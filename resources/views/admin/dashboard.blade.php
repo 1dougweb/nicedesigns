@@ -3,182 +3,316 @@
 @section('title', '- Dashboard Admin')
 
 @section('content')
-<div class="min-h-screen bg-gray-100">
+<div class="bg-gray-100 min-h-screen">
     <!-- Header -->
     <div class="bg-white shadow">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16">
-                <div class="flex items-center">
-                    <h1 class="text-2xl font-bold text-gray-900">Dashboard Admin</h1>
-                </div>
+        <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center">
+                <h1 class="text-3xl font-bold text-gray-900">Dashboard</h1>
                 <div class="flex items-center space-x-4">
-                    <span class="text-gray-700">Olá, {{ auth()->user()->name }}!</span>
-                    <form method="POST" action="{{ route('logout') }}" class="inline">
-                        @csrf
-                        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg text-sm">
-                            Sair
-                        </button>
-                    </form>
+                    <span class="text-gray-600">Bem-vindo, {{ auth()->user()->name }}!</span>
+                    <a href="{{ route('home') }}" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition">
+                        Ver Site
+                    </a>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="text-blue-600">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
+    <div class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        
+        <!-- Navigation Menu -->
+        <div class="bg-white overflow-hidden shadow-sm rounded-lg mb-6">
+            <div class="p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Menu Administrativo</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    
+                    <a href="{{ route('admin.posts.index') }}" class="flex flex-col items-center p-4 bg-blue-50 rounded-lg hover:bg-blue-100 transition group">
+                        <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center group-hover:bg-blue-700 transition">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                            </svg>
+                        </div>
+                        <span class="mt-2 text-sm font-medium text-gray-900">Posts</span>
+                    </a>
+
+                    <a href="{{ route('admin.projects.index') }}" class="flex flex-col items-center p-4 bg-green-50 rounded-lg hover:bg-green-100 transition group">
+                        <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center group-hover:bg-green-700 transition">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                            </svg>
+                        </div>
+                        <span class="mt-2 text-sm font-medium text-gray-900">Projetos</span>
+                    </a>
+
+                    <a href="{{ route('admin.categories.index') }}" class="flex flex-col items-center p-4 bg-purple-50 rounded-lg hover:bg-purple-100 transition group">
+                        <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center group-hover:bg-purple-700 transition">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                            </svg>
+                        </div>
+                        <span class="mt-2 text-sm font-medium text-gray-900">Categorias</span>
+                    </a>
+
+                    <a href="{{ route('admin.contacts.index') }}" class="flex flex-col items-center p-4 bg-yellow-50 rounded-lg hover:bg-yellow-100 transition group">
+                        <div class="w-8 h-8 bg-yellow-600 rounded-lg flex items-center justify-center group-hover:bg-yellow-700 transition">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                        <span class="mt-2 text-sm font-medium text-gray-900">Contatos</span>
+                        @if($stats['contacts']['new'] > 0)
+                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800 mt-1">
+                                {{ $stats['contacts']['new'] }} novos
+                            </span>
+                        @endif
+                    </a>
+
+                    <div class="flex flex-col items-center p-4 bg-gray-50 rounded-lg opacity-50">
+                        <div class="w-8 h-8 bg-gray-400 rounded-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                        </div>
+                        <span class="mt-2 text-sm font-medium text-gray-500">Páginas</span>
+                        <span class="text-xs text-gray-400 mt-1">Em breve</span>
                     </div>
-                    <div class="ml-4">
-                        <h2 class="text-lg font-semibold text-gray-900">Posts</h2>
-                        <p class="text-2xl font-bold text-blue-600">{{ $stats['posts'] }}</p>
-                        <p class="text-sm text-gray-500">{{ $stats['published_posts'] }} publicados</p>
+
+                    <div class="flex flex-col items-center p-4 bg-gray-50 rounded-lg opacity-50">
+                        <div class="w-8 h-8 bg-gray-400 rounded-lg flex items-center justify-center">
+                            <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                            </svg>
+                        </div>
+                        <span class="mt-2 text-sm font-medium text-gray-500">Configurações</span>
+                        <span class="text-xs text-gray-400 mt-1">Em breve</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
+            
+            <!-- Posts Stats -->
+            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+                <div class="p-6">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Posts</dt>
+                                <dd class="text-lg font-semibold text-gray-900">{{ $stats['posts']['total'] }}</dd>
+                            </dl>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <div class="flex text-sm text-gray-600">
+                            <span class="flex items-center">
+                                <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
+                                {{ $stats['posts']['published'] }} publicados
+                            </span>
+                            <span class="flex items-center ml-4">
+                                <span class="w-2 h-2 bg-gray-400 rounded-full mr-1"></span>
+                                {{ $stats['posts']['drafts'] }} rascunhos
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="text-green-600">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                        </svg>
+            <!-- Projects Stats -->
+            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+                <div class="p-6">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 bg-green-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Projetos</dt>
+                                <dd class="text-lg font-semibold text-gray-900">{{ $stats['projects']['total'] }}</dd>
+                            </dl>
+                        </div>
                     </div>
-                    <div class="ml-4">
-                        <h2 class="text-lg font-semibold text-gray-900">Projetos</h2>
-                        <p class="text-2xl font-bold text-green-600">{{ $stats['projects'] }}</p>
-                        <p class="text-sm text-gray-500">{{ $stats['published_projects'] }} publicados</p>
+                    <div class="mt-4">
+                        <div class="flex text-sm text-gray-600">
+                            <span class="flex items-center">
+                                <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
+                                {{ $stats['projects']['published'] }} publicados
+                            </span>
+                            <span class="flex items-center ml-4">
+                                <span class="w-2 h-2 bg-yellow-400 rounded-full mr-1"></span>
+                                {{ $stats['projects']['featured'] }} destaques
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="text-orange-600">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                        </svg>
+            <!-- Contacts Stats -->
+            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+                <div class="p-6">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 bg-yellow-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Contatos</dt>
+                                <dd class="text-lg font-semibold text-gray-900">{{ $stats['contacts']['total'] }}</dd>
+                            </dl>
+                        </div>
                     </div>
-                    <div class="ml-4">
-                        <h2 class="text-lg font-semibold text-gray-900">Contatos</h2>
-                        <p class="text-2xl font-bold text-orange-600">{{ $stats['contacts'] }}</p>
-                        <p class="text-sm text-gray-500">{{ $stats['unread_contacts'] }} não lidos</p>
+                    <div class="mt-4">
+                        <div class="flex text-sm text-gray-600">
+                            <span class="flex items-center">
+                                <span class="w-2 h-2 bg-red-400 rounded-full mr-1"></span>
+                                {{ $stats['contacts']['new'] }} novos
+                            </span>
+                            <span class="flex items-center ml-4">
+                                <span class="w-2 h-2 bg-green-400 rounded-full mr-1"></span>
+                                {{ $stats['contacts']['completed'] }} concluídos
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-lg shadow p-6">
-                <div class="flex items-center">
-                    <div class="text-purple-600">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
-                        </svg>
+            <!-- Categories Stats -->
+            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+                <div class="p-6">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0">
+                            <div class="w-8 h-8 bg-purple-600 rounded-lg flex items-center justify-center">
+                                <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="ml-5 w-0 flex-1">
+                            <dl>
+                                <dt class="text-sm font-medium text-gray-500 truncate">Categorias</dt>
+                                <dd class="text-lg font-semibold text-gray-900">{{ $stats['categories'] }}</dd>
+                            </dl>
+                        </div>
                     </div>
-                    <div class="ml-4">
-                        <h2 class="text-lg font-semibold text-gray-900">Visitantes</h2>
-                        <p class="text-2xl font-bold text-purple-600">0</p>
-                        <p class="text-sm text-gray-500">Este mês</p>
+                    <div class="mt-4">
+                        <div class="text-sm text-gray-600">
+                            Organizando conteúdo
+                        </div>
                     </div>
                 </div>
             </div>
+
         </div>
 
         <!-- Recent Activity -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <!-- Recent Contacts -->
-            <div class="bg-white rounded-lg shadow">
-                <div class="p-6 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900">Contatos Recentes</h3>
-                </div>
-                <div class="p-6">
-                    @if($recentContacts->count() > 0)
-                        <div class="space-y-4">
-                            @foreach($recentContacts as $contact)
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                <div>
-                                    <h4 class="font-medium text-gray-900">{{ $contact->name }}</h4>
-                                    <p class="text-sm text-gray-600">{{ $contact->email }}</p>
-                                    <p class="text-sm text-gray-500">{{ Str::limit($contact->subject, 50) }}</p>
-                                </div>
-                                <div class="text-right">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                                {{ $contact->status === 'unread' ? 'bg-yellow-100 text-yellow-800' : 'bg-green-100 text-green-800' }}">
-                                        {{ $contact->status === 'unread' ? 'Novo' : 'Lido' }}
-                                    </span>
-                                    <p class="text-xs text-gray-500 mt-1">{{ $contact->created_at->diffForHumans() }}</p>
-                                </div>
-                            </div>
-                            @endforeach
-                        </div>
-                    @else
-                        <p class="text-gray-500 text-center py-4">Nenhum contato recente</p>
-                    @endif
-                </div>
-            </div>
-
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
             <!-- Recent Posts -->
-            <div class="bg-white rounded-lg shadow">
-                <div class="p-6 border-b border-gray-200">
-                    <h3 class="text-lg font-semibold text-gray-900">Posts Recentes</h3>
+            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-medium text-gray-900">Posts Recentes</h3>
+                        <a href="{{ route('admin.posts.index') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Ver todos</a>
+                    </div>
                 </div>
-                <div class="p-6">
-                    @if($recentPosts->count() > 0)
-                        <div class="space-y-4">
-                            @foreach($recentPosts as $post)
-                            <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                                <div>
-                                    <h4 class="font-medium text-gray-900">{{ Str::limit($post->title, 40) }}</h4>
-                                    <p class="text-sm text-gray-600">{{ $post->category->name }}</p>
-                                    <p class="text-sm text-gray-500">Por {{ $post->author->name }}</p>
-                                </div>
-                                <div class="text-right">
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                                {{ $post->is_published ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800' }}">
-                                        {{ $post->is_published ? 'Publicado' : 'Rascunho' }}
-                                    </span>
-                                    <p class="text-xs text-gray-500 mt-1">{{ $post->created_at->diffForHumans() }}</p>
+                <div class="divide-y divide-gray-200">
+                    @forelse($recentPosts as $post)
+                    <div class="p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <h4 class="text-sm font-medium text-gray-900">{{ $post->title }}</h4>
+                                <div class="mt-1 flex items-center text-sm text-gray-500">
+                                    <span class="truncate">{{ $post->category->name }}</span>
+                                    <span class="mx-2">•</span>
+                                    <span>{{ $post->created_at->diffForHumans() }}</span>
                                 </div>
                             </div>
-                            @endforeach
+                            <div class="ml-4">
+                                @if($post->is_published)
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Publicado
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                                        Rascunho
+                                    </span>
+                                @endif
+                            </div>
                         </div>
-                    @else
-                        <p class="text-gray-500 text-center py-4">Nenhum post recente</p>
-                    @endif
+                    </div>
+                    @empty
+                    <div class="p-6 text-center text-gray-500">
+                        Nenhum post encontrado.
+                    </div>
+                    @endforelse
                 </div>
             </div>
-        </div>
 
-        <!-- Quick Actions -->
-        <div class="mt-8">
-            <h3 class="text-lg font-semibold text-gray-900 mb-4">Ações Rápidas</h3>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-lg text-center transition duration-300">
-                    <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                    </svg>
-                    Novo Post
-                </a>
-                <a href="#" class="bg-green-600 hover:bg-green-700 text-white p-4 rounded-lg text-center transition duration-300">
-                    <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                    </svg>
-                    Novo Projeto
-                </a>
-                <a href="{{ route('home') }}" class="bg-gray-600 hover:bg-gray-700 text-white p-4 rounded-lg text-center transition duration-300">
-                    <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                    </svg>
-                    Ver Site
-                </a>
+            <!-- Recent Contacts -->
+            <div class="bg-white overflow-hidden shadow-sm rounded-lg">
+                <div class="px-6 py-4 border-b border-gray-200">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-lg font-medium text-gray-900">Contatos Recentes</h3>
+                        <a href="{{ route('admin.contacts.index') }}" class="text-blue-600 hover:text-blue-800 text-sm font-medium">Ver todos</a>
+                    </div>
+                </div>
+                <div class="divide-y divide-gray-200">
+                    @forelse($recentContacts as $contact)
+                    <div class="p-6">
+                        <div class="flex items-center justify-between">
+                            <div class="flex-1">
+                                <h4 class="text-sm font-medium text-gray-900">{{ $contact->name }}</h4>
+                                <div class="mt-1 text-sm text-gray-500">
+                                    <p class="truncate">{{ $contact->subject }}</p>
+                                    <p class="text-xs">{{ $contact->created_at->diffForHumans() }}</p>
+                                </div>
+                            </div>
+                            <div class="ml-4">
+                                @if($contact->status === 'new')
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                                        Novo
+                                    </span>
+                                @elseif($contact->status === 'in_progress')
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                                        Em andamento
+                                    </span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                                        Concluído
+                                    </span>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+                    @empty
+                    <div class="p-6 text-center text-gray-500">
+                        Nenhum contato encontrado.
+                    </div>
+                    @endforelse
+                </div>
             </div>
+
         </div>
+        
     </div>
 </div>
 @endsection 
