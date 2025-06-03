@@ -10,6 +10,10 @@ use App\Models\Project;
 use App\Models\Contact;
 use App\Models\Category;
 use App\Models\Page;
+use App\Models\ClientProject;
+use App\Models\Invoice;
+use App\Models\SupportTicket;
+use App\Models\User;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -39,6 +43,33 @@ class DashboardController extends Controller
                 'active' => Category::where('is_active', true)->count(),
             ],
             'pages' => Page::count(),
+            // Novas estatísticas de cliente
+            'client_projects' => [
+                'total' => ClientProject::count(),
+                'active' => ClientProject::active()->count(),
+                'completed' => ClientProject::completed()->count(),
+                'overdue' => ClientProject::overdue()->count(),
+            ],
+            'invoices' => [
+                'total' => Invoice::count(),
+                'pending' => Invoice::pending()->count(),
+                'paid' => Invoice::paid()->count(),
+                'overdue' => Invoice::overdue()->count(),
+                'total_amount' => Invoice::sum('total_amount'),
+                'pending_amount' => Invoice::pending()->sum('total_amount'),
+            ],
+            'support_tickets' => [
+                'total' => SupportTicket::count(),
+                'open' => SupportTicket::open()->count(),
+                'pending_response' => SupportTicket::where('status', 'aguardando_cliente')->count(),
+                'resolved_today' => SupportTicket::whereDate('resolved_at', today())->count(),
+            ],
+            'clients' => [
+                'total' => User::clients()->count(),
+                'active' => User::clients()->whereHas('clientProjects', function($q) {
+                    $q->active();
+                })->count(),
+            ],
         ];
 
         // Atividades recentes
@@ -56,11 +87,48 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Novas atividades de cliente
+        $recentClientProjects = ClientProject::with(['user', 'project'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $recentInvoices = Invoice::with(['user', 'clientProject'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        $recentTickets = SupportTicket::with(['user', 'assignedUser'])
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // Tickets que precisam de atenção
+        $urgentTickets = SupportTicket::with(['user'])
+            ->where('priority', 'urgente')
+            ->open()
+            ->latest()
+            ->take(3)
+            ->get();
+
+        // Faturas vencendo em breve
+        $upcomingInvoices = Invoice::with(['user'])
+            ->where('status', 'pendente')
+            ->whereBetween('due_date', [now(), now()->addDays(7)])
+            ->orderBy('due_date')
+            ->take(5)
+            ->get();
+
         return view('admin.dashboard', compact(
             'stats',
             'recentPosts',
             'recentProjects',
-            'recentContacts'
+            'recentContacts',
+            'recentClientProjects',
+            'recentInvoices',
+            'recentTickets',
+            'urgentTickets',
+            'upcomingInvoices'
         ));
     }
 }

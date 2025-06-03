@@ -160,12 +160,12 @@
         </div>
 
         <!-- Responses -->
-        @if($ticket->responses && $ticket->responses->count() > 0)
-            @foreach($ticket->responses as $response)
+        @if($ticket->replies && $ticket->replies->where('is_internal', false)->count() > 0)
+            @foreach($ticket->replies->where('is_internal', false) as $reply)
                 <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center space-x-3">
-                            @if($response->user->role === 'admin')
+                            @if($reply->user->role === 'admin')
                                 <div class="w-10 h-10 bg-purple-500 rounded-full flex items-center justify-center">
                                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -173,20 +173,20 @@
                                 </div>
                             @else
                                 <div class="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                                    <span class="text-white font-semibold text-sm">{{ substr($response->user->display_name, 0, 2) }}</span>
+                                    <span class="text-white font-semibold text-sm">{{ substr($reply->user->display_name, 0, 2) }}</span>
                                 </div>
                             @endif
                             <div>
                                 <div class="text-white font-semibold">
-                                    {{ $response->user->display_name }}
-                                    @if($response->user->role === 'admin')
+                                    {{ $reply->user->display_name }}
+                                    @if($reply->user->role === 'admin')
                                         <span class="text-purple-400 text-sm font-normal">(Suporte)</span>
                                     @endif
                                 </div>
-                                <div class="text-gray-400 text-sm">{{ $response->created_at->format('d/m/Y \à\s H:i') }}</div>
+                                <div class="text-gray-400 text-sm">{{ $reply->created_at->format('d/m/Y \à\s H:i') }}</div>
                             </div>
                         </div>
-                        @if($response->user->role === 'admin')
+                        @if($reply->user->role === 'admin')
                             <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-purple-500/20 text-purple-400 border border-purple-500/30">
                                 Resposta da Equipe
                             </span>
@@ -194,14 +194,40 @@
                     </div>
                     
                     <div class="prose prose-invert max-w-none">
-                        <div class="text-gray-300 whitespace-pre-line">{{ $response->message }}</div>
+                        <div class="text-gray-300 whitespace-pre-line">{{ $reply->message }}</div>
                     </div>
+                    
+                    <!-- Attachments -->
+                    @if($reply->attachments && count($reply->attachments) > 0)
+                        <div class="mt-4 pt-4 border-t border-gray-600">
+                            <p class="text-gray-400 text-sm mb-3">Anexos:</p>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                @foreach($reply->attachments as $attachment)
+                                    <div class="flex items-center p-3 bg-gray-700/30 rounded-xl">
+                                        <svg class="w-5 h-5 text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"/>
+                                        </svg>
+                                        <div class="flex-1">
+                                            <p class="text-white text-sm font-medium">{{ $attachment['name'] }}</p>
+                                            <p class="text-gray-400 text-xs">{{ number_format($attachment['size'] / 1024, 1) }} KB</p>
+                                        </div>
+                                        <a href="{{ Storage::url($attachment['path']) }}" target="_blank" 
+                                           class="text-blue-400 hover:text-blue-300 transition-colors">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endif
                 </div>
             @endforeach
         @endif
 
         <!-- No Responses Yet -->
-        @if(!$ticket->responses || $ticket->responses->count() === 0)
+        @if(!$ticket->replies || $ticket->replies->where('is_internal', false)->count() === 0)
             <div class="text-center py-8">
                 <div class="bg-gray-800/30 backdrop-blur-md rounded-3xl border border-gray-700/30 p-8">
                     <div class="w-16 h-16 bg-gray-700/50 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -211,6 +237,94 @@
                     </div>
                     <h3 class="text-lg font-semibold text-white mb-2">Aguardando Resposta</h3>
                     <p class="text-gray-400">Nossa equipe de suporte responderá em breve. Você receberá uma notificação quando houver uma atualização.</p>
+                </div>
+            </div>
+        @endif
+
+        <!-- Reply Form -->
+        @if($ticket->status !== 'fechado')
+            <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
+                <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                    <svg class="w-6 h-6 mr-3 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
+                    </svg>
+                    Responder ao Ticket
+                </h3>
+
+                @if(session('error'))
+                    <div class="mb-6 bg-red-500/20 border border-red-500/30 rounded-2xl p-4">
+                        <div class="flex items-center">
+                            <svg class="w-6 h-6 text-red-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                            <span class="text-red-300 font-medium">{{ session('error') }}</span>
+                        </div>
+                    </div>
+                @endif
+
+                <form action="{{ route('client.support.reply', $ticket) }}" method="POST" enctype="multipart/form-data">
+                    @csrf
+                    
+                    <div class="space-y-6">
+                        <!-- Message -->
+                        <div>
+                            <label for="message" class="block text-sm font-medium text-gray-300 mb-2">
+                                Sua Mensagem <span class="text-red-400">*</span>
+                            </label>
+                            <textarea name="message" 
+                                      id="message" 
+                                      rows="6"
+                                      required
+                                      placeholder="Digite sua resposta ou informações adicionais..."
+                                      class="w-full bg-gray-700/50 border border-gray-600 text-white placeholder-gray-400 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent @error('message') border-red-500 @enderror">{{ old('message') }}</textarea>
+                            @error('message')
+                                <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Attachments -->
+                        <div>
+                            <label for="attachments" class="block text-sm font-medium text-gray-300 mb-2">
+                                Anexos (Opcional)
+                            </label>
+                            <input type="file" 
+                                   name="attachments[]" 
+                                   id="attachments"
+                                   multiple
+                                   accept=".jpg,.jpeg,.png,.gif,.pdf,.doc,.docx,.txt,.zip"
+                                   class="w-full bg-gray-700/50 border border-gray-600 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent @error('attachments') border-red-500 @enderror">
+                            <p class="text-gray-500 text-sm mt-1">
+                                Máximo 10MB por arquivo. Formatos: JPG, PNG, PDF, DOC, TXT, ZIP
+                            </p>
+                            @error('attachments')
+                                <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="flex items-center justify-end space-x-4">
+                            <button type="submit" 
+                                    class="px-8 py-3 bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white font-medium rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-cyan-500/25">
+                                <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                                </svg>
+                                Enviar Resposta
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        @else
+            <!-- Ticket Closed Message -->
+            <div class="bg-gray-700/30 backdrop-blur-md rounded-3xl border border-gray-600/50 p-6">
+                <div class="flex items-center justify-center">
+                    <svg class="w-8 h-8 text-gray-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-300">Ticket Fechado</h3>
+                        <p class="text-gray-400 text-sm">Este ticket foi fechado e não aceita mais respostas.</p>
+                    </div>
                 </div>
             </div>
         @endif

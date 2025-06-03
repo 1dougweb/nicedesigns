@@ -35,6 +35,10 @@ class TicketReply extends Model
     {
         return [
             'reply' => 'Resposta',
+            'resposta' => 'Resposta',
+            'pergunta' => 'Pergunta',
+            'atualizacao' => 'Atualização',
+            'resolucao' => 'Resolução',
             'internal_note' => 'Nota Interna',
             'status_change' => 'Mudança de Status',
         ];

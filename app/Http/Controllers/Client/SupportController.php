@@ -72,7 +72,12 @@ class SupportController extends Controller
             abort(403, 'Acesso negado.');
         }
         
-        $ticket->load(['clientProject', 'replies.user']);
+        $ticket->load([
+            'clientProject', 
+            'replies' => function($query) {
+                $query->where('is_internal', false)->with('user')->orderBy('created_at', 'asc');
+            }
+        ]);
         
         return view('client.support.show', compact('ticket'));
     }
@@ -107,5 +112,57 @@ class SupportController extends Controller
 
         return redirect()->route('client.support.show', $ticket)
             ->with('success', 'Ticket criado com sucesso! Nossa equipe responderá em breve.');
+    }
+
+    public function reply(Request $request, SupportTicket $ticket): RedirectResponse
+    {
+        // Verificar se o ticket pertence ao cliente logado
+        if ($ticket->user_id !== Auth::id()) {
+            abort(403, 'Acesso negado.');
+        }
+
+        // Verificar se o ticket não está fechado
+        if ($ticket->status === 'fechado') {
+            return back()->with('error', 'Não é possível responder a um ticket fechado.');
+        }
+
+        $validated = $request->validate([
+            'message' => 'required|string',
+            'attachments' => 'nullable|array',
+            'attachments.*' => 'file|max:10240', // 10MB
+        ]);
+
+        $attachments = [];
+        if ($request->hasFile('attachments')) {
+            foreach ($request->file('attachments') as $file) {
+                $path = $file->store('support-attachments', 'public');
+                $attachments[] = [
+                    'name' => $file->getClientOriginalName(),
+                    'path' => $path,
+                    'size' => $file->getSize(),
+                    'type' => $file->getMimeType(),
+                ];
+            }
+        }
+
+        // Criar a resposta
+        $ticket->replies()->create([
+            'user_id' => Auth::id(),
+            'message' => $validated['message'],
+            'type' => 'resposta',
+            'is_internal' => false,
+            'attachments' => $attachments,
+        ]);
+
+        // Atualizar o status do ticket se necessário
+        if ($ticket->status === 'aguardando_cliente') {
+            $ticket->update(['status' => 'em_andamento']);
+        }
+
+        // Atualizar timestamp de última resposta
+        $ticket->update(['last_response_at' => now()]);
+
+        return redirect()->route('client.support.show', $ticket)
+            ->with('success', 'Sua resposta foi enviada com sucesso! Nossa equipe será notificada.');
     }
 } 

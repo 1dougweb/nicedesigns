@@ -55,6 +55,27 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('settings/test-email', [AdminSettingController::class, 'testEmail'])->name('settings.test-email');
     Route::post('settings/clear-cache', [AdminSettingController::class, 'clearCache'])->name('settings.clear-cache');
     
+    // Client Projects Management
+    Route::resource('client-projects', \App\Http\Controllers\Admin\ClientProjectController::class);
+    Route::put('client-projects/{clientProject}/progress', [\App\Http\Controllers\Admin\ClientProjectController::class, 'updateProgress'])->name('client-projects.update-progress');
+    
+    // Invoices Management
+    Route::resource('invoices', \App\Http\Controllers\Admin\InvoiceController::class);
+    Route::post('invoices/{invoice}/mark-as-paid', [\App\Http\Controllers\Admin\InvoiceController::class, 'markAsPaid'])->name('invoices.mark-as-paid');
+    Route::get('ajax/client-projects', [\App\Http\Controllers\Admin\InvoiceController::class, 'getClientProjects'])->name('ajax.client-projects');
+    
+    // Support Tickets Management
+    Route::resource('support-tickets', \App\Http\Controllers\Admin\SupportTicketController::class)->only(['index', 'show', 'destroy']);
+    Route::post('support-tickets/{supportTicket}/assign', [\App\Http\Controllers\Admin\SupportTicketController::class, 'assign'])->name('support-tickets.assign');
+    Route::put('support-tickets/{supportTicket}/status', [\App\Http\Controllers\Admin\SupportTicketController::class, 'updateStatus'])->name('support-tickets.update-status');
+    Route::put('support-tickets/{supportTicket}/priority', [\App\Http\Controllers\Admin\SupportTicketController::class, 'updatePriority'])->name('support-tickets.update-priority');
+    Route::post('support-tickets/{supportTicket}/reply', [\App\Http\Controllers\Admin\SupportTicketController::class, 'reply'])->name('support-tickets.reply');
+    Route::post('support-tickets/{supportTicket}/resolve', [\App\Http\Controllers\Admin\SupportTicketController::class, 'markAsResolved'])->name('support-tickets.resolve');
+    Route::post('support-tickets/{supportTicket}/mark-as-resolved', [\App\Http\Controllers\Admin\SupportTicketController::class, 'markAsResolved'])->name('support-tickets.mark-as-resolved');
+    Route::post('support-tickets/{supportTicket}/close', [\App\Http\Controllers\Admin\SupportTicketController::class, 'close'])->name('support-tickets.close');
+    Route::post('support-tickets/{supportTicket}/reopen', [\App\Http\Controllers\Admin\SupportTicketController::class, 'reopen'])->name('support-tickets.reopen');
+    Route::get('support-analytics', [\App\Http\Controllers\Admin\SupportTicketController::class, 'analytics'])->name('support-tickets.analytics');
+    
     // Pages Management (será implementado depois)
     // Route::resource('pages', AdminPageController::class);
 });
@@ -77,6 +98,7 @@ Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(
     Route::get('/support/create', [\App\Http\Controllers\Client\SupportController::class, 'create'])->name('support.create');
     Route::post('/support', [\App\Http\Controllers\Client\SupportController::class, 'store'])->name('support.store');
     Route::get('/support/{ticket}', [\App\Http\Controllers\Client\SupportController::class, 'show'])->name('support.show');
+    Route::post('/support/{ticket}/reply', [\App\Http\Controllers\Client\SupportController::class, 'reply'])->name('support.reply');
     
     // Profile
     Route::get('/profile', [\App\Http\Controllers\Client\ProfileController::class, 'index'])->name('profile.index');

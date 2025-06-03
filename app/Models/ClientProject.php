@@ -180,6 +180,14 @@ class ClientProject extends Model
     }
 
     /**
+     * Get status color (method alias for view compatibility)
+     */
+    public function getStatusColor(): string
+    {
+        return $this->getStatusColorAttribute();
+    }
+
+    /**
      * Get priority label
      */
     public function getPriorityLabelAttribute(): string
@@ -193,6 +201,14 @@ class ClientProject extends Model
     public function getPriorityColorAttribute(): string
     {
         return self::getPriorityColors()[$this->priority] ?? 'gray';
+    }
+
+    /**
+     * Get priority color (method alias for view compatibility)
+     */
+    public function getPriorityColor(): string
+    {
+        return $this->getPriorityColorAttribute();
     }
 
     /**
