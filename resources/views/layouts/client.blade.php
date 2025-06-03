@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Laravel') }} @yield('title')</title>
+    <title>@yield('title', 'Área do Cliente') - {{ config('app.name', 'Nice Designs') }}</title>
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
@@ -46,8 +46,8 @@
                 </a>
 
                 <!-- Meus Projetos -->
-                <a href="{{ route('client.projects') }}" 
-                   class="flex items-center px-4 py-3 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-200 group {{ request()->routeIs('client.projects*') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' : '' }}">
+                <a href="{{ route('client.projects.index') }}" 
+                   class="flex items-center px-4 py-3 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-200 group {{ request()->routeIs('client.projects.*') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' : '' }}">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                     </svg>
@@ -55,8 +55,8 @@
                 </a>
 
                 <!-- Faturas -->
-                <a href="{{ route('client.invoices') }}" 
-                   class="flex items-center px-4 py-3 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-200 group {{ request()->routeIs('client.invoices*') ? 'bg-purple-600/20 text-purple-400 border border-purple-500/30' : '' }}">
+                <a href="{{ route('client.invoices.index') }}" 
+                   class="flex items-center px-4 py-3 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-200 group {{ request()->routeIs('client.invoices.*') ? 'bg-purple-600/20 text-purple-400 border border-purple-500/30' : '' }}">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                     </svg>
@@ -64,8 +64,8 @@
                 </a>
 
                 <!-- Suporte -->
-                <a href="{{ route('client.support') }}" 
-                   class="flex items-center px-4 py-3 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-200 group {{ request()->routeIs('client.support*') ? 'bg-yellow-600/20 text-yellow-400 border border-yellow-500/30' : '' }}">
+                <a href="{{ route('client.support.index') }}" 
+                   class="flex items-center px-4 py-3 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-200 group {{ request()->routeIs('client.support.*') ? 'bg-yellow-600/20 text-yellow-400 border border-yellow-500/30' : '' }}">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
                     </svg>
@@ -73,8 +73,8 @@
                 </a>
 
                 <!-- Perfil -->
-                <a href="{{ route('client.profile') }}" 
-                   class="flex items-center px-4 py-3 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-200 group {{ request()->routeIs('client.profile*') ? 'bg-pink-600/20 text-pink-400 border border-pink-500/30' : '' }}">
+                <a href="{{ route('client.profile.index') }}" 
+                   class="flex items-center px-4 py-3 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-200 group {{ request()->routeIs('client.profile.*') ? 'bg-pink-600/20 text-pink-400 border border-pink-500/30' : '' }}">
                     <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
@@ -140,10 +140,10 @@
                             <!-- User Info -->
                             <div class="flex items-center space-x-3">
                                 <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-blue-600 rounded-full flex items-center justify-center">
-                                    <span class="text-white font-bold text-sm">{{ substr(auth()->user()->name, 0, 2) }}</span>
+                                    <span class="text-white font-bold text-sm">{{ substr(auth()->user()->display_name, 0, 2) }}</span>
                                 </div>
                                 <div class="hidden md:block">
-                                    <p class="text-sm font-medium text-white">{{ auth()->user()->name }}</p>
+                                    <p class="text-sm font-medium text-white">{{ auth()->user()->display_name }}</p>
                                     <p class="text-xs text-gray-400">Cliente</p>
                                 </div>
                             </div>
@@ -154,6 +154,22 @@
 
             <!-- Page Content -->
             <main class="flex-1 p-6">
+                @if (session('success'))
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+                        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                            <span class="block sm:inline">{{ session('success') }}</span>
+                        </div>
+                    </div>
+                @endif
+
+                @if (session('error'))
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-4">
+                        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                            <span class="block sm:inline">{{ session('error') }}</span>
+                        </div>
+                    </div>
+                @endif
+
                 @yield('content')
             </main>
         </div>

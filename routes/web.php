@@ -63,14 +63,28 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(function () {
     // Dashboard
     Route::get('/', [ClientDashboardController::class, 'index'])->name('dashboard');
+    
     // Projects
-    Route::get('/projects', [ClientDashboardController::class, 'projects'])->name('projects');
+    Route::get('/projects', [\App\Http\Controllers\Client\ProjectController::class, 'index'])->name('projects.index');
+    Route::get('/projects/{project}', [\App\Http\Controllers\Client\ProjectController::class, 'show'])->name('projects.show');
+    
     // Invoices
-    Route::get('/invoices', [ClientDashboardController::class, 'invoices'])->name('invoices');
-    // Support
-    Route::get('/support', [ClientDashboardController::class, 'support'])->name('support');
+    Route::get('/invoices', [\App\Http\Controllers\Client\InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('/invoices/{invoice}', [\App\Http\Controllers\Client\InvoiceController::class, 'show'])->name('invoices.show');
+    
+    // Support Tickets
+    Route::get('/support', [\App\Http\Controllers\Client\SupportController::class, 'index'])->name('support.index');
+    Route::get('/support/create', [\App\Http\Controllers\Client\SupportController::class, 'create'])->name('support.create');
+    Route::post('/support', [\App\Http\Controllers\Client\SupportController::class, 'store'])->name('support.store');
+    Route::get('/support/{ticket}', [\App\Http\Controllers\Client\SupportController::class, 'show'])->name('support.show');
+    
     // Profile
-    Route::get('/profile', [ClientDashboardController::class, 'profile'])->name('profile');
+    Route::get('/profile', [\App\Http\Controllers\Client\ProfileController::class, 'index'])->name('profile.index');
+    Route::put('/profile', [\App\Http\Controllers\Client\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [\App\Http\Controllers\Client\ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::post('/profile/validate-document', [\App\Http\Controllers\Client\ProfileController::class, 'validateDocument'])->name('profile.validate-document');
+    Route::post('/profile/avatar', [\App\Http\Controllers\Client\ProfileController::class, 'uploadAvatar'])->name('profile.upload-avatar');
+    Route::delete('/profile/avatar', [\App\Http\Controllers\Client\ProfileController::class, 'removeAvatar'])->name('profile.remove-avatar');
 });
 
 // Auth Routes (Laravel/UI)

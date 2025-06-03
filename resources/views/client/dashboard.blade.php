@@ -10,7 +10,7 @@
         <div class="flex items-center justify-between">
             <div>
                 <h2 class="text-3xl font-bold text-white mb-2">
-                    Bem-vindo, {{ auth()->user()->name }}! 👋
+                    Bem-vindo, {{ auth()->user()->display_name }}! 👋
                 </h2>
                 <p class="text-gray-300 text-lg">
                     Aqui você pode acompanhar seus projetos e gerenciar sua conta.
@@ -38,19 +38,19 @@
                 </svg>
             </div>
             <div class="text-right">
-                <p class="text-3xl font-bold text-white">3</p>
+                <p class="text-3xl font-bold text-white">{{ $stats['total_projects'] ?? 3 }}</p>
                 <p class="text-sm text-gray-400">Projetos</p>
             </div>
         </div>
         <div class="flex items-center justify-between text-sm">
             <span class="flex items-center text-green-400">
                 <span class="w-2 h-2 bg-green-400 rounded-full mr-2 animate-pulse"></span>
-                2 em andamento
+                {{ $stats['active_projects'] ?? 2 }} em andamento
             </span>
-            <span class="text-gray-500">1 concluído</span>
+            <span class="text-gray-500">{{ $stats['completed_projects'] ?? 1 }} concluído</span>
         </div>
         <div class="mt-4">
-            <a href="{{ route('client.projects') }}" class="text-green-400 hover:text-green-300 text-sm font-medium transition-colors">
+            <a href="{{ route('client.projects.index') }}" class="text-green-400 hover:text-green-300 text-sm font-medium transition-colors">
                 Ver Projetos →
             </a>
         </div>
@@ -65,19 +65,19 @@
                 </svg>
             </div>
             <div class="text-right">
-                <p class="text-3xl font-bold text-white">5</p>
+                <p class="text-3xl font-bold text-white">{{ $stats['total_invoices'] ?? 5 }}</p>
                 <p class="text-sm text-gray-400">Faturas</p>
             </div>
         </div>
         <div class="flex items-center justify-between text-sm">
             <span class="flex items-center text-green-400">
                 <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
-                4 pagas
+                {{ ($stats['total_invoices'] ?? 5) - ($stats['pending_invoices'] ?? 1) }} pagas
             </span>
-            <span class="text-yellow-400">1 pendente</span>
+            <span class="text-yellow-400">{{ $stats['pending_invoices'] ?? 1 }} pendente</span>
         </div>
         <div class="mt-4">
-            <a href="{{ route('client.invoices') }}" class="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors">
+            <a href="{{ route('client.invoices.index') }}" class="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors">
                 Ver Faturas →
             </a>
         </div>
@@ -92,19 +92,19 @@
                 </svg>
             </div>
             <div class="text-right">
-                <p class="text-3xl font-bold text-white">2</p>
+                <p class="text-3xl font-bold text-white">{{ $stats['total_tickets'] ?? 2 }}</p>
                 <p class="text-sm text-gray-400">Tickets</p>
             </div>
         </div>
         <div class="flex items-center justify-between text-sm">
             <span class="flex items-center text-yellow-400">
                 <span class="w-2 h-2 bg-yellow-400 rounded-full mr-2"></span>
-                1 aberto
+                {{ $stats['open_tickets'] ?? 1 }} aberto
             </span>
-            <span class="text-green-400">1 resolvido</span>
+            <span class="text-green-400">{{ $stats['closed_tickets'] ?? 1 }} resolvido</span>
         </div>
         <div class="mt-4">
-            <a href="{{ route('client.support') }}" class="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors">
+            <a href="{{ route('client.support.index') }}" class="text-purple-400 hover:text-purple-300 text-sm font-medium transition-colors">
                 Ver Suporte →
             </a>
         </div>
@@ -119,16 +119,16 @@
                 </svg>
             </div>
             <div class="text-right">
-                <p class="text-3xl font-bold text-white">R$ 2.500</p>
-                <p class="text-sm text-gray-400">Próximo</p>
+                <p class="text-3xl font-bold text-white">R$ {{ number_format($stats['total_amount_due'] ?? 2500, 2, ',', '.') }}</p>
+                <p class="text-sm text-gray-400">Em Aberto</p>
             </div>
         </div>
         <div class="flex items-center justify-between text-sm">
-            <span class="text-gray-300">Vencimento:</span>
-            <span class="text-yellow-400">15/06/2025</span>
+            <span class="text-gray-300">{{ $stats['overdue_invoices'] ?? 0 }} vencidas</span>
+            <span class="text-yellow-400">{{ $stats['pending_invoices'] ?? 1 }} pendente</span>
         </div>
         <div class="mt-4">
-            <a href="{{ route('client.invoices') }}" class="text-yellow-400 hover:text-yellow-300 text-sm font-medium transition-colors">
+            <a href="{{ route('client.invoices.index') }}" class="text-yellow-400 hover:text-yellow-300 text-sm font-medium transition-colors">
                 Ver Detalhes →
             </a>
         </div>
@@ -146,48 +146,71 @@
             Projetos em Andamento
         </h3>
         <div class="space-y-4">
-            <!-- Projeto 1 -->
-            <div class="flex items-center p-4 bg-gray-700/30 rounded-2xl hover:bg-gray-700/50 transition-colors">
-                <div class="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center mr-4">
-                    <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
-                </div>
-                <div class="flex-1">
-                    <h4 class="text-white font-semibold">Site Corporativo</h4>
-                    <p class="text-gray-400 text-sm">Desenvolvimento em andamento</p>
-                    <div class="mt-2">
-                        <div class="w-full bg-gray-600 rounded-full h-2">
-                            <div class="bg-blue-500 h-2 rounded-full" style="width: 75%"></div>
+            @if(isset($recentProjects) && $recentProjects->count() > 0)
+                @foreach($recentProjects as $project)
+                    <div class="flex items-center p-4 bg-gray-700/30 rounded-2xl hover:bg-gray-700/50 transition-colors">
+                        <div class="w-12 h-12 bg-{{ $project->status_color ?? 'blue' }}-600/20 rounded-xl flex items-center justify-center mr-4">
+                            <svg class="w-6 h-6 text-{{ $project->status_color ?? 'blue' }}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                            </svg>
                         </div>
-                        <p class="text-xs text-gray-400 mt-1">75% concluído</p>
+                        <div class="flex-1">
+                            <h4 class="text-white font-semibold">{{ $project->name }}</h4>
+                            <p class="text-gray-400 text-sm">{{ $project->status_label ?? 'Em andamento' }}</p>
+                            <div class="mt-2">
+                                <div class="w-full bg-gray-600 rounded-full h-2">
+                                    <div class="bg-{{ $project->status_color ?? 'blue' }}-500 h-2 rounded-full" style="width: {{ $project->progress_percentage ?? 75 }}%"></div>
+                                </div>
+                                <p class="text-xs text-gray-400 mt-1">{{ $project->progress_percentage ?? 75 }}% concluído</p>
+                            </div>
+                        </div>
+                        <span class="text-{{ $project->status_color ?? 'blue' }}-400 text-sm font-medium">{{ $project->status_label ?? 'Em andamento' }}</span>
                     </div>
+                @endforeach
+            @else
+                <!-- Projeto 1 -->
+                <div class="flex items-center p-4 bg-gray-700/30 rounded-2xl hover:bg-gray-700/50 transition-colors">
+                    <div class="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center mr-4">
+                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <h4 class="text-white font-semibold">Site Corporativo</h4>
+                        <p class="text-gray-400 text-sm">Desenvolvimento em andamento</p>
+                        <div class="mt-2">
+                            <div class="w-full bg-gray-600 rounded-full h-2">
+                                <div class="bg-blue-500 h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">75% concluído</p>
+                        </div>
+                    </div>
+                    <span class="text-blue-400 text-sm font-medium">Em andamento</span>
                 </div>
-                <span class="text-blue-400 text-sm font-medium">Em andamento</span>
-            </div>
 
-            <!-- Projeto 2 -->
-            <div class="flex items-center p-4 bg-gray-700/30 rounded-2xl hover:bg-gray-700/50 transition-colors">
-                <div class="w-12 h-12 bg-purple-600/20 rounded-xl flex items-center justify-center mr-4">
-                    <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                    </svg>
-                </div>
-                <div class="flex-1">
-                    <h4 class="text-white font-semibold">App Mobile</h4>
-                    <p class="text-gray-400 text-sm">Design em aprovação</p>
-                    <div class="mt-2">
-                        <div class="w-full bg-gray-600 rounded-full h-2">
-                            <div class="bg-purple-500 h-2 rounded-full" style="width: 45%"></div>
-                        </div>
-                        <p class="text-xs text-gray-400 mt-1">45% concluído</p>
+                <!-- Projeto 2 -->
+                <div class="flex items-center p-4 bg-gray-700/30 rounded-2xl hover:bg-gray-700/50 transition-colors">
+                    <div class="w-12 h-12 bg-purple-600/20 rounded-xl flex items-center justify-center mr-4">
+                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
                     </div>
+                    <div class="flex-1">
+                        <h4 class="text-white font-semibold">App Mobile</h4>
+                        <p class="text-gray-400 text-sm">Design em aprovação</p>
+                        <div class="mt-2">
+                            <div class="w-full bg-gray-600 rounded-full h-2">
+                                <div class="bg-purple-500 h-2 rounded-full" style="width: 45%"></div>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">45% concluído</p>
+                        </div>
+                    </div>
+                    <span class="text-yellow-400 text-sm font-medium">Aguardando</span>
                 </div>
-                <span class="text-yellow-400 text-sm font-medium">Aguardando</span>
-            </div>
+            @endif
         </div>
         <div class="mt-6">
-            <a href="{{ route('client.projects') }}" class="text-green-400 hover:text-green-300 text-sm font-medium transition-colors">
+            <a href="{{ route('client.projects.index') }}" class="text-green-400 hover:text-green-300 text-sm font-medium transition-colors">
                 Ver Todos os Projetos →
             </a>
         </div>
@@ -202,47 +225,74 @@
             Atividades Recentes
         </h3>
         <div class="space-y-4">
-            <!-- Atividade 1 -->
-            <div class="flex items-start space-x-4">
-                <div class="w-8 h-8 bg-green-600/20 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
+            @if(isset($recentActivities) && $recentActivities->count() > 0)
+                @foreach($recentActivities as $activity)
+                    <div class="flex items-start space-x-4">
+                        <div class="w-8 h-8 bg-{{ $activity['color'] }}-600/20 rounded-full flex items-center justify-center flex-shrink-0">
+                            @if($activity['icon'] === 'project')
+                                <svg class="w-4 h-4 text-{{ $activity['color'] }}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                            @elseif($activity['icon'] === 'invoice')
+                                <svg class="w-4 h-4 text-{{ $activity['color'] }}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            @else
+                                <svg class="w-4 h-4 text-{{ $activity['color'] }}-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                </svg>
+                            @endif
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-white font-medium">{{ $activity['title'] }}</p>
+                            <p class="text-gray-400 text-sm">{{ $activity['description'] }}</p>
+                            <p class="text-gray-500 text-xs mt-1">{{ $activity['time']->diffForHumans() }}</p>
+                        </div>
+                    </div>
+                @endforeach
+            @else
+                <!-- Atividade 1 -->
+                <div class="flex items-start space-x-4">
+                    <div class="w-8 h-8 bg-green-600/20 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-white font-medium">Projeto Site Corporativo atualizado</p>
+                        <p class="text-gray-400 text-sm">Nova versão do design aprovada</p>
+                        <p class="text-gray-500 text-xs mt-1">Há 2 horas</p>
+                    </div>
                 </div>
-                <div class="flex-1">
-                    <p class="text-white font-medium">Projeto Site Corporativo atualizado</p>
-                    <p class="text-gray-400 text-sm">Nova versão do design aprovada</p>
-                    <p class="text-gray-500 text-xs mt-1">Há 2 horas</p>
-                </div>
-            </div>
 
-            <!-- Atividade 2 -->
-            <div class="flex items-start space-x-4">
-                <div class="w-8 h-8 bg-blue-600/20 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
+                <!-- Atividade 2 -->
+                <div class="flex items-start space-x-4">
+                    <div class="w-8 h-8 bg-blue-600/20 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-white font-medium">Nova fatura gerada</p>
+                        <p class="text-gray-400 text-sm">Fatura #2025-006 - R$ 2.500,00</p>
+                        <p class="text-gray-500 text-xs mt-1">Ontem</p>
+                    </div>
                 </div>
-                <div class="flex-1">
-                    <p class="text-white font-medium">Nova fatura gerada</p>
-                    <p class="text-gray-400 text-sm">Fatura #2025-006 - R$ 2.500,00</p>
-                    <p class="text-gray-500 text-xs mt-1">Ontem</p>
-                </div>
-            </div>
 
-            <!-- Atividade 3 -->
-            <div class="flex items-start space-x-4">
-                <div class="w-8 h-8 bg-purple-600/20 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                    </svg>
+                <!-- Atividade 3 -->
+                <div class="flex items-start space-x-4">
+                    <div class="w-8 h-8 bg-purple-600/20 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <p class="text-white font-medium">Ticket de suporte respondido</p>
+                        <p class="text-gray-400 text-sm">Dúvida sobre hospedagem esclarecida</p>
+                        <p class="text-gray-500 text-xs mt-1">2 dias atrás</p>
+                    </div>
                 </div>
-                <div class="flex-1">
-                    <p class="text-white font-medium">Ticket de suporte respondido</p>
-                    <p class="text-gray-400 text-sm">Dúvida sobre hospedagem esclarecida</p>
-                    <p class="text-gray-500 text-xs mt-1">2 dias atrás</p>
-                </div>
-            </div>
+            @endif
         </div>
     </div>
 </div>
@@ -256,7 +306,7 @@
         Ações Rápidas
     </h3>
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <a href="{{ route('client.support') }}" class="flex flex-col items-center p-4 bg-blue-600/20 rounded-2xl hover:bg-blue-600/30 transition-all duration-300 group border border-blue-500/30">
+        <a href="{{ route('client.support.index') }}" class="flex flex-col items-center p-4 bg-blue-600/20 rounded-2xl hover:bg-blue-600/30 transition-all duration-300 group border border-blue-500/30">
             <div class="w-12 h-12 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-3">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
@@ -265,7 +315,7 @@
             <span class="text-sm font-medium text-white">Abrir Ticket</span>
         </a>
 
-        <a href="{{ route('client.invoices') }}" class="flex flex-col items-center p-4 bg-green-600/20 rounded-2xl hover:bg-green-600/30 transition-all duration-300 group border border-green-500/30">
+        <a href="{{ route('client.invoices.index') }}" class="flex flex-col items-center p-4 bg-green-600/20 rounded-2xl hover:bg-green-600/30 transition-all duration-300 group border border-green-500/30">
             <div class="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-3">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
@@ -274,7 +324,7 @@
             <span class="text-sm font-medium text-white">Ver Faturas</span>
         </a>
 
-        <a href="{{ route('client.profile') }}" class="flex flex-col items-center p-4 bg-purple-600/20 rounded-2xl hover:bg-purple-600/30 transition-all duration-300 group border border-purple-500/30">
+        <a href="{{ route('client.profile.index') }}" class="flex flex-col items-center p-4 bg-purple-600/20 rounded-2xl hover:bg-purple-600/30 transition-all duration-300 group border border-purple-500/30">
             <div class="w-12 h-12 bg-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-3">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
