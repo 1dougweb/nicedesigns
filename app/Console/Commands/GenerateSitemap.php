@@ -57,7 +57,7 @@ class GenerateSitemap extends Command
         }
 
         // Posts
-        $posts = Post::where('status', 'published')->select('slug', 'updated_at')->get();
+        $posts = Post::where('is_published', true)->select('slug', 'updated_at')->get();
         foreach ($posts as $post) {
             $xml .= "  <url>\n";
             $xml .= "    <loc>{$baseUrl}/blog/{$post->slug}</loc>\n";
@@ -68,7 +68,7 @@ class GenerateSitemap extends Command
         }
 
         // Projects
-        $projects = Project::where('status', 'published')->select('slug', 'updated_at')->get();
+        $projects = Project::where('is_published', true)->select('slug', 'updated_at')->get();
         foreach ($projects as $project) {
             $xml .= "  <url>\n";
             $xml .= "    <loc>{$baseUrl}/portfolio/{$project->slug}</loc>\n";

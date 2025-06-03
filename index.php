@@ -2,11 +2,10 @@
 declare(strict_types=1);
 
 /**
- * Redirecionamento para a pasta public do Laravel
+ * Proxy para a pasta public do Laravel
  * 
- * Este arquivo permite que o projeto Laravel funcione mesmo quando
- * o servidor web não está configurado para apontar diretamente
- * para a pasta public como document root.
+ * Este arquivo permite que o conteúdo da pasta public seja servido
+ * diretamente na raiz do domínio (seudominio.com) sem mostrar /public/ na URL.
  */
 
 // Verifica se a pasta public existe
@@ -21,28 +20,50 @@ $request = $_SERVER['REQUEST_URI'] ?? '/';
 // Remove query string da URL se existir
 $path = parse_url($request, PHP_URL_PATH);
 
-// Se a requisição é para a raiz, redireciona para public/
-if ($path === '/' || $path === '') {
-    // Redireciona para a pasta public
-    $protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https://' : 'http://';
-    $host = $_SERVER['HTTP_HOST'];
-    $newUrl = $protocol . $host . '/public/';
-    
-    header('Location: ' . $newUrl, true, 301);
-    exit;
+// Normaliza o path (remove barras duplas, etc.)
+$path = '/' . trim($path, '/');
+if ($path === '/') {
+    $path = '/index.php';
 }
 
-// Para outras requisições, tenta incluir o arquivo da pasta public
+// Caminho completo para o arquivo na pasta public
 $publicPath = __DIR__ . '/public' . $path;
 
 // Se é um arquivo que existe na pasta public, serve o arquivo
 if (is_file($publicPath)) {
-    $mimeType = mime_content_type($publicPath);
+    // Define o tipo MIME apropriado
+    $extension = strtolower(pathinfo($publicPath, PATHINFO_EXTENSION));
+    $mimeTypes = [
+        'css' => 'text/css',
+        'js' => 'application/javascript',
+        'png' => 'image/png',
+        'jpg' => 'image/jpeg',
+        'jpeg' => 'image/jpeg',
+        'gif' => 'image/gif',
+        'svg' => 'image/svg+xml',
+        'ico' => 'image/x-icon',
+        'pdf' => 'application/pdf',
+        'zip' => 'application/zip',
+        'txt' => 'text/plain',
+        'xml' => 'application/xml',
+        'json' => 'application/json',
+    ];
+    
+    $mimeType = $mimeTypes[$extension] ?? mime_content_type($publicPath);
     header('Content-Type: ' . $mimeType);
-    readfile($publicPath);
-    exit;
+    
+    // Para arquivos PHP, não queremos servir diretamente, deixamos o Laravel processar
+    if ($extension !== 'php') {
+        readfile($publicPath);
+        exit;
+    }
 }
 
-// Se não encontrou o arquivo, redireciona para o index.php da pasta public
-// para que o Laravel possa processar a rota
+// Se chegou até aqui, deixa o Laravel processar a requisição
+// Ajusta as variáveis do servidor para simular que estamos na pasta public
+$_SERVER['SCRIPT_NAME'] = '/index.php';
+$_SERVER['SCRIPT_FILENAME'] = __DIR__ . '/public/index.php';
+$_SERVER['DOCUMENT_ROOT'] = __DIR__ . '/public';
+
+// Inclui o index.php do Laravel na pasta public
 require_once __DIR__ . '/public/index.php'; 

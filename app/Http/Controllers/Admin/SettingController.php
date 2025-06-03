@@ -242,8 +242,8 @@ class SettingController extends Controller
         
         $urlCounts = [
             'pages' => 5,
-            'posts' => \App\Models\Post::where('status', 'published')->count(),
-            'projects' => \App\Models\Project::where('status', 'published')->count(),
+            'posts' => \App\Models\Post::where('is_published', true)->count(),
+            'projects' => \App\Models\Project::where('is_published', true)->count(),
             'categories' => \App\Models\Category::count(),
         ];
         
@@ -346,7 +346,7 @@ class SettingController extends Controller
         }
 
         // Blog posts
-        $posts = \App\Models\Post::where('status', 'published')
+        $posts = \App\Models\Post::where('is_published', true)
             ->select('slug', 'updated_at')
             ->get();
 
@@ -360,7 +360,7 @@ class SettingController extends Controller
         }
 
         // Portfolio projects
-        $projects = \App\Models\Project::where('status', 'published')
+        $projects = \App\Models\Project::where('is_published', true)
             ->select('slug', 'updated_at')
             ->get();
 
