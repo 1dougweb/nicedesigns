@@ -1,14 +1,14 @@
 @extends('layouts.admin')
 
-@section('title', '- Criar Categoria')
-@section('page-title', 'Criar Categoria')
+@section('title', '- Editar Categoria')
+@section('page-title', 'Editar Categoria')
 
 @section('content')
 <!-- Header Actions -->
 <div class="flex items-center justify-between mb-8">
     <div>
-        <h2 class="text-2xl font-bold text-white">Criar Nova Categoria</h2>
-        <p class="text-gray-400 mt-1">Adicione uma nova categoria para organizar posts e projetos</p>
+        <h2 class="text-2xl font-bold text-white">Editar Categoria</h2>
+        <p class="text-gray-400 mt-1">Atualize as informações da categoria "{{ $category->name }}"</p>
     </div>
     <a href="{{ route('admin.categories.index') }}" 
        class="bg-gray-600/20 text-gray-300 border border-gray-600/30 hover:bg-gray-600/30 px-6 py-3 rounded-2xl font-medium transition-all duration-300 flex items-center space-x-2">
@@ -20,6 +20,17 @@
 </div>
 
 <!-- Alerts -->
+@if(session('success'))
+<div class="bg-green-500/20 border border-green-500/30 text-green-400 px-6 py-4 rounded-2xl mb-6 backdrop-blur-md">
+    <div class="flex items-center">
+        <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+        </svg>
+        {{ session('success') }}
+    </div>
+</div>
+@endif
+
 @if($errors->any())
 <div class="bg-red-500/20 border border-red-500/30 text-red-400 px-6 py-4 rounded-2xl mb-6 backdrop-blur-md">
     <div class="flex items-center mb-2">
@@ -36,8 +47,9 @@
 </div>
 @endif
 
-<form method="POST" action="{{ route('admin.categories.store') }}" class="space-y-8">
+<form method="POST" action="{{ route('admin.categories.update', $category) }}" class="space-y-8">
     @csrf
+    @method('PUT')
 
     <!-- Basic Information -->
     <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
@@ -57,7 +69,7 @@
                 <input type="text" 
                        name="name" 
                        id="name" 
-                       value="{{ old('name') }}" 
+                       value="{{ old('name', $category->name) }}" 
                        required
                        class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all @error('name') border-red-500/50 @enderror"
                        placeholder="Ex: Desenvolvimento Web">
@@ -74,14 +86,14 @@
                 <input type="text" 
                        name="slug" 
                        id="slug" 
-                       value="{{ old('slug') }}" 
+                       value="{{ old('slug', $category->slug) }}" 
                        required
                        class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all @error('slug') border-red-500/50 @enderror"
                        placeholder="Ex: desenvolvimento-web">
                 @error('slug')
                     <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
                 @enderror
-                <p class="mt-1 text-xs text-gray-400">URL amigável para a categoria (gerado automaticamente se vazio)</p>
+                <p class="mt-1 text-xs text-gray-400">URL amigável para a categoria</p>
             </div>
 
             <!-- Description -->
@@ -93,7 +105,7 @@
                           id="description" 
                           rows="4"
                           class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:border-green-500/50 focus:ring-2 focus:ring-green-500/20 transition-all @error('description') border-red-500/50 @enderror"
-                          placeholder="Breve descrição sobre esta categoria (opcional)">{{ old('description') }}</textarea>
+                          placeholder="Breve descrição sobre esta categoria (opcional)">{{ old('description', $category->description) }}</textarea>
                 @error('description')
                     <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
                 @enderror
@@ -115,24 +127,34 @@
             <!-- Usage -->
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-2">
-                    Esta categoria será usada para:
+                    Esta categoria é usada para:
                 </label>
                 <div class="space-y-3">
                     <label class="flex items-center">
                         <input type="checkbox" 
                                name="used_for_posts" 
                                value="1" 
-                               {{ old('used_for_posts', true) ? 'checked' : '' }}
+                               {{ old('used_for_posts', $category->posts()->count() > 0 ? true : false) ? 'checked' : '' }}
                                class="w-4 h-4 text-green-600 bg-gray-700 border-gray-600 rounded focus:ring-green-500 focus:ring-2">
-                        <span class="ml-3 text-gray-300">Posts do Blog</span>
+                        <span class="ml-3 text-gray-300">
+                            Posts do Blog
+                            @if($category->posts()->count() > 0)
+                                <span class="text-xs text-blue-400">({{ $category->posts()->count() }} posts)</span>
+                            @endif
+                        </span>
                     </label>
                     <label class="flex items-center">
                         <input type="checkbox" 
                                name="used_for_projects" 
                                value="1" 
-                               {{ old('used_for_projects', true) ? 'checked' : '' }}
+                               {{ old('used_for_projects', $category->projects()->count() > 0 ? true : false) ? 'checked' : '' }}
                                class="w-4 h-4 text-green-600 bg-gray-700 border-gray-600 rounded focus:ring-green-500 focus:ring-2">
-                        <span class="ml-3 text-gray-300">Projetos do Portfólio</span>
+                        <span class="ml-3 text-gray-300">
+                            Projetos do Portfólio
+                            @if($category->projects()->count() > 0)
+                                <span class="text-xs text-purple-400">({{ $category->projects()->count() }} projetos)</span>
+                            @endif
+                        </span>
                     </label>
                 </div>
             </div>
@@ -147,7 +169,7 @@
                         <input type="radio" 
                                name="is_active" 
                                value="1" 
-                               {{ old('is_active', '1') == '1' ? 'checked' : '' }}
+                               {{ old('is_active', $category->is_active) == '1' ? 'checked' : '' }}
                                class="w-4 h-4 text-green-600 bg-gray-700 border-gray-600 focus:ring-green-500 focus:ring-2">
                         <span class="ml-2 text-gray-300">Ativa</span>
                     </label>
@@ -155,7 +177,7 @@
                         <input type="radio" 
                                name="is_active" 
                                value="0" 
-                               {{ old('is_active') == '0' ? 'checked' : '' }}
+                               {{ old('is_active', $category->is_active) == '0' ? 'checked' : '' }}
                                class="w-4 h-4 text-gray-600 bg-gray-700 border-gray-600 focus:ring-gray-500 focus:ring-2">
                         <span class="ml-2 text-gray-300">Inativa</span>
                     </label>
@@ -183,7 +205,7 @@
                 <input type="text" 
                        name="meta_title" 
                        id="meta_title" 
-                       value="{{ old('meta_title') }}"
+                       value="{{ old('meta_title', $category->meta_title ?? '') }}"
                        class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:border-yellow-500/50 focus:ring-2 focus:ring-yellow-500/20 transition-all @error('meta_title') border-red-500/50 @enderror"
                        placeholder="Título para mecanismos de busca (se diferente do nome)">
                 @error('meta_title')
@@ -201,11 +223,40 @@
                           id="meta_description" 
                           rows="3"
                           class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:border-yellow-500/50 focus:ring-2 focus:ring-yellow-500/20 transition-all @error('meta_description') border-red-500/50 @enderror"
-                          placeholder="Descrição da categoria para aparecer nos resultados de busca...">{{ old('meta_description') }}</textarea>
+                          placeholder="Descrição da categoria para aparecer nos resultados de busca...">{{ old('meta_description', $category->meta_description ?? '') }}</textarea>
                 @error('meta_description')
                     <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
                 @enderror
                 <p class="mt-1 text-xs text-gray-400">Recomendado: 150-160 caracteres</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Category Info -->
+    <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
+        <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+            <svg class="w-6 h-6 mr-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            Informações da Categoria
+        </h3>
+        
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <div class="text-center p-4 bg-gray-700/30 rounded-xl">
+                <div class="text-2xl font-bold text-white">{{ $category->created_at->format('d/m/Y') }}</div>
+                <div class="text-sm text-gray-400">Data de Criação</div>
+            </div>
+            <div class="text-center p-4 bg-gray-700/30 rounded-xl">
+                <div class="text-2xl font-bold text-white">{{ $category->updated_at->format('d/m/Y') }}</div>
+                <div class="text-sm text-gray-400">Última Atualização</div>
+            </div>
+            <div class="text-center p-4 bg-gray-700/30 rounded-xl">
+                <div class="text-2xl font-bold text-blue-400">{{ $category->posts()->count() }}</div>
+                <div class="text-sm text-gray-400">Posts Vinculados</div>
+            </div>
+            <div class="text-center p-4 bg-gray-700/30 rounded-xl">
+                <div class="text-2xl font-bold text-purple-400">{{ $category->projects()->count() }}</div>
+                <div class="text-sm text-gray-400">Projetos Vinculados</div>
             </div>
         </div>
     </div>
@@ -219,7 +270,7 @@
         
         <button type="submit" 
                 class="px-8 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl font-medium transition-all duration-300 shadow-lg hover:shadow-green-500/25">
-            Criar Categoria
+            Atualizar Categoria
         </button>
     </div>
 </form>
