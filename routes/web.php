@@ -86,6 +86,12 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     
     // Pages Management (será implementado depois)
     // Route::resource('pages', AdminPageController::class);
+    
+    // SEO Management
+    Route::get('seo', [AdminSettingController::class, 'seoIndex'])->name('seo.index');
+    Route::post('seo/sitemap/generate', [AdminSettingController::class, 'generateSitemap'])->name('seo.sitemap.generate');
+    Route::post('seo/robots/update', [AdminSettingController::class, 'updateRobots'])->name('seo.robots.update');
+    Route::post('seo/robots/reset', [AdminSettingController::class, 'resetRobots'])->name('seo.robots.reset');
 });
 
 // Client Routes (Only for users with client role)
@@ -127,3 +133,30 @@ Route::prefix('pagarme')->name('pagarme.')->group(function () {
 Auth::routes();
 // Static Pages (deve ficar por último para não conflitar)
 Route::get('/{slug}', [PageController::class, 'show'])->name('pages.show');
+
+// Public SEO Routes
+Route::get('sitemap.xml', function () {
+    $sitemapPath = public_path('sitemap.xml');
+    
+    if (!file_exists($sitemapPath)) {
+        abort(404);
+    }
+    
+    return response(file_get_contents($sitemapPath), 200, [
+        'Content-Type' => 'application/xml'
+    ]);
+});
+
+Route::get('robots.txt', function () {
+    $robotsPath = public_path('robots.txt');
+    
+    if (!file_exists($robotsPath)) {
+        $baseUrl = config('app.url');
+        $defaultContent = "User-agent: *\nDisallow: /admin/\nDisallow: /client/\nAllow: /\n\nSitemap: {$baseUrl}/sitemap.xml\n";
+        return response($defaultContent, 200, ['Content-Type' => 'text/plain']);
+    }
+    
+    return response(file_get_contents($robotsPath), 200, [
+        'Content-Type' => 'text/plain'
+    ]);
+});

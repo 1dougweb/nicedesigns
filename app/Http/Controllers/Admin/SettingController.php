@@ -228,4 +228,198 @@ class SettingController extends Controller
             ], 500);
         }
     }
+
+    /**
+     * Display SEO management page
+     */
+    public function seoIndex()
+    {
+        $robotsContent = $this->getRobotsContent();
+        $sitemapExists = file_exists(public_path('sitemap.xml'));
+        $sitemapLastGenerated = $sitemapExists ? 
+            \Carbon\Carbon::createFromTimestamp(filemtime(public_path('sitemap.xml')))->format('d/m/Y H:i') 
+            : 'Nunca';
+        
+        $urlCounts = [
+            'pages' => 5,
+            'posts' => \App\Models\Post::where('status', 'published')->count(),
+            'projects' => \App\Models\Project::where('status', 'published')->count(),
+            'categories' => \App\Models\Category::count(),
+        ];
+        
+        return view('admin.seo.index', compact('robotsContent', 'sitemapExists', 'sitemapLastGenerated', 'urlCounts'));
+    }
+
+    /**
+     * Generate sitemap.xml
+     */
+    public function generateSitemap()
+    {
+        try {
+            $sitemap = $this->buildSitemapXml();
+            file_put_contents(public_path('sitemap.xml'), $sitemap);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Sitemap gerado com sucesso!',
+                'timestamp' => \Carbon\Carbon::now()->format('d/m/Y H:i')
+            ]);
+        } catch (\Exception $e) {
+            \Log::error('Erro ao gerar sitemap: ' . $e->getMessage());
+            
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao gerar sitemap: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Update robots.txt
+     */
+    public function updateRobots(Request $request)
+    {
+        $request->validate(['robots_content' => 'required|string']);
+
+        try {
+            file_put_contents(public_path('robots.txt'), $request->robots_content);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Robots.txt atualizado com sucesso!'
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao atualizar robots.txt: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Reset robots.txt to default
+     */
+    public function resetRobots()
+    {
+        try {
+            $defaultRobots = $this->getDefaultRobotsContent();
+            file_put_contents(public_path('robots.txt'), $defaultRobots);
+            
+            return response()->json([
+                'success' => true,
+                'message' => 'Robots.txt restaurado!',
+                'content' => $defaultRobots
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao restaurar robots.txt: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Build sitemap XML content
+     */
+    private function buildSitemapXml(): string
+    {
+        $baseUrl = config('app.url');
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
+        $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
+
+        // Static pages
+        $staticPages = [
+            ['url' => '/', 'priority' => '1.0', 'changefreq' => 'weekly'],
+            ['url' => '/sobre', 'priority' => '0.8', 'changefreq' => 'monthly'],
+            ['url' => '/contato', 'priority' => '0.7', 'changefreq' => 'monthly'],
+            ['url' => '/blog', 'priority' => '0.9', 'changefreq' => 'daily'],
+            ['url' => '/portfolio', 'priority' => '0.9', 'changefreq' => 'weekly'],
+        ];
+
+        foreach ($staticPages as $page) {
+            $xml .= "  <url>\n";
+            $xml .= "    <loc>{$baseUrl}{$page['url']}</loc>\n";
+            $xml .= "    <lastmod>" . \Carbon\Carbon::now()->format('Y-m-d') . "</lastmod>\n";
+            $xml .= "    <changefreq>{$page['changefreq']}</changefreq>\n";
+            $xml .= "    <priority>{$page['priority']}</priority>\n";
+            $xml .= "  </url>\n";
+        }
+
+        // Blog posts
+        $posts = \App\Models\Post::where('status', 'published')
+            ->select('slug', 'updated_at')
+            ->get();
+
+        foreach ($posts as $post) {
+            $xml .= "  <url>\n";
+            $xml .= "    <loc>{$baseUrl}/blog/{$post->slug}</loc>\n";
+            $xml .= "    <lastmod>" . $post->updated_at->format('Y-m-d') . "</lastmod>\n";
+            $xml .= "    <changefreq>monthly</changefreq>\n";
+            $xml .= "    <priority>0.6</priority>\n";
+            $xml .= "  </url>\n";
+        }
+
+        // Portfolio projects
+        $projects = \App\Models\Project::where('status', 'published')
+            ->select('slug', 'updated_at')
+            ->get();
+
+        foreach ($projects as $project) {
+            $xml .= "  <url>\n";
+            $xml .= "    <loc>{$baseUrl}/portfolio/{$project->slug}</loc>\n";
+            $xml .= "    <lastmod>" . $project->updated_at->format('Y-m-d') . "</lastmod>\n";
+            $xml .= "    <changefreq>monthly</changefreq>\n";
+            $xml .= "    <priority>0.7</priority>\n";
+            $xml .= "  </url>\n";
+        }
+
+        // Categories
+        $categories = \App\Models\Category::select('slug', 'updated_at')->get();
+
+        foreach ($categories as $category) {
+            $xml .= "  <url>\n";
+            $xml .= "    <loc>{$baseUrl}/blog/categoria/{$category->slug}</loc>\n";
+            $xml .= "    <lastmod>" . $category->updated_at->format('Y-m-d') . "</lastmod>\n";
+            $xml .= "    <changefreq>weekly</changefreq>\n";
+            $xml .= "    <priority>0.5</priority>\n";
+            $xml .= "  </url>\n";
+        }
+
+        $xml .= '</urlset>';
+        return $xml;
+    }
+
+    /**
+     * Get current robots.txt content
+     */
+    private function getRobotsContent(): string
+    {
+        $robotsPath = public_path('robots.txt');
+        
+        if (file_exists($robotsPath)) {
+            return file_get_contents($robotsPath);
+        }
+        
+        return $this->getDefaultRobotsContent();
+    }
+
+    /**
+     * Get default robots.txt content
+     */
+    private function getDefaultRobotsContent(): string
+    {
+        $baseUrl = config('app.url');
+        
+        return "User-agent: *\n" .
+               "Disallow: /admin/\n" .
+               "Disallow: /client/\n" .
+               "Disallow: /api/\n" .
+               "Disallow: /vendor/\n" .
+               "Disallow: /storage/\n" .
+               "Disallow: /bootstrap/\n" .
+               "Allow: /\n" .
+               "\n" .
+               "# Sitemap\n" .
+               "Sitemap: {$baseUrl}/sitemap.xml\n";
+    }
 }

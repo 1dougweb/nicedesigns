@@ -121,6 +121,15 @@
                     Configurações
                 </a>
 
+                <!-- SEO -->
+                <a href="{{ route('admin.seo.index') }}" 
+                   class="flex items-center px-4 py-3 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-200 group {{ request()->routeIs('admin.seo.*') ? 'bg-green-600/20 text-green-400 border border-green-500/30' : '' }}">
+                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    SEO Manager
+                </a>
+
                 <!-- Divider -->
                 <div class="border-t border-gray-700/50 my-6"></div>
 
