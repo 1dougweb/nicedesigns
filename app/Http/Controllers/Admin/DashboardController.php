@@ -34,7 +34,10 @@ class DashboardController extends Controller
                 'in_progress' => Contact::where('status', 'in_progress')->count(),
                 'completed' => Contact::where('status', 'completed')->count(),
             ],
-            'categories' => Category::count(),
+            'categories' => [
+                'total' => Category::count(),
+                'active' => Category::where('is_active', true)->count(),
+            ],
             'pages' => Page::count(),
         ];
 
