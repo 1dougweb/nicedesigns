@@ -27,9 +27,10 @@ Nice Designs é uma solução completa para agências de web design que inclui:
 - **Blog** com sistema de categorias e busca
 - **Portfólio** com showcase de projetos realizados
 - **Páginas Institucionais** (sobre, serviços, contato)
-- **Formulário de Contato** integrado
+- **Formulário de Contato** com notificações automáticas por email
 - **Design Responsivo** para todos os dispositivos
 - **Performance Otimizada** com lazy loading
+- **Notificações de Email** automáticas
 
 ### 🛠️ Dashboard Administrativo Moderno
 
@@ -86,18 +87,82 @@ Nice Designs é uma solução completa para agências de web design que inclui:
 - ✅ **Modal de Detalhes** para visualização rápida
 - ✅ **Busca Avançada** por nome, email ou mensagem
 - ✅ **Indicadores Visuais** de prioridade e urgência
+- ✅ **Notificações Automáticas** por email quando novo contato é recebido
 
-#### 🎨 Design System Implementado
-- **Dark Theme Consistente** em todas as views administrativas
-- **Backdrop Blur Effects** para profundidade visual
-- **Grid System Responsivo** com breakpoints otimizados
-- **Typography Hierárquica** com contraste adequado
-- **Ícones SVG Customizados** para cada seção
-- **Animações Suaves** com transition-all
-- **Estados Visuais** para validação de formulários
-- **Botões Modernos** com hover effects
-- **Cards Organizados** com border-radius consistente
-- **Color Palette** com variações de transparência
+#### ⚙️ Sistema de Configurações - Gerenciamento Completo ✅
+
+> **🎯 Sistema Totalmente Funcional**: Interface completa de configurações com validação robusta e salvamento em banco de dados.
+
+- ✅ **Interface com Abas** organizadas por grupos temáticos
+- ✅ **46 Configurações Organizadas** em 6 grupos distintos
+- ✅ **Salvamento em Banco de Dados** com validação completa
+- ✅ **Feedback Visual Avançado** com indicadores de carregamento
+- ✅ **Tratamento de Erros Robusto** com logs detalhados
+- ✅ **Cache Management** integrado com limpeza automática
+
+**📋 Grupos de Configurações:**
+
+**🔧 Configurações Gerais:**
+- ✅ Nome do site, descrição, palavras-chave SEO
+- ✅ URLs do logo e favicon
+- ✅ Fuso horário e formato de data
+- ✅ Paginação (posts e projetos por página)
+- ✅ Moeda padrão (BRL, USD, EUR)
+- ✅ Modo manutenção e registro de usuários
+
+**📞 Informações de Contato:**
+- ✅ Email, telefone e WhatsApp
+- ✅ Endereço completo com complemento
+- ✅ Cidade, estado, CEP e país
+- ✅ Validação automática de campos obrigatórios
+
+**🌐 Redes Sociais:**
+- ✅ Facebook, Instagram, LinkedIn, Behance
+- ✅ Twitter/X, YouTube, GitHub, Dribbble
+- ✅ URLs validadas automaticamente
+
+**🔍 SEO e Analytics:**
+- ✅ Meta title e description (com contadores de caracteres)
+- ✅ Google Analytics ID
+- ✅ Facebook Pixel ID
+- ✅ Google Search Console (código de verificação)
+
+**📧 Email SMTP Completo:**
+- ✅ Host, porta, usuário e senha SMTP
+- ✅ Criptografia (TLS/SSL)
+- ✅ Email e nome do remetente
+- ✅ **Teste de Email Integrado** na interface
+- ✅ Configuração dinâmica sobrescreve .env
+
+**🎨 Aparência:**
+- ✅ Cores personalizáveis (primária, secundária, destaque)
+- ✅ CSS e JavaScript customizado
+- ✅ Seletor de cores visual
+
+**🔧 Funcionalidades Técnicas:**
+- ✅ **Validação Robusta** com mensagens de erro claras
+- ✅ **Logs Detalhados** para debugging e monitoramento
+- ✅ **Indicadores de Carregamento** em todos os botões
+- ✅ **Cache Automático** com TTL de 1 hora
+- ✅ **Comando de Teste**: `php artisan settings:test-save`
+- ✅ **Tratamento de Checkboxes** e valores nulos
+- ✅ **Middleware de Segurança** (admin apenas)
+
+**🧪 Testando o Sistema:**
+
+```bash
+# Testar salvamento das configurações
+php artisan settings:test-save
+
+# Verificar logs em tempo real
+tail -f storage/logs/laravel.log | grep -i "configurações"
+
+# Limpar cache se necessário
+php artisan cache:clear && php artisan config:clear
+
+# Verificar total de configurações
+php artisan tinker --execute="echo 'Total: ' . App\Models\Setting::count()"
+```
 
 ### 👤 Área do Cliente
 
@@ -151,6 +216,18 @@ Nice Designs é uma solução completa para agências de web design que inclui:
 - ✅ **Download de Dados** pessoais
 - ✅ **Exportação de Relatórios**
 - ✅ **Configurações de Privacidade**
+
+#### 🎨 Design System Implementado
+- **Dark Theme Consistente** em todas as views administrativas
+- **Backdrop Blur Effects** para profundidade visual
+- **Grid System Responsivo** com breakpoints otimizados
+- **Typography Hierárquica** com contraste adequado
+- **Ícones SVG Customizados** para cada seção
+- **Animações Suaves** com transition-all
+- **Estados Visuais** para validação de formulários
+- **Botões Modernos** com hover effects
+- **Cards Organizados** com border-radius consistente
+- **Color Palette** com variações de transparência
 
 ## 🚀 Instalação e Configuração
 
@@ -276,7 +353,7 @@ nicedesigns/
 │   │   │   │   ├── index.blade.php   # ✅ Listagem moderna
 │   │   │   │   ├── create.blade.php  # ✅ Criação com seções
 │   │   │   │   ├── edit.blade.php    # ✅ Edição com preview
-│   │   │   │   └── show.blade.php    # ✅ Visualização detalhada
+│   │   │   │   ├── show.blade.php    # ✅ Visualização detalhada
 │   │   │   ├── projects/             # CRUD Projetos completo
 │   │   │   │   ├── index.blade.php   # ✅ Listagem com filtros
 │   │   │   │   ├── create.blade.php  # ✅ Criação organizada
@@ -680,11 +757,19 @@ Este projeto está sob a licença [MIT](https://opensource.org/licenses/MIT).
 - [x] CRUD completo para Posts
 - [x] CRUD completo para Projetos  
 - [x] CRUD completo para Categorias
-- [x] Gerenciamento de Contatos
+- [x] Gerenciamento de Contatos com notificações
+- [x] **Sistema de Configurações 100% funcional**
+- [x] **46 configurações organizadas em 6 grupos**
+- [x] **Validação robusta com feedback visual**
+- [x] Sistema de Email SMTP integrado
 - [x] Área do cliente funcional
 - [x] Design system consistente
 - [x] SEO otimizado
 - [x] Performance otimizada
+- [x] Templates de email modernos
+- [x] **Comando artisan para testes de configurações**
+- [x] **Logs detalhados para debugging**
+- [x] **Tratamento de erros avançado**
 
 ### 🚧 Em Desenvolvimento
 - [ ] Integração com gateways de pagamento
@@ -695,10 +780,299 @@ Este projeto está sob a licença [MIT](https://opensource.org/licenses/MIT).
 ### 📊 Estatísticas do Projeto
 - **Linguagens:** PHP, JavaScript, CSS
 - **Framework:** Laravel 11
-- **Views:** 25+ templates Blade
-- **Rotas:** 50+ rotas definidas
+- **Views:** 30+ templates Blade
+- **Rotas:** 60+ rotas definidas
 - **Modelos:** 8 modelos Eloquent
-- **Controladores:** 15 controladores organizados
+- **Controladores:** 18 controladores organizados
+- **Comandos Artisan:** 4 comandos personalizados
+- **Classes de Email:** 2 mailables implementadas
+- **Sistema de Configurações:** 46 configurações organizadas em 6 grupos
+- **Templates de Email:** 2 templates responsivos
+- **Middlewares:** 2 middlewares de segurança
+- **Helpers:** 2 classes helper personalizadas
+- **Logs:** Sistema de logging completo implementado
+
+## 📧 Sistema de Email SMTP - Documentação Completa
+
+### 🎯 Visão Geral
+
+O Nice Designs possui um sistema completo de email SMTP integrado que permite:
+- Configuração visual via painel administrativo
+- Teste de configurações em tempo real
+- Envio automático de notificações
+- Templates responsivos e modernos
+- Suporte a múltiplos provedores SMTP
+
+### 🔧 Configuração Inicial
+
+#### 1. Acesso às Configurações
+1. Faça login no painel admin: `/admin`
+2. Acesse **Configurações** no menu lateral
+3. Clique na aba **"Email"**
+
+#### 2. Campos de Configuração
+
+| Campo | Descrição | Exemplo |
+|-------|-----------|---------|
+| **Host SMTP** | Servidor de email | `smtp.gmail.com` |
+| **Porta SMTP** | Porta de conexão | `587` (TLS) ou `465` (SSL) |
+| **Usuário SMTP** | Email de autenticação | `seu-email@gmail.com` |
+| **Senha SMTP** | Senha ou token de app | `senha-de-app-gmail` |
+| **Criptografia** | Tipo de segurança | `TLS` (recomendado) |
+| **Email Remetente** | Email que aparece como remetente | `noreply@seudominio.com` |
+| **Nome Remetente** | Nome que aparece como remetente | `Nice Designs` |
+
+#### 3. Configuração para Gmail
+
+**Passo a passo para Gmail:**
+1. Ative a **verificação em 2 etapas** na sua conta Google
+2. Vá em **Configurações** → **Segurança** → **Senhas de app**
+3. Gere uma nova **senha de app** para "Email"
+4. Use essa senha no campo "Senha SMTP" (não a senha normal)
+
+### 🧪 Testando o Sistema
+
+#### Via Interface Web
+1. Configure os dados SMTP
+2. Digite um email no campo "Testar email"
+3. Clique em **"Testar Email"**
+4. Verifique se o email chegou (incluindo spam)
+
+#### Via Linha de Comando
+```bash
+# Ver configurações atuais
+php artisan email:test --config
+
+# Testar envio para um email específico
+php artisan email:test seuemail@exemplo.com
+
+# Exemplo de saída do comando --config
+📧 Configurações de Email Atuais:
++-----------------+----------------------------+
+| Configuração    | Valor                      |
++-----------------+----------------------------+
+| Host SMTP       | smtp.gmail.com             |
+| Porta SMTP      | 587                        |
+| Usuário SMTP    | Configurado                |
+| Senha SMTP      | Configurado (oculto)       |
+| Criptografia    | tls                        |
+| Email Remetente | noreply@nicedesigns.com.br |
+| Nome Remetente  | Nice Designs               |
++-----------------+----------------------------+
+```
+
+### 📬 Emails Automáticos
+
+#### 1. Email de Teste
+- **Quando:** Ao clicar no botão "Testar Email"
+- **Template:** Moderno e responsivo
+- **Conteúdo:** Informações do sistema e data/hora do teste
+
+#### 2. Notificação de Contato
+- **Quando:** Alguém preenche o formulário de contato
+- **Para:** Email configurado em "Email de Contato" (configurações)
+- **Reply-To:** Email de quem enviou o contato
+- **Conteúdo:** Dados completos do contato e mensagem
+
+### 🎨 Templates de Email
+
+#### Características dos Templates:
+- **Design Responsivo** para desktop e mobile
+- **Cores da Marca** Nice Designs
+- **Typography Moderna** com hierarquia clara
+- **Botões de Ação** para links importantes
+- **Informações Estruturadas** em cards organizados
+- **Footer Profissional** com informações da empresa
+
+#### Template de Teste:
+- Logo e branding da empresa
+- Ícone de sucesso verde
+- Informações do sistema
+- Data e hora do teste
+- Design responsivo
+
+#### Template de Contato:
+- Dados completos do remetente
+- Mensagem formatada
+- Botão para acessar o painel admin
+- Reply-to configurado automaticamente
+
+### 🔌 Provedores Suportados
+
+| Provedor | Host | Porta | Criptografia | Configuração Especial |
+|----------|------|-------|--------------|----------------------|
+| **Gmail** | smtp.gmail.com | 587 | TLS | Senha de app obrigatória |
+| **Outlook** | smtp-mail.outlook.com | 587 | TLS | Autenticação moderna |
+| **Yahoo** | smtp.mail.yahoo.com | 587 | TLS | Senha de app obrigatória |
+| **SendGrid** | smtp.sendgrid.net | 587 | TLS | API Key como senha |
+| **Mailgun** | smtp.mailgun.org | 587 | TLS | Domínio verificado |
+| **Amazon SES** | email-smtp.região.amazonaws.com | 587 | TLS | Credenciais SMTP |
+
+### 🚨 Solução de Problemas
+
+#### Erro: "Authentication Required"
+**Causa:** Credenciais incorretas ou configuração de segurança
+**Solução:**
+- Verifique usuário e senha
+- Para Gmail: use senha de app, não a senha normal
+- Confirme se 2FA está ativado (Gmail/Outlook)
+
+#### Erro: "Connection Timeout"
+**Causa:** Problemas de conectividade ou porta bloqueada
+**Solução:**
+- Verifique a porta (587 para TLS, 465 para SSL)
+- Confirme se o firewall não está bloqueando
+- Teste com porta alternativa
+
+#### Email não chega
+**Causa:** Configuração de remetente ou spam
+**Solução:**
+- Verifique pasta de spam
+- Configure SPF/DKIM no domínio
+- Use email do mesmo domínio como remetente
+
+### 📋 Logs e Monitoramento
+
+#### Visualizar Logs de Email
+```bash
+# Ver logs do Laravel
+tail -f storage/logs/laravel.log
+
+# Filtrar apenas logs de email
+tail -f storage/logs/laravel.log | grep -i mail
+```
+
+#### Debugging
+```bash
+# Verificar configuração atual do mail
+php artisan tinker
+>>> config('mail')
+
+# Testar conexão SMTP
+php artisan email:test teste@exemplo.com
+```
+
+### 🔄 Integração com o Sistema
+
+#### Formulário de Contato
+O sistema automaticamente:
+1. Salva o contato no banco de dados
+2. Envia email para o admin configurado
+3. Configura reply-to para resposta direta
+4. Trata erros sem quebrar o fluxo
+
+#### Configurações Dinâmicas
+- Settings do banco sobrescrevem `.env`
+- Cache automático para performance
+- Atualização em tempo real via painel
+
+### 🎯 Próximas Melhorias
+
+- [ ] **Templates Customizáveis** via painel admin
+- [ ] **Múltiplos Destinatários** por tipo de email
+- [ ] **Fila de Emails** para envios em massa
+- [ ] **Relatórios de Entrega** com estatísticas
+- [ ] **Webhook** para status de entrega
+- [ ] **Backup de Configurações** SMTP
+
+## 🔧 Troubleshooting
+
+### Problema: Configurações Não Estão Sendo Salvas
+
+Se as configurações não estão sendo salvas no banco de dados:
+
+#### Solução 1: Verificar Permissões e Estrutura
+```bash
+# Verificar se a tabela settings existe
+php artisan tinker --execute="Schema::hasTable('settings')"
+
+# Verificar total de configurações no banco
+php artisan tinker --execute="App\Models\Setting::count()"
+
+# Executar migrations se necessário
+php artisan migrate
+
+# Executar seeders para criar configurações iniciais
+php artisan db:seed --class=DatabaseSeeder
+```
+
+#### Solução 2: Testar Sistema de Configurações
+```bash
+# Executar teste completo do sistema
+php artisan settings:test-save
+
+# Verificar logs em tempo real
+tail -f storage/logs/laravel.log | grep -i "configurações"
+
+# Limpar todos os caches
+php artisan cache:clear && php artisan config:clear && php artisan view:clear
+```
+
+#### Solução 3: Debug Manual
+```bash
+# Testar salvamento manual
+php artisan tinker --execute="App\Models\Setting::set('test_config', 'test_value', 'string', 'general'); echo 'Valor: ' . App\Models\Setting::get('test_config');"
+
+# Verificar se o usuário tem permissão de admin
+php artisan tinker --execute="\$user = App\Models\User::where('email', 'admin@nicedesigns.com.br')->first(); echo 'Role: ' . \$user->role;"
+
+# Verificar middleware de admin
+php artisan route:list | grep admin.settings
+```
+
+#### Solução 4: Recriar Configurações
+```bash
+# Limpar configurações existentes
+php artisan tinker --execute="App\Models\Setting::truncate();"
+
+# Recriar todas as configurações
+php artisan db:seed --class=DatabaseSeeder
+
+# Verificar se foram criadas
+php artisan tinker --execute="echo 'Total: ' . App\Models\Setting::count();"
+```
+
+### Problema: Admin logando como Cliente
+
+Se o usuário admin está sendo redirecionado para a área do cliente, isso indica um problema com as roles. Para corrigir:
+
+#### Solução Rápida (Comando Artisan)
+```bash
+# Corrigir roles automaticamente
+php artisan users:fix-roles
+
+# Verificar usuários e roles
+php artisan tinker --execute="App\Models\User::all(['email', 'role'])->each(function(\$u) { echo \$u->email . ' => ' . \$u->role . PHP_EOL; });"
+```
+
+#### Solução Manual (Tinker)
+```bash
+# Corrigir role do admin
+php artisan tinker --execute="App\Models\User::where('email', 'admin@nicedesigns.com.br')->update(['role' => 'admin']);"
+
+# Verificar se foi corrigido
+php artisan tinker --execute="\$user = App\Models\User::where('email', 'admin@nicedesigns.com.br')->first(); echo 'Role: ' . \$user->role . PHP_EOL; echo 'isAdmin(): ' . (\$user->isAdmin() ? 'true' : 'false') . PHP_EOL;"
+```
+
+#### Via Seeder
+```bash
+# Executar seeder específico
+php artisan db:seed --class=FixAdminRoleSeeder
+```
+
+### Credenciais Padrão
+
+Após a correção, as credenciais são:
+
+**Admin:**
+- Email: `admin@nicedesigns.com.br`
+- Senha: `password`
+- Acesso: `/admin`
+
+**Cliente (exemplo):**
+- Email: `cliente@exemplo.com` 
+- Senha: `password`
+- Acesso: `/client`
 
 ---
 
@@ -712,6 +1086,51 @@ Este projeto está sob a licença [MIT](https://opensource.org/licenses/MIT).
 
 <p align="center">
   <img src="https://img.shields.io/badge/Status-Produção%20Ready-brightgreen?style=for-the-badge" alt="Status">
-  <img src="https://img.shields.io/badge/Versão-2.0-blue?style=for-the-badge" alt="Versão">
+  <img src="https://img.shields.io/badge/Versão-2.1-blue?style=for-the-badge" alt="Versão">
+  <img src="https://img.shields.io/badge/Configurações-46%20Settings-orange?style=for-the-badge" alt="Configurações">
+  <img src="https://img.shields.io/badge/Laravel-11-red?style=for-the-badge" alt="Laravel">
+  <img src="https://img.shields.io/badge/Sistema-100%25%20Funcional-success?style=for-the-badge" alt="Sistema">
   <img src="https://img.shields.io/badge/Licença-MIT-yellow?style=for-the-badge" alt="Licença">
 </p>
+
+## 🎉 Sistema Completamente Funcional
+
+> **✅ Todas as funcionalidades principais estão implementadas e testadas**
+
+### 🚀 **Últimas Atualizações (v2.1):**
+- ✅ **Sistema de Configurações** totalmente corrigido e funcional
+- ✅ **46 configurações** organizadas em 6 grupos temáticos
+- ✅ **Validação robusta** com feedback visual em tempo real
+- ✅ **Logs detalhados** para monitoramento e debugging
+- ✅ **Tratamento de erros** avançado com recuperação automática
+- ✅ **Comando de teste** para verificação do sistema
+- ✅ **Interface moderna** com indicadores de carregamento
+- ✅ **Cache inteligente** com invalidação automática
+
+### 📈 **Performance e Qualidade:**
+- 🚀 **100% Funcional** - Todos os sistemas testados e validados
+- 🔒 **Seguro** - Middleware de autenticação e validação robusta
+- 📱 **Responsivo** - Interface adaptativa para todos os dispositivos
+- ⚡ **Rápido** - Sistema de cache otimizado
+- 🔍 **SEO Ready** - Meta tags e estrutura otimizada
+- 📧 **Email Integrado** - Sistema SMTP completo
+- 🎨 **Design Moderno** - Dark theme consistente
+
+### 🛠️ **Comandos Úteis para Administração:**
+
+```bash
+# Verificar status geral do sistema
+php artisan settings:test-save
+php artisan email:test admin@exemplo.com
+
+# Monitoramento em tempo real
+tail -f storage/logs/laravel.log
+
+# Manutenção do sistema
+php artisan cache:clear && php artisan config:clear
+
+# Backup das configurações
+php artisan tinker --execute="App\Models\Setting::all()->toJson()" > backup-settings.json
+```
+
+**Nice Designs** está pronto para produção! 🎯

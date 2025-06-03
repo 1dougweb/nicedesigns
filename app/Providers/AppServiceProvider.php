@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use App\Helpers\SettingsHelper;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -12,7 +13,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Register SettingsHelper as singleton
+        $this->app->singleton('settings', function () {
+            return new SettingsHelper();
+        });
     }
 
     /**
