@@ -33,20 +33,37 @@ class Invoice extends Model
         'attachments',
         'notes',
         'payment_instructions',
+        // Campos PagarMe
+        'pagarme_charge_id',
+        'pagarme_transaction_id',
+        'pagarme_status',
+        'pagarme_data',
+        'payment_url',
+        'boleto_url',
+        'boleto_barcode',
+        'pix_qr_code',
+        'pix_code',
+        'auto_charge_enabled',
+        'auto_charge_date',
+        'webhook_received_at',
     ];
 
     protected function casts(): array
     {
         return [
             'attachments' => 'array',
+            'pagarme_data' => 'array',
             'issue_date' => 'date',
             'due_date' => 'date',
             'paid_date' => 'date',
+            'auto_charge_date' => 'date',
+            'webhook_received_at' => 'datetime',
             'subtotal' => 'decimal:2',
             'discount' => 'decimal:2',
             'tax_rate' => 'decimal:2',
             'tax_amount' => 'decimal:2',
             'total_amount' => 'decimal:2',
+            'auto_charge_enabled' => 'boolean',
         ];
     }
 
@@ -290,5 +307,132 @@ class Invoice extends Model
     public function scopeByStatus($query, string $status)
     {
         return $query->where('status', $status);
+    }
+
+    /**
+     * Métodos PagarMe
+     */
+
+    /**
+     * Verificar se tem cobrança PagarMe ativa
+     */
+    public function hasPagarMeCharge(): bool
+    {
+        return !empty($this->pagarme_charge_id) || !empty($this->pagarme_transaction_id);
+    }
+
+    /**
+     * Verificar se pode gerar cobrança automática
+     */
+    public function canAutoCharge(): bool
+    {
+        return $this->auto_charge_enabled && 
+               $this->auto_charge_date &&
+               $this->auto_charge_date->isToday() &&
+               !$this->hasPagarMeCharge() &&
+               in_array($this->status, ['pendente']);
+    }
+
+    /**
+     * Marcar para cobrança automática
+     */
+    public function enableAutoCharge(\DateTime $chargeDate = null): void
+    {
+        $this->update([
+            'auto_charge_enabled' => true,
+            'auto_charge_date' => $chargeDate ?? $this->due_date,
+        ]);
+    }
+
+    /**
+     * Desabilitar cobrança automática
+     */
+    public function disableAutoCharge(): void
+    {
+        $this->update([
+            'auto_charge_enabled' => false,
+            'auto_charge_date' => null,
+        ]);
+    }
+
+    /**
+     * Tem boleto disponível
+     */
+    public function hasBoleto(): bool
+    {
+        return !empty($this->boleto_url);
+    }
+
+    /**
+     * Tem PIX disponível
+     */
+    public function hasPix(): bool
+    {
+        return !empty($this->pix_qr_code) || !empty($this->pix_code);
+    }
+
+    /**
+     * Status da cobrança PagarMe
+     */
+    public function getPagarMeStatusLabelAttribute(): string
+    {
+        if (!$this->pagarme_status) return 'Não enviado';
+
+        return match($this->pagarme_status) {
+            'paid' => 'Pago',
+            'pending' => 'Pendente',
+            'processing' => 'Processando',
+            'waiting_payment' => 'Aguardando Pagamento',
+            'canceled' => 'Cancelado',
+            'failed' => 'Falhou',
+            'refunded' => 'Estornado',
+            default => ucfirst($this->pagarme_status)
+        };
+    }
+
+    /**
+     * Cor do status PagarMe
+     */
+    public function getPagarMeStatusColorAttribute(): string
+    {
+        if (!$this->pagarme_status) return 'gray';
+
+        return match($this->pagarme_status) {
+            'paid' => 'green',
+            'pending', 'processing', 'waiting_payment' => 'yellow',
+            'canceled', 'failed' => 'red',
+            'refunded' => 'orange',
+            default => 'gray'
+        };
+    }
+
+    /**
+     * Scopes para PagarMe
+     */
+    public function scopeWithPagarMeCharge($query)
+    {
+        return $query->whereNotNull('pagarme_charge_id')
+                    ->orWhereNotNull('pagarme_transaction_id');
+    }
+
+    public function scopeAutoChargeReady($query)
+    {
+        return $query->where('auto_charge_enabled', true)
+                    ->whereDate('auto_charge_date', '<=', now())
+                    ->whereNull('pagarme_charge_id')
+                    ->whereNull('pagarme_transaction_id')
+                    ->where('status', 'pendente');
+    }
+
+    public function scopeNeedsBoleto($query)
+    {
+        return $query->where('status', 'pendente')
+                    ->whereNull('boleto_url');
+    }
+
+    public function scopeNeedsPix($query)
+    {
+        return $query->where('status', 'pendente')
+                    ->whereNull('pix_qr_code');
     }
 }

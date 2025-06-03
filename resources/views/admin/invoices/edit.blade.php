@@ -84,9 +84,9 @@
                         id="client_project_id"
                         class="w-full bg-gray-700/50 border border-gray-600 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('client_project_id') border-red-500 @enderror">
                     <option value="">Nenhum projeto selecionado</option>
-                    @foreach($projects as $project)
+                    @foreach($clientProjects as $project)
                         <option value="{{ $project->id }}" {{ old('client_project_id', $invoice->client_project_id) == $project->id ? 'selected' : '' }}>
-                            {{ $project->name }} ({{ $project->user->full_name }})
+                            {{ $project->name }}
                         </option>
                     @endforeach
                 </select>

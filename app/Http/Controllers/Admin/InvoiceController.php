@@ -261,4 +261,195 @@ class InvoiceController extends Controller
             ->route('admin.invoices.index')
             ->with('success', 'Fatura removida com sucesso!');
     }
+
+    /**
+     * Gerar cobrança PagarMe para fatura
+     */
+    public function generatePagarMeCharge(Request $request, Invoice $invoice)
+    {
+        try {
+            $validated = $request->validate([
+                'payment_method' => 'required|in:pix,boleto,multi',
+                'send_email' => 'boolean'
+            ]);
+
+            $paymentMethod = $validated['payment_method'];
+            $sendEmail = $validated['send_email'] ?? true;
+
+            // Verificar se fatura pode ter cobrança gerada
+            if ($invoice->status !== 'pendente') {
+                $message = 'Apenas faturas pendentes podem ter cobrança gerada.';
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => false, 'message' => $message]);
+                }
+                return back()->with('error', $message);
+            }
+
+            if ($invoice->hasPagarMeCharge()) {
+                $message = 'Esta fatura já possui uma cobrança PagarMe ativa.';
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => false, 'message' => $message]);
+                }
+                return back()->with('error', $message);
+            }
+
+            // Disparar job para processar
+            \App\Jobs\ProcessInvoicePayment::dispatch($invoice, [$paymentMethod], $sendEmail);
+
+            $message = 'Cobrança PagarMe sendo processada. Aguarde alguns instantes.';
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => $message]);
+            }
+            return back()->with('success', $message);
+
+        } catch (\Exception $e) {
+            $message = 'Erro ao gerar cobrança: ' . $e->getMessage();
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => $message]);
+            }
+            return back()->with('error', $message);
+        }
+    }
+
+    /**
+     * Habilitar cobrança automática
+     */
+    public function enableAutoCharge(Request $request, Invoice $invoice)
+    {
+        try {
+            $validated = $request->validate([
+                'auto_charge_date' => 'nullable|date|after_or_equal:today'
+            ]);
+
+            $autoChargeDate = $validated['auto_charge_date'] ?? now()->addDays(7)->format('Y-m-d');
+            $invoice->enableAutoCharge(new \DateTime($autoChargeDate));
+
+            $message = 'Cobrança automática habilitada para ' . 
+                \Carbon\Carbon::parse($autoChargeDate)->format('d/m/Y');
+            
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => $message]);
+            }
+            return back()->with('success', $message);
+
+        } catch (\Exception $e) {
+            $message = 'Erro ao habilitar cobrança automática: ' . $e->getMessage();
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => $message]);
+            }
+            return back()->with('error', $message);
+        }
+    }
+
+    /**
+     * Desabilitar cobrança automática
+     */
+    public function disableAutoCharge(Request $request, Invoice $invoice)
+    {
+        try {
+            $invoice->disableAutoCharge();
+
+            $message = 'Cobrança automática desabilitada.';
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => $message]);
+            }
+            return back()->with('success', $message);
+
+        } catch (\Exception $e) {
+            $message = 'Erro ao desabilitar cobrança automática: ' . $e->getMessage();
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => $message]);
+            }
+            return back()->with('error', $message);
+        }
+    }
+
+    /**
+     * Consultar status no PagarMe
+     */
+    public function checkPagarMeStatus(Request $request, Invoice $invoice)
+    {
+        try {
+            if (!$invoice->hasPagarMeCharge()) {
+                $message = 'Esta fatura não possui cobrança PagarMe.';
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => false, 'message' => $message]);
+                }
+                return back()->with('error', $message);
+            }
+
+            $pagarmeService = new \App\Services\PagarMeService();
+            $chargeId = $invoice->pagarme_charge_id ?? $invoice->pagarme_transaction_id;
+            
+            $status = $pagarmeService->getChargeStatus($chargeId);
+            $oldStatus = $invoice->pagarme_status;
+            
+            // Atualizar dados da fatura
+            $invoice->update([
+                'pagarme_status' => $status['status'],
+                'pagarme_data' => $status,
+                'webhook_received_at' => now()
+            ]);
+
+            $message = 'Status atualizado: ' . $invoice->pagarme_status_label;
+            
+            if ($request->expectsJson()) {
+                return response()->json([
+                    'success' => true, 
+                    'message' => $message,
+                    'status' => $status['status'],
+                    'status_changed' => $oldStatus !== $status['status']
+                ]);
+            }
+            return back()->with('success', $message);
+
+        } catch (\Exception $e) {
+            $message = 'Erro ao consultar status: ' . $e->getMessage();
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => $message]);
+            }
+            return back()->with('error', $message);
+        }
+    }
+
+    /**
+     * Cancelar cobrança PagarMe
+     */
+    public function cancelPagarMeCharge(Request $request, Invoice $invoice)
+    {
+        try {
+            if (!$invoice->hasPagarMeCharge()) {
+                $message = 'Esta fatura não possui cobrança PagarMe.';
+                if ($request->expectsJson()) {
+                    return response()->json(['success' => false, 'message' => $message]);
+                }
+                return back()->with('error', $message);
+            }
+
+            $pagarmeService = new \App\Services\PagarMeService();
+            $chargeId = $invoice->pagarme_charge_id ?? $invoice->pagarme_transaction_id;
+            
+            $result = $pagarmeService->cancelCharge($chargeId);
+            
+            // Atualizar dados da fatura
+            $invoice->update([
+                'pagarme_status' => $result['status'],
+                'pagarme_data' => $result,
+                'status' => 'cancelada'
+            ]);
+
+            $message = 'Cobrança PagarMe cancelada com sucesso.';
+            if ($request->expectsJson()) {
+                return response()->json(['success' => true, 'message' => $message]);
+            }
+            return back()->with('success', $message);
+
+        } catch (\Exception $e) {
+            $message = 'Erro ao cancelar cobrança: ' . $e->getMessage();
+            if ($request->expectsJson()) {
+                return response()->json(['success' => false, 'message' => $message]);
+            }
+            return back()->with('error', $message);
+        }
+    }
 } 

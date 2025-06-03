@@ -106,13 +106,11 @@
                             id="status" 
                             required
                             class="w-full bg-gray-700/50 border border-gray-600 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent @error('status') border-red-500 @enderror">
-                        <option value="planejamento" {{ old('status', $clientProject->status) === 'planejamento' ? 'selected' : '' }}>Planejamento</option>
-                        <option value="em_desenvolvimento" {{ old('status', $clientProject->status) === 'em_desenvolvimento' ? 'selected' : '' }}>Em Desenvolvimento</option>
-                        <option value="em_revisao" {{ old('status', $clientProject->status) === 'em_revisao' ? 'selected' : '' }}>Em Revisão</option>
-                        <option value="aguardando_cliente" {{ old('status', $clientProject->status) === 'aguardando_cliente' ? 'selected' : '' }}>Aguardando Cliente</option>
-                        <option value="concluido" {{ old('status', $clientProject->status) === 'concluido' ? 'selected' : '' }}>Concluído</option>
-                        <option value="pausado" {{ old('status', $clientProject->status) === 'pausado' ? 'selected' : '' }}>Pausado</option>
-                        <option value="cancelado" {{ old('status', $clientProject->status) === 'cancelado' ? 'selected' : '' }}>Cancelado</option>
+                        @foreach(\App\Models\ClientProject::getStatusLabels() as $value => $label)
+                            <option value="{{ $value }}" {{ old('status', $clientProject->status) === $value ? 'selected' : '' }}>
+                                {{ $label }}
+                            </option>
+                        @endforeach
                     </select>
                     @error('status')
                         <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
@@ -128,10 +126,11 @@
                             id="priority" 
                             required
                             class="w-full bg-gray-700/50 border border-gray-600 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent @error('priority') border-red-500 @enderror">
-                        <option value="baixa" {{ old('priority', $clientProject->priority) === 'baixa' ? 'selected' : '' }}>Baixa</option>
-                        <option value="normal" {{ old('priority', $clientProject->priority) === 'normal' ? 'selected' : '' }}>Normal</option>
-                        <option value="alta" {{ old('priority', $clientProject->priority) === 'alta' ? 'selected' : '' }}>Alta</option>
-                        <option value="urgente" {{ old('priority', $clientProject->priority) === 'urgente' ? 'selected' : '' }}>Urgente</option>
+                        @foreach(\App\Models\ClientProject::getPriorityLabels() as $value => $label)
+                            <option value="{{ $value }}" {{ old('priority', $clientProject->priority) === $value ? 'selected' : '' }}>
+                                {{ $label }}
+                            </option>
+                        @endforeach
                     </select>
                     @error('priority')
                         <p class="text-red-400 text-sm mt-1">{{ $message }}</p>

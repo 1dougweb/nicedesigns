@@ -177,5 +177,16 @@ class DatabaseSeeder extends Seeder
         Setting::set('accent_color', '#10B981', 'string', 'appearance');
         Setting::set('custom_css', '', 'text', 'appearance');
         Setting::set('custom_js', '', 'text', 'appearance');
+
+        // Grupo: PagarMe
+        Setting::set('pagarme_api_key', '', 'string', 'pagarme');
+        Setting::set('pagarme_encryption_key', '', 'string', 'pagarme');
+        Setting::set('pagarme_webhook_secret', '', 'string', 'pagarme');
+        Setting::set('pagarme_environment', 'sandbox', 'string', 'pagarme');
+        Setting::set('pagarme_auto_charge_days', 0, 'integer', 'pagarme');
+        Setting::set('pagarme_default_methods', 'boleto,pix', 'string', 'pagarme');
+        Setting::set('pagarme_boleto_instructions', 'Pagar preferencialmente em bancos digitais para compensação mais rápida.', 'text', 'pagarme');
+        Setting::set('pagarme_send_email_on_generation', true, 'boolean', 'pagarme');
+        Setting::set('pagarme_max_retry_attempts', 3, 'integer', 'pagarme');
     }
 }

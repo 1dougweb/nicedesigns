@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
+use App\Http\Controllers\PagarMeWebhookController;
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -64,6 +65,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('invoices/{invoice}/mark-as-paid', [\App\Http\Controllers\Admin\InvoiceController::class, 'markAsPaid'])->name('invoices.mark-as-paid');
     Route::get('ajax/client-projects', [\App\Http\Controllers\Admin\InvoiceController::class, 'getClientProjects'])->name('ajax.client-projects');
     
+    // PagarMe Integration for Invoices
+    Route::post('invoices/{invoice}/pagarme/generate', [\App\Http\Controllers\Admin\InvoiceController::class, 'generatePagarMeCharge'])->name('invoices.pagarme.generate');
+    Route::post('invoices/{invoice}/pagarme/auto-charge/enable', [\App\Http\Controllers\Admin\InvoiceController::class, 'enableAutoCharge'])->name('invoices.pagarme.auto-charge.enable');
+    Route::post('invoices/{invoice}/pagarme/auto-charge/disable', [\App\Http\Controllers\Admin\InvoiceController::class, 'disableAutoCharge'])->name('invoices.pagarme.auto-charge.disable');
+    Route::post('invoices/{invoice}/pagarme/status', [\App\Http\Controllers\Admin\InvoiceController::class, 'checkPagarMeStatus'])->name('invoices.pagarme.status');
+    Route::post('invoices/{invoice}/pagarme/cancel', [\App\Http\Controllers\Admin\InvoiceController::class, 'cancelPagarMeCharge'])->name('invoices.pagarme.cancel');
+    
     // Support Tickets Management
     Route::resource('support-tickets', \App\Http\Controllers\Admin\SupportTicketController::class)->only(['index', 'show', 'destroy']);
     Route::post('support-tickets/{supportTicket}/assign', [\App\Http\Controllers\Admin\SupportTicketController::class, 'assign'])->name('support-tickets.assign');
@@ -107,6 +115,12 @@ Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(
     Route::post('/profile/validate-document', [\App\Http\Controllers\Client\ProfileController::class, 'validateDocument'])->name('profile.validate-document');
     Route::post('/profile/avatar', [\App\Http\Controllers\Client\ProfileController::class, 'uploadAvatar'])->name('profile.upload-avatar');
     Route::delete('/profile/avatar', [\App\Http\Controllers\Client\ProfileController::class, 'removeAvatar'])->name('profile.remove-avatar');
+});
+
+// PagarMe Webhook Routes (sem middleware de autenticação)
+Route::prefix('pagarme')->name('pagarme.')->group(function () {
+    Route::post('/webhook', [\App\Http\Controllers\PagarMeWebhookController::class, 'receive'])->name('webhook');
+    Route::post('/webhook/test', [\App\Http\Controllers\PagarMeWebhookController::class, 'test'])->name('webhook.test');
 });
 
 // Auth Routes (Laravel/UI)
