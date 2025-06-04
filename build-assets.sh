@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🎨 Compilando Assets do Nice Designs para Hospedagem Compartilhada..."
+echo "🎨 Compilando Assets do Nice Designs para Produção (Hospedagem Compartilhada)..."
 
 # Cores para output
 RED='\033[0;31m'
@@ -31,27 +31,48 @@ if [ ! -f "vite.config.js" ]; then
     exit 1
 fi
 
-status "1. Verificando dependências Node.js..."
+status "1. Configurando Node.js com NVM..."
 
-# Verificar se node está instalado
-if ! command -v node &> /dev/null; then
-    error "Node.js não encontrado! Instale o Node.js primeiro."
-    echo "Visite: https://nodejs.org/"
+# Carregar NVM se disponível (já instalado)
+if [ -s "$HOME/.nvm/nvm.sh" ]; then
+    source "$HOME/.nvm/nvm.sh"
+    nvm use --lts 2>/dev/null || nvm use node
+    success "NVM carregado! Node.js $(node --version) ativo"
+elif command -v node &> /dev/null; then
+    success "Node.js $(node --version) disponível!"
+else
+    error "Node.js não encontrado!"
     exit 1
 fi
 
-# Verificar se npm está instalado
+# Verificar se npm está disponível
 if ! command -v npm &> /dev/null; then
-    error "NPM não encontrado! Instale o NPM primeiro."
+    error "NPM não encontrado!"
     exit 1
 fi
 
-success "Node.js $(node --version) e NPM $(npm --version) detectados!"
+success "NPM $(npm --version) disponível!"
 
-status "2. Instalando dependências..."
+status "2. Limpando instalação anterior..."
 
-# Instalar dependências de desenvolvimento
-npm install
+# Remover node_modules e lock files para instalação limpa
+if [ -d "node_modules" ]; then
+    rm -rf node_modules
+    success "node_modules removido!"
+fi
+
+if [ -f "package-lock.json" ]; then
+    rm package-lock.json
+    success "package-lock.json removido!"
+fi
+
+status "3. Instalando dependências para produção..."
+
+# Configurar npm para produção
+export NODE_ENV=production
+
+# Instalar dependências
+npm install --production=false
 
 if [ $? -eq 0 ]; then
     success "Dependências instaladas!"
@@ -60,7 +81,21 @@ else
     exit 1
 fi
 
-status "3. Compilando assets para produção..."
+status "4. Limpando assets antigos..."
+
+# Remover assets antigos
+if [ -d "public/build" ]; then
+    rm -rf public/build
+    success "Assets antigos removidos!"
+fi
+
+# Remover hot file se existir
+if [ -f "public/hot" ]; then
+    rm public/hot
+    success "Arquivo hot removido!"
+fi
+
+status "5. Compilando assets para PRODUÇÃO..."
 
 # Build para produção com Vite
 npm run build
@@ -72,94 +107,142 @@ else
     exit 1
 fi
 
-status "4. Verificando arquivos gerados..."
+status "6. Verificando arquivos gerados..."
 
 # Verificar se os arquivos foram criados
 if [ -d "public/build" ]; then
     success "Pasta public/build criada!"
     echo "Arquivos gerados:"
     ls -la public/build/
+    
+    # Mostrar tamanho dos arquivos
+    echo ""
+    echo "Tamanhos dos arquivos:"
+    du -sh public/build/*
 else
     error "Pasta public/build não foi criada!"
     exit 1
 fi
 
-status "5. Criando estrutura para hospedagem compartilhada..."
+status "7. Preparando estrutura para hospedagem compartilhada..."
 
-# Criar pasta temporária para assets compilados
-mkdir -p assets-compiled
+# Criar pasta para deploy
+mkdir -p deploy-ready
 
-# Copiar apenas os assets compilados
-cp -r public/build assets-compiled/
-cp public/mix-manifest.json assets-compiled/ 2>/dev/null || echo "mix-manifest.json não encontrado (normal para Vite)"
+# Como index.php está na raiz, ajustar estrutura
+status "Configurando para index.php na raiz..."
 
-# Verificar se existe hot file do Vite
-if [ -f "public/hot" ]; then
-    rm public/hot
-    warning "Arquivo 'hot' removido (apenas para desenvolvimento)"
+# Copiar build para pasta de deploy 
+cp -r public/build deploy-ready/
+
+# Verificar manifest
+if [ -f "public/build/manifest.json" ]; then
+    success "Manifest.json encontrado!"
+    echo "Preview do manifest:"
+    head -10 public/build/manifest.json
+else
+    warning "Manifest.json não encontrado!"
 fi
 
-success "Assets preparados em: assets-compiled/"
+success "Assets preparados em: deploy-ready/"
 
-status "6. Criando arquivo de instruções..."
+status "8. Criando instruções de deploy para hospedagem compartilhada..."
 
-cat > assets-deploy-instructions.txt << 'EOF'
-🎨 INSTRUÇÕES PARA DEPLOY DOS ASSETS - NICE DESIGNS
+cat > deploy-instructions.txt << 'EOF'
+🚀 INSTRUÇÕES PARA DEPLOY - NICE DESIGNS (Produção)
 
-📦 ARQUIVOS COMPILADOS:
-   assets-compiled/build/ → Upload para public_html/build/
+📁 ESTRUTURA ATUAL:
+   ✅ index.php está na raiz (correto para hospedagem compartilhada)
+   ✅ Assets compilados em deploy-ready/build/
 
 📋 PASSOS PARA HOSPEDAGEM COMPARTILHADA:
 
-1. UPLOAD VIA HOSTINGER FILE MANAGER:
-   □ Acessar hPanel → File Manager
-   □ Navegar até public_html/
-   □ Fazer upload da pasta assets-compiled/build/
+1. UPLOAD DOS ASSETS:
+   □ Acessar File Manager da hospedagem
+   □ Navegar até public_html/ (ou pasta do domínio)
+   □ Fazer upload da pasta deploy-ready/build/
    □ Renomear para apenas "build"
 
 2. ESTRUTURA FINAL NO SERVIDOR:
-   public_html/
+   public_html/ (ou pasta do domínio)
+   ├── index.php (já deve estar aqui)
    ├── build/
    │   ├── assets/
    │   │   ├── app-[hash].css
-   │   │   └── app-[hash].js
+   │   │   ├── app-[hash].js
+   │   │   └── [outros arquivos]
    │   └── manifest.json
+   ├── .htaccess
    └── ... (outros arquivos Laravel)
 
-3. VERIFICAÇÃO:
+3. CONFIGURAÇÃO NVM NO SERVIDOR (se disponível):
+   □ SSH no servidor: ssh usuario@servidor
+   □ Instalar NVM: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+   □ Recarregar: source ~/.bashrc
+   □ Instalar Node LTS: nvm install --lts && nvm use --lts
+
+4. VERIFICAÇÃO:
    □ Acessar: https://seudominio.com/build/manifest.json
    □ Deve mostrar JSON com mapping dos assets
-   □ CSS e JS devem carregar corretamente
+   □ Verificar se CSS/JS carregam na página
 
-⚠️ IMPORTANTE:
-   - Não fazer upload da pasta node_modules/
-   - Não fazer upload dos arquivos fonte (resources/css, resources/js)
-   - Apenas a pasta build/ compilada é necessária
+⚠️ IMPORTANTE PARA PRODUÇÃO:
+   - Assets são cacheados com hash único
+   - Sempre fazer upload completo da pasta build/
+   - Verificar se .htaccess está configurado corretamente
+   - Configurar APP_ENV=production no .env
 
 🔄 PARA ATUALIZAÇÕES:
-   1. Executar este script novamente: ./build-assets.sh
-   2. Fazer upload apenas da nova pasta build/
-   3. Vite automaticamente gera novos hashes para cache
+   1. Executar: ./build-assets.sh
+   2. Upload da nova pasta deploy-ready/build/
+   3. Limpar cache do navegador se necessário
 
-📞 SUPORTE:
-   - Logs do build: Verificar output do npm run build
+🐛 TROUBLESHOOTING:
    - Assets não carregam: Verificar caminhos no manifest.json
-   - Erro 404: Verificar se pasta build/ existe no servidor
+   - Erro 404: Verificar se pasta build/ existe
+   - CSS quebrado: Verificar se build foi feito para produção
+   - JS não funciona: Verificar console do navegador
+
+📞 LOGS ÚTEIS:
+   - Build: npm run build -- --debug
+   - Servidor: tail -f storage/logs/laravel.log
 EOF
 
-success "Instruções criadas: assets-deploy-instructions.txt"
+success "Instruções criadas: deploy-instructions.txt"
+
+status "9. Otimizações finais..."
+
+# Mostrar estatísticas finais
+echo ""
+echo "📊 ESTATÍSTICAS DO BUILD:"
+echo "================================"
+if [ -d "deploy-ready/build" ]; then
+    echo "📁 Pasta build: $(du -sh deploy-ready/build | cut -f1)"
+    echo "📄 Arquivos CSS: $(find deploy-ready/build -name "*.css" | wc -l)"
+    echo "📄 Arquivos JS: $(find deploy-ready/build -name "*.js" | wc -l)"
+    echo "📄 Outros assets: $(find deploy-ready/build -type f ! -name "*.css" ! -name "*.js" | wc -l)"
+fi
 
 echo ""
-echo "🎉 COMPILAÇÃO CONCLUÍDA!"
+echo "🎉 BUILD PARA PRODUÇÃO CONCLUÍDA!"
 echo ""
-echo -e "${GREEN}Arquivos criados:${NC}"
-echo "  📁 assets-compiled/build/ (para upload)"
-echo "  📋 assets-deploy-instructions.txt (instruções)"
+echo -e "${GREEN}Arquivos prontos para deploy:${NC}"
+echo "  📁 deploy-ready/build/ (fazer upload para public_html/build/)"
+echo "  📋 deploy-instructions.txt (instruções detalhadas)"
 echo ""
 echo -e "${YELLOW}Próximos passos:${NC}"
-echo "  1. Fazer upload da pasta assets-compiled/build/ para public_html/build/"
-echo "  2. Verificar se assets carregam no navegador"
-echo "  3. Para mudanças, rodar este script novamente"
+echo "  1. Fazer upload da pasta deploy-ready/build/ para o servidor"
+echo "  2. Verificar se assets carregam corretamente"
+echo "  3. Configurar .env para produção (APP_ENV=production)"
+echo "  4. Limpar cache: php artisan config:clear"
 echo ""
-echo -e "${BLUE}ℹ️  Sua aplicação Laravel + Vite está pronta para hospedagem compartilhada!${NC}"
+echo -e "${BLUE}🚀 Sua aplicação está pronta para PRODUÇÃO!${NC}"
+echo ""
+
+# Mostrar próximos comandos úteis
+echo -e "${YELLOW}Comandos úteis no servidor:${NC}"
+echo "  composer install --no-dev --optimize-autoloader"
+echo "  php artisan config:cache"
+echo "  php artisan route:cache"
+echo "  php artisan view:cache"
 echo "" 

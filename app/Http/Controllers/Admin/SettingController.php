@@ -40,6 +40,16 @@ class SettingController extends Controller
             'timezone' => 'required|string',
             'date_format' => 'required|string',
             'currency' => 'required|string|max:10',
+            // Pagar.me validation
+            'pagarme_environment' => 'required|string|in:sandbox,live',
+            'pagarme_api_key' => 'nullable|string|max:255',
+            'pagarme_encryption_key' => 'nullable|string|max:255',
+            'pagarme_webhook_secret' => 'nullable|string|max:255',
+            'pagarme_default_methods' => 'nullable|string|max:100',
+            'pagarme_auto_charge_days' => 'nullable|integer|min:0|max:30',
+            'pagarme_boleto_instructions' => 'nullable|string|max:500',
+            'pagarme_send_email_on_generation' => 'nullable|boolean',
+            'pagarme_max_retry_attempts' => 'nullable|integer|min:1|max:10',
         ]);
 
         try {
@@ -83,6 +93,12 @@ class SettingController extends Controller
             $this->saveSettingsGroup($request, 'appearance', [
                 'primary_color', 'secondary_color', 'accent_color', 
                 'custom_css', 'custom_js'
+            ]);
+
+            $this->saveSettingsGroup($request, 'pagarme', [
+                'pagarme_api_key', 'pagarme_encryption_key', 'pagarme_webhook_secret',
+                'pagarme_environment', 'pagarme_default_methods', 'pagarme_auto_charge_days',
+                'pagarme_boleto_instructions', 'pagarme_send_email_on_generation', 'pagarme_max_retry_attempts'
             ]);
 
             // Contar configurações depois
@@ -139,17 +155,17 @@ class SettingController extends Controller
     private function getSettingType(string $key, mixed $value): string
     {
         // Boolean settings
-        if (in_array($key, ['maintenance_mode', 'allow_registration'])) {
+        if (in_array($key, ['maintenance_mode', 'allow_registration', 'pagarme_send_email_on_generation'])) {
             return 'boolean';
         }
         
         // Integer settings
-        if (in_array($key, ['posts_per_page', 'projects_per_page', 'smtp_port'])) {
+        if (in_array($key, ['posts_per_page', 'projects_per_page', 'smtp_port', 'pagarme_auto_charge_days', 'pagarme_max_retry_attempts'])) {
             return 'integer';
         }
         
         // Text/Textarea settings
-        if (in_array($key, ['custom_css', 'custom_js', 'google_search_console'])) {
+        if (in_array($key, ['custom_css', 'custom_js', 'google_search_console', 'pagarme_boleto_instructions'])) {
             return 'text';
         }
         
@@ -203,6 +219,58 @@ class SettingController extends Controller
                 'mail.from.address' => $emailSettings->get('mail_from_address')->value ?? 'noreply@nicedesigns.com.br',
                 'mail.from.name' => $emailSettings->get('mail_from_name')->value ?? 'Nice Designs',
             ]);
+        }
+    }
+
+    /**
+     * Test Pagar.me connection
+     */
+    public function testPagarMeConnection(Request $request)
+    {
+        $request->validate([
+            'environment' => 'required|string|in:sandbox,live',
+            'api_key' => 'required|string',
+            'encryption_key' => 'required|string',
+            'webhook_secret' => 'nullable|string'
+        ]);
+
+        try {
+            // Temporariamente configurar as credenciais para teste
+            $originalApiKey = Setting::get('pagarme_api_key');
+            $originalEncryptionKey = Setting::get('pagarme_encryption_key');
+            $originalEnvironment = Setting::get('pagarme_environment');
+
+            // Configurar temporariamente
+            Setting::set('pagarme_api_key', $request->api_key, 'string', 'pagarme');
+            Setting::set('pagarme_encryption_key', $request->encryption_key, 'string', 'pagarme');
+            Setting::set('pagarme_environment', $request->environment, 'string', 'pagarme');
+
+            // Testar a conexão usando o PagarMeService
+            $pagarMeService = new \App\Services\PagarMeService();
+            $result = $pagarMeService->testConnection();
+
+            // Restaurar configurações originais
+            if ($originalApiKey) {
+                Setting::set('pagarme_api_key', $originalApiKey, 'string', 'pagarme');
+            }
+            if ($originalEncryptionKey) {
+                Setting::set('pagarme_encryption_key', $originalEncryptionKey, 'string', 'pagarme');
+            }
+            if ($originalEnvironment) {
+                Setting::set('pagarme_environment', $originalEnvironment, 'string', 'pagarme');
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Conexão com Pagar.me estabelecida com sucesso!',
+                'data' => $result
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Erro ao conectar com Pagar.me: ' . $e->getMessage()
+            ], 500);
         }
     }
 

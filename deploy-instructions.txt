@@ -1,0 +1,57 @@
+🚀 INSTRUÇÕES PARA DEPLOY - NICE DESIGNS (Produção)
+
+📁 ESTRUTURA ATUAL:
+   ✅ index.php está na raiz (correto para hospedagem compartilhada)
+   ✅ Assets compilados em deploy-ready/build/
+
+📋 PASSOS PARA HOSPEDAGEM COMPARTILHADA:
+
+1. UPLOAD DOS ASSETS:
+   □ Acessar File Manager da hospedagem
+   □ Navegar até public_html/ (ou pasta do domínio)
+   □ Fazer upload da pasta deploy-ready/build/
+   □ Renomear para apenas "build"
+
+2. ESTRUTURA FINAL NO SERVIDOR:
+   public_html/ (ou pasta do domínio)
+   ├── index.php (já deve estar aqui)
+   ├── build/
+   │   ├── assets/
+   │   │   ├── app-[hash].css
+   │   │   ├── app-[hash].js
+   │   │   └── [outros arquivos]
+   │   └── manifest.json
+   ├── .htaccess
+   └── ... (outros arquivos Laravel)
+
+3. CONFIGURAÇÃO NVM NO SERVIDOR (se disponível):
+   □ SSH no servidor: ssh usuario@servidor
+   □ Instalar NVM: curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+   □ Recarregar: source ~/.bashrc
+   □ Instalar Node LTS: nvm install --lts && nvm use --lts
+
+4. VERIFICAÇÃO:
+   □ Acessar: https://seudominio.com/build/manifest.json
+   □ Deve mostrar JSON com mapping dos assets
+   □ Verificar se CSS/JS carregam na página
+
+⚠️ IMPORTANTE PARA PRODUÇÃO:
+   - Assets são cacheados com hash único
+   - Sempre fazer upload completo da pasta build/
+   - Verificar se .htaccess está configurado corretamente
+   - Configurar APP_ENV=production no .env
+
+🔄 PARA ATUALIZAÇÕES:
+   1. Executar: ./build-assets.sh
+   2. Upload da nova pasta deploy-ready/build/
+   3. Limpar cache do navegador se necessário
+
+🐛 TROUBLESHOOTING:
+   - Assets não carregam: Verificar caminhos no manifest.json
+   - Erro 404: Verificar se pasta build/ existe
+   - CSS quebrado: Verificar se build foi feito para produção
+   - JS não funciona: Verificar console do navegador
+
+📞 LOGS ÚTEIS:
+   - Build: npm run build -- --debug
+   - Servidor: tail -f storage/logs/laravel.log

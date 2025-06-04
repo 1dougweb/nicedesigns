@@ -55,6 +55,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('settings', [AdminSettingController::class, 'update'])->name('settings.update');
     Route::post('settings/test-email', [AdminSettingController::class, 'testEmail'])->name('settings.test-email');
     Route::post('settings/clear-cache', [AdminSettingController::class, 'clearCache'])->name('settings.clear-cache');
+    Route::post('settings/test-pagarme-connection', [AdminSettingController::class, 'testPagarMeConnection'])->name('settings.test-pagarme-connection');
     
     // Client Projects Management
     Route::resource('client-projects', \App\Http\Controllers\Admin\ClientProjectController::class);

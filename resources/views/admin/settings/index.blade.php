@@ -111,6 +111,13 @@
                 </svg>
                 <span>Aparência</span>
             </button>
+            <button type="button" onclick="switchTab('pagarme')" 
+                    class="tab-button flex items-center space-x-2 py-2 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600 font-medium">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <span>Pagar.me</span>
+            </button>
         </nav>
     </div>
 </div>
@@ -583,6 +590,195 @@
             </div>
         </div>
     </div>
+
+    <!-- PagarMe Tab -->
+    <div id="pagarme-tab" class="tab-content hidden">
+        <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
+            <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                <svg class="w-6 h-6 mr-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Configurações Pagar.me
+            </h3>
+            
+            <div class="mb-8 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
+                <div class="flex items-start space-x-3">
+                    <svg class="w-5 h-5 text-blue-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div>
+                        <h4 class="text-blue-300 font-medium mb-1">Configuração da Integração Pagar.me</h4>
+                        <p class="text-blue-200 text-sm">
+                            Configure suas credenciais da API Pagar.me para processar pagamentos. Use o ambiente <strong>sandbox</strong> para testes e <strong>live</strong> para produção.
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Environment -->
+                <div class="md:col-span-2">
+                    <label for="pagarme_environment" class="block text-sm font-medium text-gray-300 mb-2">
+                        Ambiente <span class="text-red-400">*</span>
+                    </label>
+                    <select id="pagarme_environment" name="pagarme_environment" 
+                            class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                            onchange="togglePagarMeEnvironment()">
+                        <option value="sandbox" {{ ($settings['pagarme']->where('key', 'pagarme_environment')->first()->value ?? 'sandbox') == 'sandbox' ? 'selected' : '' }}>Sandbox (Testes)</option>
+                        <option value="live" {{ ($settings['pagarme']->where('key', 'pagarme_environment')->first()->value ?? 'sandbox') == 'live' ? 'selected' : '' }}>Live (Produção)</option>
+                    </select>
+                </div>
+
+                <!-- API Key -->
+                <div>
+                    <label for="pagarme_api_key" class="block text-sm font-medium text-gray-300 mb-2">
+                        API Key <span class="text-red-400">*</span>
+                        <span class="text-xs text-gray-400 ml-2" id="api-key-hint">(Inicia com ak_test_ para sandbox)</span>
+                    </label>
+                    <div class="relative">
+                        <input type="password" id="pagarme_api_key" name="pagarme_api_key" 
+                               value="{{ $settings['pagarme']->where('key', 'pagarme_api_key')->first()->value ?? '' }}"
+                               class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                               placeholder="ak_test_...">
+                        <button type="button" onclick="togglePasswordVisibility('pagarme_api_key')" 
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Encryption Key -->
+                <div>
+                    <label for="pagarme_encryption_key" class="block text-sm font-medium text-gray-300 mb-2">
+                        Encryption Key <span class="text-red-400">*</span>
+                        <span class="text-xs text-gray-400 ml-2" id="encryption-key-hint">(Inicia com ek_test_ para sandbox)</span>
+                    </label>
+                    <div class="relative">
+                        <input type="password" id="pagarme_encryption_key" name="pagarme_encryption_key" 
+                               value="{{ $settings['pagarme']->where('key', 'pagarme_encryption_key')->first()->value ?? '' }}"
+                               class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                               placeholder="ek_test_...">
+                        <button type="button" onclick="togglePasswordVisibility('pagarme_encryption_key')" 
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Webhook Secret -->
+                <div>
+                    <label for="pagarme_webhook_secret" class="block text-sm font-medium text-gray-300 mb-2">
+                        Webhook Secret
+                        <span class="text-xs text-gray-400 ml-2">(Opcional - para validação de webhooks)</span>
+                    </label>
+                    <div class="relative">
+                        <input type="password" id="pagarme_webhook_secret" name="pagarme_webhook_secret" 
+                               value="{{ $settings['pagarme']->where('key', 'pagarme_webhook_secret')->first()->value ?? '' }}"
+                               class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                               placeholder="whsec_...">
+                        <button type="button" onclick="togglePasswordVisibility('pagarme_webhook_secret')" 
+                                class="absolute inset-y-0 right-0 pr-3 flex items-center">
+                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Payment Methods -->
+                <div>
+                    <label for="pagarme_default_methods" class="block text-sm font-medium text-gray-300 mb-2">
+                        Métodos de Pagamento Padrão
+                    </label>
+                    <input type="text" id="pagarme_default_methods" name="pagarme_default_methods" 
+                           value="{{ $settings['pagarme']->where('key', 'pagarme_default_methods')->first()->value ?? 'boleto,pix' }}"
+                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                           placeholder="boleto,pix">
+                    <p class="text-xs text-gray-400 mt-1">Separados por vírgula: boleto, pix, credit_card</p>
+                </div>
+
+                <!-- Auto Charge Days -->
+                <div>
+                    <label for="pagarme_auto_charge_days" class="block text-sm font-medium text-gray-300 mb-2">
+                        Dias para Cobrança Automática
+                    </label>
+                    <input type="number" id="pagarme_auto_charge_days" name="pagarme_auto_charge_days" min="0" max="30"
+                           value="{{ $settings['pagarme']->where('key', 'pagarme_auto_charge_days')->first()->value ?? 0 }}"
+                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+                    <p class="text-xs text-gray-400 mt-1">0 = desabilitado</p>
+                </div>
+
+                <!-- Max Retry Attempts -->
+                <div>
+                    <label for="pagarme_max_retry_attempts" class="block text-sm font-medium text-gray-300 mb-2">
+                        Máximo de Tentativas
+                    </label>
+                    <input type="number" id="pagarme_max_retry_attempts" name="pagarme_max_retry_attempts" min="1" max="10"
+                           value="{{ $settings['pagarme']->where('key', 'pagarme_max_retry_attempts')->first()->value ?? 3 }}"
+                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+                </div>
+
+                <!-- Send Email on Generation -->
+                <div>
+                    <label class="flex items-center">
+                        <input type="checkbox" name="pagarme_send_email_on_generation" value="1"
+                               {{ ($settings['pagarme']->where('key', 'pagarme_send_email_on_generation')->first()->value ?? true) ? 'checked' : '' }}
+                               class="sr-only peer">
+                        <div class="relative w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                        <span class="ml-3 text-gray-300">Enviar Email na Geração</span>
+                    </label>
+                </div>
+
+                <!-- Boleto Instructions -->
+                <div class="md:col-span-2">
+                    <label for="pagarme_boleto_instructions" class="block text-sm font-medium text-gray-300 mb-2">
+                        Instruções do Boleto
+                    </label>
+                    <textarea id="pagarme_boleto_instructions" name="pagarme_boleto_instructions" rows="3"
+                              class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">{{ $settings['pagarme']->where('key', 'pagarme_boleto_instructions')->first()->value ?? 'Pagar preferencialmente em bancos digitais para compensação mais rápida.' }}</textarea>
+                </div>
+
+                <!-- Test Connection -->
+                <div class="md:col-span-2 pt-6 border-t border-gray-700/50">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h4 class="text-white font-medium mb-1">Testar Conexão</h4>
+                            <p class="text-gray-400 text-sm">Verifique se as credenciais estão funcionando corretamente</p>
+                        </div>
+                        <button type="button" onclick="testPagarMeConnection()"
+                                class="bg-green-600/20 text-green-300 border border-green-600/30 hover:bg-green-600/30 px-6 py-3 rounded-xl font-medium transition-all duration-300 flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            <span>Testar Conexão</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Webhook URL Info -->
+                    <div class="mt-6 p-4 bg-gray-700/30 rounded-xl">
+                        <h5 class="text-gray-300 font-medium mb-2">URL do Webhook</h5>
+                        <div class="flex items-center space-x-2">
+                            <input type="text" readonly 
+                                   value="{{ route('pagarme.webhook') }}"
+                                   class="flex-1 bg-gray-600/50 border border-gray-500/50 text-gray-300 rounded-lg px-3 py-2 text-sm font-mono">
+                            <button type="button" onclick="copyToClipboard('{{ route('pagarme.webhook') }}')"
+                                    class="bg-gray-600/50 hover:bg-gray-600/70 text-gray-300 px-3 py-2 rounded-lg text-sm transition-colors">
+                                Copiar
+                            </button>
+                        </div>
+                        <p class="text-xs text-gray-400 mt-2">Configure esta URL no painel do Pagar.me para receber notificações de pagamento</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 
 <script>
@@ -676,6 +872,86 @@ function testEmail(button) {
         button.innerHTML = originalText;
         button.disabled = false;
     });
+}
+
+function togglePagarMeEnvironment() {
+    const environment = document.getElementById('pagarme_environment').value;
+    const apiKey = document.getElementById('pagarme_api_key');
+    const encryptionKey = document.getElementById('pagarme_encryption_key');
+    const webhookSecret = document.getElementById('pagarme_webhook_secret');
+
+    if (environment === 'live') {
+        apiKey.disabled = true;
+        encryptionKey.disabled = true;
+        webhookSecret.disabled = true;
+    } else {
+        apiKey.disabled = false;
+        encryptionKey.disabled = false;
+        webhookSecret.disabled = false;
+    }
+}
+
+function togglePasswordVisibility(inputId) {
+    const input = document.getElementById(inputId);
+    const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
+    input.setAttribute('type', type);
+}
+
+function testPagarMeConnection() {
+    const environment = document.getElementById('pagarme_environment').value;
+    const apiKey = document.getElementById('pagarme_api_key').value;
+    const encryptionKey = document.getElementById('pagarme_encryption_key').value;
+    const webhookSecret = document.getElementById('pagarme_webhook_secret').value;
+
+    if (!environment || !apiKey || !encryptionKey) {
+        alert('Por favor, preencha pelo menos Ambiente, API Key e Encryption Key antes de testar a conexão.');
+        return;
+    }
+
+    const button = event.target;
+    const originalText = button.innerHTML;
+    button.innerHTML = '<svg class="w-4 h-4 animate-spin mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Testando...';
+    button.disabled = true;
+
+    fetch('{{ route("admin.settings.test-pagarme-connection") }}', {
+        method: 'POST',
+        headers: {
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            environment: environment,
+            api_key: apiKey,
+            encryption_key: encryptionKey,
+            webhook_secret: webhookSecret
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            alert('Conexão com Pagar.me estabelecida com sucesso!');
+        } else {
+            alert('Erro ao testar conexão: ' + data.message);
+        }
+    })
+    .catch(error => {
+        alert('Erro ao testar conexão');
+        console.error('Error:', error);
+    })
+    .finally(() => {
+        button.innerHTML = originalText;
+        button.disabled = false;
+    });
+}
+
+function copyToClipboard(text) {
+    const tempInput = document.createElement('input');
+    tempInput.value = text;
+    document.body.appendChild(tempInput);
+    tempInput.select();
+    document.execCommand('copy');
+    document.body.removeChild(tempInput);
+    alert('URL copiada para o clipboard!');
 }
 
 // Adicionar feedback visual ao formulário
