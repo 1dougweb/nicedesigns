@@ -5,22 +5,20 @@
 
 @section('content')
 <!-- Welcome Section -->
-<div class="mb-8">
-    <div class="bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-md rounded-3xl border border-blue-500/30 p-8">
-        <div class="flex items-center justify-between">
-            <div>
-                <h2 class="text-3xl font-bold text-white mb-2">
+<div class="mb-6 lg:mb-8">
+    <div class="bg-gradient-to-r from-blue-600/20 to-purple-600/20 backdrop-blur-md rounded-2xl lg:rounded-3xl border border-blue-500/30 p-4 sm:p-6 lg:p-8">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+            <div class="flex-1">
+                <h2 class="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-2">
                     Bem-vindo de volta, {{ auth()->user()->name }}! 👋
                 </h2>
-                <p class="text-gray-300 text-lg">
+                <p class="text-gray-300 text-sm sm:text-base lg:text-lg">
                     Aqui está um resumo das atividades do seu site hoje.
                 </p>
             </div>
-            <div class="hidden lg:block">
-                <div class="w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                    <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                    </svg>
+            <div class="hidden sm:block lg:block flex-shrink-0">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <i class="fi fi-rr-stats w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-white"></i>
                 </div>
             </div>
         </div>
@@ -28,29 +26,27 @@
 </div>
 
 <!-- Statistics Cards -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 lg:mb-8">
     <!-- Posts Stats -->
-    <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-blue-500/50 transition-all duration-300 group">
-        <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                </svg>
+    <div class="bg-gray-800/50 backdrop-blur-md rounded-2xl lg:rounded-3xl border border-gray-700/50 p-4 sm:p-6 hover:border-blue-500/50 transition-all duration-300 group">
+        <div class="flex items-center justify-between mb-3 sm:mb-4">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <i class="fi fi-rr-edit w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
             </div>
             <div class="text-right">
-                <p class="text-3xl font-bold text-white">{{ $stats['posts']['total'] }}</p>
-                <p class="text-sm text-gray-400">Posts</p>
+                <p class="text-2xl sm:text-3xl font-bold text-white">{{ $stats['posts']['total'] }}</p>
+                <p class="text-xs sm:text-sm text-gray-400">Posts</p>
             </div>
         </div>
-        <div class="flex items-center justify-between text-sm">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 text-xs sm:text-sm">
             <span class="flex items-center text-green-400">
-                <span class="w-2 h-2 bg-green-400 rounded-full mr-2"></span>
-                {{ $stats['posts']['published'] }} publicados
+                <span class="w-2 h-2 bg-green-400 rounded-full mr-2 flex-shrink-0"></span>
+                <span class="truncate">{{ $stats['posts']['published'] }} publicados</span>
             </span>
-            <span class="text-gray-500">{{ $stats['posts']['drafts'] }} rascunhos</span>
+            <span class="text-gray-500 text-right sm:text-left">{{ $stats['posts']['drafts'] }} rascunhos</span>
         </div>
-        <div class="mt-4">
-            <a href="{{ route('admin.posts.index') }}" class="text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors">
+        <div class="mt-3 sm:mt-4">
+            <a href="{{ route('admin.posts.index') }}" class="text-blue-400 hover:text-blue-300 text-xs sm:text-sm font-medium transition-colors">
                 Gerenciar Posts →
             </a>
         </div>
@@ -59,10 +55,8 @@
     <!-- Projects Stats -->
     <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-purple-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
-                </svg>
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <i class="fi fi-rr-briefcase w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
             </div>
             <div class="text-right">
                 <p class="text-3xl font-bold text-white">{{ $stats['projects']['total'] }}</p>
@@ -86,10 +80,8 @@
     <!-- Client Projects Stats -->
     <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-cyan-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                </svg>
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <i class="fi fi-rr-users w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
             </div>
             <div class="text-right">
                 <p class="text-3xl font-bold text-white">{{ $stats['client_projects']['total'] }}</p>
@@ -113,10 +105,8 @@
     <!-- Invoices Stats -->
     <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-emerald-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                </svg>
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <i class="fi fi-rr-receipt w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
             </div>
             <div class="text-right">
                 <p class="text-3xl font-bold text-white">{{ $stats['invoices']['total'] }}</p>
@@ -139,14 +129,12 @@
 </div>
 
 <!-- Additional Stats Row -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-6 lg:mb-8">
     <!-- Support Tickets Stats -->
     <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-orange-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
-                </svg>
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <i class="fi fi-rr-headset w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
             </div>
             <div class="text-right">
                 <p class="text-3xl font-bold text-white">{{ $stats['support_tickets']['total'] }}</p>
@@ -170,10 +158,8 @@
     <!-- Contacts Stats -->
     <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-pink-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-pink-500 to-pink-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                </svg>
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <i class="fi fi-rr-envelope w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
             </div>
             <div class="text-right">
                 <p class="text-3xl font-bold text-white">{{ $stats['contacts']['total'] }}</p>
@@ -197,10 +183,8 @@
     <!-- Clients Stats -->
     <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-indigo-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
-                </svg>
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <i class="fi fi-rr-user w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
             </div>
             <div class="text-right">
                 <p class="text-3xl font-bold text-white">{{ $stats['clients']['total'] }}</p>
@@ -224,10 +208,8 @@
     <!-- Financial Summary -->
     <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-green-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <i class="fi fi-rr-dollar w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
             </div>
             <div class="text-right">
                 <p class="text-2xl font-bold text-white">R$ {{ number_format($stats['invoices']['total_amount'], 0, ',', '.') }}</p>
@@ -249,15 +231,13 @@
 
 <!-- Urgent Alerts & Recent Activity -->
 @if($urgentTickets->count() > 0 || $upcomingInvoices->count() > 0)
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 lg:mb-8">
     <!-- Urgent Tickets -->
     @if($urgentTickets->count() > 0)
-    <div class="bg-red-600/10 border border-red-500/30 rounded-3xl p-6">
-        <h3 class="text-xl font-bold text-red-400 mb-4 flex items-center">
-            <svg class="w-6 h-6 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"/>
-            </svg>
-            Tickets Urgentes
+    <div class="bg-red-600/10 border border-red-500/30 rounded-2xl lg:rounded-3xl p-4 sm:p-6">
+        <h3 class="text-lg sm:text-xl font-bold text-red-400 mb-3 sm:mb-4 flex items-center">
+            <i class="fi fi-rr-triangle-warning w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3"></i>
+            <span class="truncate">Tickets Urgentes</span>
         </h3>
         <div class="space-y-3">
             @foreach($urgentTickets as $ticket)
@@ -307,70 +287,56 @@
 @endif
 
 <!-- Quick Actions & Recent Activity -->
-<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+<div class="grid grid-cols-1 xl:grid-cols-2 gap-4 sm:gap-6 lg:gap-8 mb-6 lg:mb-8">
     <!-- Quick Actions -->
-    <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6">
-        <h3 class="text-xl font-bold text-white mb-6 flex items-center">
-            <svg class="w-6 h-6 mr-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-            </svg>
-            Ações Rápidas
+    <div class="bg-gray-800/50 backdrop-blur-md rounded-2xl lg:rounded-3xl border border-gray-700/50 p-4 sm:p-6">
+        <h3 class="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6 flex items-center">
+            <i class="fi fi-rr-bolt w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-blue-400"></i>
+            <span class="truncate">Ações Rápidas</span>
         </h3>
-        <div class="grid grid-cols-2 gap-4">
-            <a href="{{ route('admin.posts.create') }}" class="flex flex-col items-center p-4 bg-blue-600/20 rounded-2xl hover:bg-blue-600/30 transition-all duration-300 group border border-blue-500/30">
-                <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-3">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
+        <div class="grid grid-cols-2 gap-3 sm:gap-4">
+            <a href="{{ route('admin.posts.create') }}" class="flex flex-col items-center p-3 sm:p-4 bg-blue-600/20 rounded-xl sm:rounded-2xl hover:bg-blue-600/30 transition-all duration-300 group border border-blue-500/30">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-2 sm:mb-3">
+                    <i class="fi fi-rr-plus w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
                 </div>
-                <span class="text-sm font-medium text-white">Novo Post</span>
+                <span class="text-xs sm:text-sm font-medium text-white text-center">Novo Post</span>
             </a>
 
-            <a href="{{ route('admin.projects.create') }}" class="flex flex-col items-center p-4 bg-purple-600/20 rounded-2xl hover:bg-purple-600/30 transition-all duration-300 group border border-purple-500/30">
-                <div class="w-10 h-10 bg-purple-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-3">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
+            <a href="{{ route('admin.projects.create') }}" class="flex flex-col items-center p-3 sm:p-4 bg-purple-600/20 rounded-xl sm:rounded-2xl hover:bg-purple-600/30 transition-all duration-300 group border border-purple-500/30">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-2 sm:mb-3">
+                    <i class="fi fi-rr-plus w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
                 </div>
-                <span class="text-sm font-medium text-white">Novo Projeto</span>
+                <span class="text-xs sm:text-sm font-medium text-white text-center">Novo Projeto</span>
             </a>
 
-            <a href="{{ route('admin.client-projects.create') }}" class="flex flex-col items-center p-4 bg-cyan-600/20 rounded-2xl hover:bg-cyan-600/30 transition-all duration-300 group border border-cyan-500/30">
-                <div class="w-10 h-10 bg-cyan-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-3">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
+            <a href="{{ route('admin.client-projects.create') }}" class="flex flex-col items-center p-3 sm:p-4 bg-cyan-600/20 rounded-xl sm:rounded-2xl hover:bg-cyan-600/30 transition-all duration-300 group border border-cyan-500/30">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-cyan-600 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-2 sm:mb-3">
+                    <i class="fi fi-rr-plus w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
                 </div>
-                <span class="text-sm font-medium text-white">Projeto Cliente</span>
+                <span class="text-xs sm:text-sm font-medium text-white text-center">Projeto Cliente</span>
             </a>
 
-            <a href="{{ route('admin.invoices.create') }}" class="flex flex-col items-center p-4 bg-emerald-600/20 rounded-2xl hover:bg-emerald-600/30 transition-all duration-300 group border border-emerald-500/30">
-                <div class="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-3">
-                    <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
-                    </svg>
+            <a href="{{ route('admin.invoices.create') }}" class="flex flex-col items-center p-3 sm:p-4 bg-emerald-600/20 rounded-xl sm:rounded-2xl hover:bg-emerald-600/30 transition-all duration-300 group border border-emerald-500/30">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-600 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-2 sm:mb-3">
+                    <i class="fi fi-rr-plus w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
                 </div>
-                <span class="text-sm font-medium text-white">Nova Fatura</span>
+                <span class="text-xs sm:text-sm font-medium text-white text-center">Nova Fatura</span>
             </a>
         </div>
     </div>
 
     <!-- Recent Activity -->
-    <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6">
-        <h3 class="text-xl font-bold text-white mb-6 flex items-center">
-            <svg class="w-6 h-6 mr-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-            </svg>
-            Atividade Recente
+    <div class="bg-gray-800/50 backdrop-blur-md rounded-2xl lg:rounded-3xl border border-gray-700/50 p-4 sm:p-6">
+        <h3 class="text-lg sm:text-xl font-bold text-white mb-4 sm:mb-6 flex items-center">
+            <i class="fi fi-rr-clock w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-green-400"></i>
+            <span class="truncate">Atividade Recente</span>
         </h3>
         <div class="space-y-4">
             @if($recentClientProjects->count() > 0)
                 @foreach($recentClientProjects->take(2) as $project)
                     <div class="flex items-center p-3 bg-gray-700/30 rounded-xl hover:bg-gray-700/50 transition-colors">
                         <div class="w-10 h-10 bg-cyan-600/20 rounded-lg flex items-center justify-center mr-3">
-                            <svg class="w-5 h-5 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
+                            <i class="fi fi-rr-users w-5 h-5 text-cyan-400"></i>
                         </div>
                         <div class="flex-1">
                             <p class="text-white font-medium">Projeto: {{ Str::limit($project->name, 25) }}</p>
@@ -387,9 +353,7 @@
                 @foreach($recentTickets->take(2) as $ticket)
                     <div class="flex items-center p-3 bg-gray-700/30 rounded-xl hover:bg-gray-700/50 transition-colors">
                         <div class="w-10 h-10 bg-orange-600/20 rounded-lg flex items-center justify-center mr-3">
-                            <svg class="w-5 h-5 text-orange-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
-                            </svg>
+                            <i class="fi fi-rr-headset w-5 h-5 text-orange-400"></i>
                         </div>
                         <div class="flex-1">
                             <p class="text-white font-medium">Ticket: {{ Str::limit($ticket->subject, 25) }}</p>
@@ -406,9 +370,7 @@
                 @foreach($recentPosts->take(3) as $post)
                     <div class="flex items-center p-3 bg-gray-700/30 rounded-xl hover:bg-gray-700/50 transition-colors">
                         <div class="w-10 h-10 bg-blue-600/20 rounded-lg flex items-center justify-center mr-3">
-                            <svg class="w-5 h-5 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
-                            </svg>
+                            <i class="fi fi-rr-edit w-5 h-5 text-blue-400"></i>
                         </div>
                         <div class="flex-1">
                             <p class="text-white font-medium">{{ Str::limit($post->title, 30) }}</p>
@@ -428,9 +390,7 @@
 <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6">
     <div class="flex items-center justify-between mb-6">
         <h3 class="text-xl font-bold text-white flex items-center">
-            <svg class="w-6 h-6 mr-3 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-            </svg>
+            <i class="fi fi-rr-envelope w-6 h-6 mr-3 text-pink-400"></i>
             Contatos Recentes
         </h3>
         <a href="{{ route('admin.contacts.index') }}" class="text-pink-400 hover:text-pink-300 text-sm font-medium transition-colors">

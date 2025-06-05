@@ -40,18 +40,14 @@
                    class="group bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-10 py-5 rounded-xl text-lg font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25">
                     <span class="inline-flex items-center">
                         Ver Portfolio
-                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                        </svg>
+                        <i class="fi fi-rr-arrow-right w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true"></i>
                     </span>
                 </a>
                 <a href="{{ route('contact') }}" 
                    class="group border-2 border-blue-400 text-blue-400 hover:bg-blue-400 hover:text-black px-10 py-5 rounded-xl text-lg font-semibold transition-all duration-300 transform hover:scale-105 backdrop-blur-sm">
                     <span class="inline-flex items-center">
                         Fale Conosco
-                        <svg class="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                        </svg>
+                        <i class="fi fi-rr-comment w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true"></i>
                     </span>
                 </a>
             </div>
@@ -76,9 +72,7 @@
     
     <!-- Scroll Indicator -->
     <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-        <svg class="w-6 h-6 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"/>
-        </svg>
+        <i class="fi fi-rr-angle-down w-6 h-6 text-white/60" aria-hidden="true"></i>
     </div>
 </section>
 
@@ -102,9 +96,7 @@
             <!-- Web Design -->
             <div class="group bg-gray-800/50 backdrop-blur-md p-10 rounded-3xl border border-gray-700 hover:border-blue-500/50 hover:bg-gray-700/50 transition-all duration-500 transform hover:-translate-y-4 shadow-2xl hover:shadow-blue-500/25">
                 <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
+                    <i class="fi fi-rr-computer w-8 h-8 text-white" aria-hidden="true"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-white mb-4">Web Design</h3>
                 <p class="text-gray-300 mb-6 leading-relaxed">
@@ -112,21 +104,15 @@
                 </p>
                 <ul class="space-y-2 text-sm text-gray-400">
                     <li class="flex items-center">
-                        <svg class="w-4 h-4 text-blue-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                        </svg>
+                        <i class="fi fi-rr-check w-4 h-4 text-blue-400 mr-2" aria-hidden="true"></i>
                         Design Responsivo
                     </li>
                     <li class="flex items-center">
-                        <svg class="w-4 h-4 text-blue-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                        </svg>
+                        <i class="fi fi-rr-check w-4 h-4 text-blue-400 mr-2" aria-hidden="true"></i>
                         UI/UX Otimizado
                     </li>
                     <li class="flex items-center">
-                        <svg class="w-4 h-4 text-blue-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                        </svg>
+                        <i class="fi fi-rr-check w-4 h-4 text-blue-400 mr-2" aria-hidden="true"></i>
                         Prototipagem Avançada
                     </li>
                 </ul>
@@ -135,9 +121,7 @@
             <!-- Desenvolvimento -->
             <div class="group bg-gray-800/50 backdrop-blur-md p-10 rounded-3xl border border-gray-700 hover:border-purple-500/50 hover:bg-gray-700/50 transition-all duration-500 transform hover:-translate-y-4 shadow-2xl hover:shadow-purple-500/25">
                 <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
-                    </svg>
+                    <i class="fi fi-rr-code w-8 h-8 text-white" aria-hidden="true"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-white mb-4">Desenvolvimento</h3>
                 <p class="text-gray-300 mb-6 leading-relaxed">
@@ -145,21 +129,15 @@
                 </p>
                 <ul class="space-y-2 text-sm text-gray-400">
                     <li class="flex items-center">
-                        <svg class="w-4 h-4 text-purple-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                        </svg>
+                        <i class="fi fi-rr-check w-4 h-4 text-purple-400 mr-2" aria-hidden="true"></i>
                         Laravel & PHP
                     </li>
                     <li class="flex items-center">
-                        <svg class="w-4 h-4 text-purple-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                        </svg>
+                        <i class="fi fi-rr-check w-4 h-4 text-purple-400 mr-2" aria-hidden="true"></i>
                         React & Vue.js
                     </li>
                     <li class="flex items-center">
-                        <svg class="w-4 h-4 text-purple-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                        </svg>
+                        <i class="fi fi-rr-check w-4 h-4 text-purple-400 mr-2" aria-hidden="true"></i>
                         APIs & Integrações
                     </li>
                 </ul>
@@ -168,9 +146,7 @@
             <!-- SEO & Performance -->
             <div class="group bg-gray-800/50 backdrop-blur-md p-10 rounded-3xl border border-gray-700 hover:border-green-500/50 hover:bg-gray-700/50 transition-all duration-500 transform hover:-translate-y-4 shadow-2xl hover:shadow-green-500/25">
                 <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                    <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                    </svg>
+                    <i class="fi fi-rr-bolt w-8 h-8 text-white" aria-hidden="true"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-white mb-4">SEO & Performance</h3>
                 <p class="text-gray-300 mb-6 leading-relaxed">
@@ -178,21 +154,15 @@
                 </p>
                 <ul class="space-y-2 text-sm text-gray-400">
                     <li class="flex items-center">
-                        <svg class="w-4 h-4 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                        </svg>
+                        <i class="fi fi-rr-check w-4 h-4 text-green-400 mr-2" aria-hidden="true"></i>
                         SEO Técnico
                     </li>
                     <li class="flex items-center">
-                        <svg class="w-4 h-4 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                        </svg>
+                        <i class="fi fi-rr-check w-4 h-4 text-green-400 mr-2" aria-hidden="true"></i>
                         Core Web Vitals
                     </li>
                     <li class="flex items-center">
-                        <svg class="w-4 h-4 text-green-400 mr-2" fill="currentColor" viewBox="0 0 20 20">
-                            <path fill-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clip-rule="evenodd"/>
-                        </svg>
+                        <i class="fi fi-rr-check w-4 h-4 text-green-400 mr-2" aria-hidden="true"></i>
                         Analytics Avançado
                     </li>
                 </ul>
@@ -230,16 +200,14 @@
                     </div>
                     <div class="flex-1 flex justify-center">
                         <div class="bg-gray-600/50 px-3 py-1 rounded text-sm text-gray-300 flex items-center">
-                            <svg class="w-4 h-4 mr-2 text-orange-400" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12,2.2467A10.00042,10.00042,0,0,0,8.83752,21.73419c.5.08752.6875-.21247.6875-.475,0-.23752-.01251-1.025-.01251-1.86249C7,19.85919,6.35,18.78423,6.15,18.22173A3.636,3.636,0,0,0,5.125,16.8092c-.35-.1875-.85-.65-.01251-.66248A2.00117,2.00117,0,0,1,6.65,17.17169a2.13742,2.13742,0,0,0,2.91248.825A2.10376,2.10376,0,0,1,10.2,16.65923c-2.225-.25-4.55-1.11254-4.55-4.9375a3.89187,3.89187,0,0,1,1.025-2.6875,3.59373,3.59373,0,0,1,.1-2.65s.83747-.26251,2.75,1.025a9.42747,9.42747,0,0,1,5,0c1.91248-1.3,2.75-1.025,2.75-1.025a3.59323,3.59323,0,0,1,.1,2.65,3.869,3.869,0,0,1,1.025,2.6875c0,3.83747-2.33752,4.6875-4.5625,4.9375a2.36814,2.36814,0,0,1,.675,1.85c0,1.33752-.01251,2.41248-.01251,2.75,0,.26251.1875.575.6875.475A10.0053,10.0053,0,0,0,12,2.2467Z"/>
-                            </svg>
+                            <i class="fi fi-br-github w-4 h-4 mr-2 text-orange-400" aria-hidden="true"></i>
                             UserController.php
                         </div>
                     </div>
                 </div>
                 
                 <!-- Code Content -->
-                <div class="p-6 font-mono text-sm h-full flex flex-col">
+                <div class="p-6 py-2 font-mono text-sm h-full flex flex-col">
                     <div class="text-gray-300 leading-relaxed flex-1">
                         <div class="text-purple-400">&lt;?php</div>
                         <br>
@@ -262,7 +230,7 @@
                     </div>
                     
                     <!-- Status Bar -->
-                    <div class="mt-4 pt-4 border-t border-gray-600 flex justify-between text-xs text-gray-400">
+                    <div class="mt-4 pt-4 flex justify-between text-xs text-gray-400">
                         <span>Laravel 11, PHP 8.2</span>
                         <span class="text-green-400">● Ready</span>
                     </div>
@@ -280,9 +248,7 @@
                     </div>
                     <div class="flex-1 flex justify-center">
                         <div class="bg-gray-600/50 px-3 py-1 rounded text-sm text-gray-300 flex items-center">
-                            <svg class="w-4 h-4 mr-2 text-green-400" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12,2.2467A10.00042,10.00042,0,0,0,8.83752,21.73419c.5.08752.6875-.21247.6875-.475,0-.23752-.01251-1.025-.01251-1.86249C7,19.85919,6.35,18.78423,6.15,18.22173A3.636,3.636,0,0,0,5.125,16.8092c-.35-.1875-.85-.65-.01251-.66248A2.00117,2.00117,0,0,1,6.65,17.17169a2.13742,2.13742,0,0,0,2.91248.825A2.10376,2.10376,0,0,1,10.2,16.65923c-2.225-.25-4.55-1.11254-4.55-4.9375a3.89187,3.89187,0,0,1,1.025-2.6875,3.59373,3.59373,0,0,1,.1-2.65s.83747-.26251,2.75,1.025a9.42747,9.42747,0,0,1,5,0c1.91248-1.3,2.75-1.025,2.75-1.025a3.59323,3.59323,0,0,1,.1,2.65,3.869,3.869,0,0,1,1.025,2.6875c0,3.83747-2.33752,4.6875-4.5625,4.9375a2.36814,2.36814,0,0,1,.675,1.85c0,1.33752-.01251,2.41248-.01251,2.75,0,.26251.1875.575.6875.475A10.0053,10.0053,0,0,0,12,2.2467Z"/>
-                            </svg>
+                            <i class="fi fi-br-github w-4 h-4 mr-2 text-green-400" aria-hidden="true"></i>
                             Dashboard.vue
                         </div>
                     </div>
@@ -321,7 +287,7 @@
                     </div>
                     
                     <!-- Status Bar -->
-                    <div class="mt-4 pt-4 border-t border-gray-600 flex justify-between text-xs text-gray-400">
+                    <div class="mt-4 pt-4 flex justify-between text-xs text-gray-400"
                         <span>Vue.js 3, TypeScript</span>
                         <span class="text-green-400">● Ready</span>
                     </div>
@@ -333,8 +299,8 @@
         <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
             <!-- Laravel -->
             <div class="group bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center hover:border-red-500/50 hover:bg-gray-700/30 transition-all duration-300 hover:scale-105">
-                <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-red-500 to-red-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <span class="text-white font-bold text-xl">L</span>
+                <div class="w-12 h-12 mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <img src="{{ asset('assets/icons/laravel-svgrepo-com.svg') }}" alt="Laravel" class="w-10 h-10" aria-hidden="true">
                 </div>
                 <h3 class="text-white font-semibold">Laravel</h3>
                 <p class="text-gray-400 text-sm mt-2">PHP Framework</p>
@@ -342,8 +308,8 @@
 
             <!-- Vue.js -->
             <div class="group bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center hover:border-green-500/50 hover:bg-gray-700/30 transition-all duration-300 hover:scale-105">
-                <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <span class="text-white font-bold text-xl">V</span>
+                <div class="w-12 h-12 mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <img src="{{ asset('assets/icons/vue-svgrepo-com.svg') }}" alt="Vue.js" class="w-10 h-10" aria-hidden="true">
                 </div>
                 <h3 class="text-white font-semibold">Vue.js</h3>
                 <p class="text-gray-400 text-sm mt-2">Frontend Framework</p>
@@ -351,8 +317,8 @@
 
             <!-- React -->
             <div class="group bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center hover:border-blue-500/50 hover:bg-gray-700/30 transition-all duration-300 hover:scale-105">
-                <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <span class="text-white font-bold text-xl">R</span>
+                <div class="w-12 h-12 mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <img src="{{ asset('assets/icons/react-svgrepo-com.svg') }}" alt="React" class="w-10 h-10" aria-hidden="true">
                 </div>
                 <h3 class="text-white font-semibold">React</h3>
                 <p class="text-gray-400 text-sm mt-2">UI Library</p>
@@ -360,8 +326,8 @@
 
             <!-- Tailwind -->
             <div class="group bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center hover:border-cyan-500/50 hover:bg-gray-700/30 transition-all duration-300 hover:scale-105">
-                <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <span class="text-white font-bold text-xl">T</span>
+                <div class="w-12 h-12 mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <img src="{{ asset('assets/icons/tailwind-svgrepo-com.svg') }}" alt="Tailwind CSS" class="w-10 h-10" aria-hidden="true">
                 </div>
                 <h3 class="text-white font-semibold">Tailwind</h3>
                 <p class="text-gray-400 text-sm mt-2">CSS Framework</p>
@@ -369,8 +335,8 @@
 
             <!-- MySQL -->
             <div class="group bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center hover:border-orange-500/50 hover:bg-gray-700/30 transition-all duration-300 hover:scale-105">
-                <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <span class="text-white font-bold text-xl">M</span>
+                <div class="w-14 h-14 mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <img src="{{ asset('assets/icons/mysql-logo-svgrepo-com.svg') }}" alt="MySQL" class="w-10 h-10" aria-hidden="true">
                 </div>
                 <h3 class="text-white font-semibold">MySQL</h3>
                 <p class="text-gray-400 text-sm mt-2">Database</p>
@@ -378,8 +344,8 @@
 
             <!-- Docker -->
             <div class="group bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center hover:border-blue-400/50 hover:bg-gray-700/30 transition-all duration-300 hover:scale-105">
-                <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-blue-400 to-blue-500 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <span class="text-white font-bold text-xl">D</span>
+                <div class="w-12 h-12 mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <img src="{{ asset('assets/icons/docker-svgrepo-com.svg') }}" alt="Docker" class="w-10 h-10" aria-hidden="true">
                 </div>
                 <h3 class="text-white font-semibold">Docker</h3>
                 <p class="text-gray-400 text-sm mt-2">Container</p>
@@ -387,8 +353,8 @@
 
             <!-- Git -->
             <div class="group bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center hover:border-gray-500/50 hover:bg-gray-700/30 transition-all duration-300 hover:scale-105">
-                <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-gray-600 to-gray-700 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <span class="text-white font-bold text-xl">G</span>
+                <div class="w-12 h-12 mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <img src="{{ asset('assets/icons/git-svgrepo-com.svg') }}" alt="Git" class="w-10 h-10" aria-hidden="true">
                 </div>
                 <h3 class="text-white font-semibold">Git</h3>
                 <p class="text-gray-400 text-sm mt-2">Version Control</p>
@@ -396,8 +362,12 @@
 
             <!-- AWS -->
             <div class="group bg-gray-800/30 backdrop-blur-sm border border-gray-700 rounded-xl p-6 text-center hover:border-yellow-500/50 hover:bg-gray-700/30 transition-all duration-300 hover:scale-105">
-                <div class="w-12 h-12 mx-auto mb-4 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-lg flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <span class="text-white font-bold text-xl">A</span>
+                <div class="w-12 h-12 mx-auto mb-4 flex items-center justify-center group-hover:scale-110 transition-transform">
+                    <svg class="w-10 h-10" viewBox="0 0 256 256" aria-hidden="true">
+                        <path fill="#fff" d="M84.745 111.961c0 2.434.263 4.407.723 5.855a35.255 35.255 0 0 0 2.106 4.737c.329.526.46 1.052.46 1.513c0 .658-.395 1.316-1.25 1.973l-4.145 2.764c-.592.394-1.184.592-1.71.592c-.658 0-1.316-.329-1.974-.921a20.382 20.382 0 0 1-2.368-3.092a51.088 51.088 0 0 1-2.04-3.882c-5.131 6.053-11.579 9.079-19.342 9.079c-5.526 0-9.934-1.579-13.158-4.737c-3.223-3.158-4.868-7.368-4.868-12.631c0-5.593 1.974-10.132 5.987-13.553c4.013-3.421 9.342-5.132 16.118-5.132c2.237 0 4.54.198 6.974.527s4.934.855 7.566 1.447v-4.803c0-5-1.053-8.487-3.092-10.526c-2.106-2.04-5.658-3.026-10.724-3.026c-2.303 0-4.671.263-7.105.855c-2.435.592-4.803 1.316-7.106 2.237a18.87 18.87 0 0 1-2.302.855c-.46.132-.79.198-1.053.198c-.92 0-1.382-.658-1.382-2.04v-3.224c0-1.052.132-1.842.461-2.302c.329-.46.921-.921 1.842-1.382c2.303-1.184 5.066-2.17 8.29-2.96c3.223-.856 6.644-1.25 10.263-1.25c7.829 0 13.552 1.776 17.237 5.328c3.618 3.553 5.46 8.948 5.46 16.185v21.316h.132Zm-26.71 10c2.17 0 4.407-.395 6.776-1.185c2.368-.789 4.473-2.237 6.25-4.21c1.052-1.25 1.842-2.632 2.236-4.211c.395-1.579.658-3.487.658-5.723v-2.764a55.03 55.03 0 0 0-6.052-1.118a49.603 49.603 0 0 0-6.185-.395c-4.408 0-7.631.856-9.802 2.632c-2.171 1.776-3.224 4.276-3.224 7.566c0 3.092.79 5.394 2.434 6.973c1.58 1.645 3.882 2.435 6.908 2.435Zm52.828 7.105c-1.184 0-1.974-.198-2.5-.658c-.526-.395-.987-1.316-1.381-2.566l-15.46-50.855c-.396-1.316-.593-2.171-.593-2.632c0-1.052.526-1.645 1.579-1.645h6.447c1.25 0 2.106.198 2.566.658c.526.395.921 1.316 1.316 2.566l11.052 43.553l10.264-43.553c.329-1.316.723-2.17 1.25-2.566c.526-.394 1.447-.657 2.631-.657h5.263c1.25 0 2.106.197 2.632.657c.526.395.987 1.316 1.25 2.566l10.395 44.079l11.381-44.079c.395-1.316.856-2.17 1.316-2.566c.526-.394 1.382-.657 2.566-.657h6.118c1.053 0 1.645.526 1.645 1.644c0 .33-.066.658-.132 1.053c-.065.395-.197.92-.46 1.645l-15.855 50.855c-.395 1.316-.856 2.171-1.382 2.566c-.526.394-1.382.658-2.5.658h-5.658c-1.25 0-2.105-.198-2.631-.658c-.527-.461-.987-1.316-1.25-2.632l-10.198-42.434l-10.131 42.368c-.329 1.316-.724 2.171-1.25 2.632c-.527.46-1.448.658-2.632.658h-5.658Zm84.54 1.776c-3.421 0-6.842-.395-10.132-1.184c-3.289-.79-5.855-1.645-7.566-2.632c-1.052-.592-1.776-1.25-2.039-1.842a4.646 4.646 0 0 1-.395-1.842v-3.355c0-1.382.526-2.04 1.513-2.04c.395 0 .79.066 1.184.198c.395.131.987.394 1.645.658a35.818 35.818 0 0 0 7.237 2.302a39.46 39.46 0 0 0 7.829.79c4.145 0 7.368-.724 9.605-2.171c2.237-1.448 3.421-3.553 3.421-6.25c0-1.842-.592-3.356-1.776-4.606c-1.184-1.25-3.421-2.368-6.645-3.421l-9.539-2.96c-4.803-1.513-8.356-3.75-10.527-6.71c-2.171-2.895-3.289-6.12-3.289-9.54c0-2.763.592-5.197 1.776-7.303c1.184-2.105 2.763-3.947 4.737-5.394c1.974-1.514 4.211-2.632 6.842-3.422c2.632-.79 5.395-1.118 8.29-1.118c1.447 0 2.96.066 4.408.263c1.513.197 2.894.46 4.276.724c1.316.329 2.566.658 3.75 1.053c1.184.394 2.105.789 2.763 1.184c.921.526 1.579 1.052 1.974 1.644c.394.527.592 1.25.592 2.172v3.092c0 1.381-.526 2.105-1.513 2.105c-.527 0-1.382-.263-2.5-.79c-3.75-1.71-7.961-2.565-12.632-2.565c-3.75 0-6.71.592-8.75 1.842c-2.039 1.25-3.092 3.158-3.092 5.855c0 1.842.658 3.421 1.974 4.671c1.315 1.25 3.75 2.5 7.237 3.618l9.342 2.96c4.736 1.514 8.158 3.619 10.197 6.317c2.039 2.697 3.026 5.789 3.026 9.21c0 2.829-.592 5.395-1.71 7.632c-1.184 2.237-2.763 4.21-4.803 5.789c-2.039 1.645-4.474 2.829-7.302 3.685c-2.961.921-6.053 1.381-9.408 1.381Z"/>
+                        <path fill="#F90" fill-rule="evenodd" d="M207.837 162.816c-21.645 15.987-53.092 24.474-80.132 24.474c-37.894 0-72.04-14.014-97.829-37.303c-2.04-1.842-.197-4.342 2.237-2.895c27.895 16.184 62.303 25.987 97.895 25.987c24.013 0 50.395-5 74.671-15.263c3.618-1.645 6.71 2.368 3.158 5Z" clip-rule="evenodd"/>
+                        <path fill="#F90" fill-rule="evenodd" d="M216.85 152.553c-2.763-3.553-18.289-1.711-25.329-.856c-2.105.264-2.434-1.579-.526-2.96c12.368-8.684 32.697-6.184 35.066-3.29c2.368 2.961-.658 23.29-12.237 33.027c-1.777 1.513-3.487.723-2.698-1.25c2.632-6.513 8.487-21.185 5.724-24.671Z" clip-rule="evenodd"/>
+                    </svg>
                 </div>
                 <h3 class="text-white font-semibold">AWS</h3>
                 <p class="text-gray-400 text-sm mt-2">Cloud Platform</p>
