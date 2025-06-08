@@ -18,17 +18,80 @@ class NotificationController extends Controller
     {
         $user = Auth::user();
         
-        $notifications = Notification::forUser($user->id)
-            ->notExpired()
-            ->orderBy('created_at', 'desc')
-            ->paginate(20);
+        // Dados fake para demonstração (remover quando o banco estiver funcionando)
+        $fakeNotifications = collect([
+            (object)[
+                'id' => 1,
+                'title' => 'Novo contato recebido',
+                'message' => 'João Silva enviou uma mensagem através do formulário de contato',
+                'type' => 'new_contact',
+                'icon' => 'fi-rr-envelope',
+                'color' => 'blue',
+                'url' => route('admin.contacts.index'),
+                'read_at' => null,
+                'created_at' => now()->subMinutes(5),
+            ],
+            (object)[
+                'id' => 2,
+                'title' => 'Projeto aprovado',
+                'message' => 'O projeto "Website Corporativo" foi aprovado pelo cliente',
+                'type' => 'new_project',
+                'icon' => 'fi-rr-briefcase',
+                'color' => 'green',
+                'url' => route('admin.projects.index'),
+                'read_at' => null,
+                'created_at' => now()->subHours(2),
+            ],
+            (object)[
+                'id' => 3,
+                'title' => 'Fatura paga',
+                'message' => 'A fatura #001 foi paga com sucesso',
+                'type' => 'invoice_paid',
+                'icon' => 'fi-rr-money',
+                'color' => 'emerald',
+                'url' => route('admin.invoices.index'),
+                'read_at' => null,
+                'created_at' => now()->subHours(6),
+            ],
+            (object)[
+                'id' => 4,
+                'title' => 'Ticket de suporte',
+                'message' => 'Novo ticket criado: "Problema com login"',
+                'type' => 'support_ticket',
+                'icon' => 'fi-rr-headset',
+                'color' => 'orange',
+                'url' => route('admin.support-tickets.index'),
+                'read_at' => now()->subMinutes(10),
+                'created_at' => now()->subDay(),
+            ],
+            (object)[
+                'id' => 5,
+                'title' => 'Bem-vindo ao sistema!',
+                'message' => 'Seu perfil foi criado com sucesso. Complete suas informações.',
+                'type' => 'success',
+                'icon' => 'fi-rr-check-circle',
+                'color' => 'green',
+                'url' => route('admin.profile.index'),
+                'read_at' => now()->subHours(1),
+                'created_at' => now()->subDays(2),
+            ],
+        ]);
+
+        // Simular paginação
+        $notifications = new \Illuminate\Pagination\LengthAwarePaginator(
+            $fakeNotifications,
+            $fakeNotifications->count(),
+            20,
+            1,
+            ['path' => request()->url()]
+        );
 
         if ($request->ajax() || $request->wantsJson()) {
             return response()->json([
-                'notifications' => $notifications->items(),
-                'unread_count' => $this->getUnreadCount(),
-                'has_more' => $notifications->hasMorePages(),
-                'next_page' => $notifications->nextPageUrl(),
+                'notifications' => $fakeNotifications->toArray(),
+                'unread_count' => $fakeNotifications->where('read_at', null)->count(),
+                'has_more' => false,
+                'next_page' => null,
             ]);
         }
 

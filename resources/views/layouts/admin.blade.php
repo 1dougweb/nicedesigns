@@ -150,7 +150,7 @@
         <!-- Main Content -->
         <div class="flex-1 lg:ml-0">
             <!-- Top Bar -->
-            <header class="bg-gray-800/30 backdrop-blur-xl border-b border-gray-700/50 sticky top-0 z-40">
+            <header class="bg-gray-800/30 backdrop-blur-xl border-b border-gray-700/50 sticky top-0 z-30">
                 <div class="px-4 sm:px-6 py-3 sm:py-4">
                     <div class="flex items-center justify-between">
                         <!-- Mobile menu button -->
@@ -173,7 +173,7 @@
                                 </button>
 
                                 <!-- Notifications Dropdown -->
-                                <div id="notifications-panel" class="absolute right-0 mt-2 w-80 sm:w-96 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-50 hidden">
+                                <div id="notifications-panel" class="absolute right-0 mt-2 w-80 sm:w-96 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-40 hidden">
                                     <div class="p-4 border-b border-gray-700">
                                         <div class="flex items-center justify-between">
                                             <h3 class="text-lg font-semibold text-white">Notificações</h3>
@@ -218,7 +218,7 @@
                                 </button>
 
                                 <!-- User Dropdown Menu -->
-                                <div id="user-panel" class="absolute right-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-50 hidden">
+                                <div id="user-panel" class="absolute right-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-40 hidden">
                                     <div class="p-3 border-b border-gray-700">
                                         <div class="flex items-center space-x-3">
                                             @if(auth()->user()->avatar)

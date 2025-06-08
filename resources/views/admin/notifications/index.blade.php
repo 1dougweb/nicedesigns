@@ -4,68 +4,70 @@
 @section('page-title', 'Notificações')
 
 @section('content')
-<div class="space-y-6">
-    <!-- Header -->
-    <div class="bg-gray-800/50 backdrop-blur-xl rounded-xl border border-gray-700/50 p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <h2 class="text-2xl font-bold text-white mb-2">Minhas Notificações</h2>
-                <p class="text-gray-400">Gerencie suas notificações e mantenha-se atualizado</p>
+<!-- Header Actions -->
+<div class="flex items-center justify-between mb-8">
+    <div>
+        <h2 class="text-2xl font-bold text-white">Minhas Notificações</h2>
+        <p class="text-gray-400 mt-1">Gerencie suas notificações e mantenha-se atualizado</p>
+    </div>
+    <div class="flex space-x-4">
+        <button type="button" onclick="markAllAsRead()"
+                class="bg-blue-600/20 text-blue-300 border border-blue-600/30 hover:bg-blue-600/30 px-6 py-3 rounded-2xl font-medium transition-all duration-300 flex items-center space-x-2">
+            <i class="fi fi-rr-check-double w-5 h-5"></i>
+            <span>Marcar todas como lidas</span>
+        </button>
+        <button type="button" onclick="clearRead()"
+                class="bg-red-600/20 text-red-300 border border-red-600/30 hover:bg-red-600/30 px-6 py-3 rounded-2xl font-medium transition-all duration-300 flex items-center space-x-2">
+            <i class="fi fi-rr-trash w-5 h-5"></i>
+            <span>Limpar lidas</span>
+        </button>
+    </div>
+</div>
+
+<!-- Statistics Cards -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 mb-6 lg:mb-8">
+    <!-- Total -->
+    <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-blue-500/50 transition-all duration-300 group">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <i class="fi fi-rr-bell w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
             </div>
-            <div class="flex items-center space-x-3">
-                <button onclick="markAllAsRead()" class="btn btn-secondary">
-                    <i class="fi fi-rr-check-double w-4 h-4 mr-2"></i>
-                    Marcar todas como lidas
-                </button>
-                <button onclick="clearRead()" class="btn btn-outline-red">
-                    <i class="fi fi-rr-trash w-4 h-4 mr-2"></i>
-                    Limpar lidas
-                </button>
+            <div class="text-right">
+                <p class="text-3xl font-bold text-white">{{ $notifications->count() }}</p>
+                <p class="text-sm text-gray-400">Total</p>
             </div>
         </div>
     </div>
 
-    <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="bg-gray-800/50 backdrop-blur-xl rounded-xl border border-gray-700/50 p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-400 text-sm">Total de Notificações</p>
-                    <p class="text-2xl font-bold text-white">{{ $notifications->total() }}</p>
-                </div>
-                <div class="w-12 h-12 bg-blue-600/20 rounded-lg flex items-center justify-center">
-                    <i class="fi fi-rr-bell w-6 h-6 text-blue-400"></i>
-                </div>
+    <!-- Unread -->
+    <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-red-500/50 transition-all duration-300 group">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-red-500 to-red-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <i class="fi fi-rr-bell-ring w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
             </div>
-        </div>
-
-        <div class="bg-gray-800/50 backdrop-blur-xl rounded-xl border border-gray-700/50 p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-400 text-sm">Não Lidas</p>
-                    <p class="text-2xl font-bold text-white" id="unread-count">{{ $notifications->where('read_at', null)->count() }}</p>
-                </div>
-                <div class="w-12 h-12 bg-red-600/20 rounded-lg flex items-center justify-center">
-                    <i class="fi fi-rr-bell-ring w-6 h-6 text-red-400"></i>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-gray-800/50 backdrop-blur-xl rounded-xl border border-gray-700/50 p-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-gray-400 text-sm">Lidas</p>
-                    <p class="text-2xl font-bold text-white">{{ $notifications->where('read_at', '!=', null)->count() }}</p>
-                </div>
-                <div class="w-12 h-12 bg-green-600/20 rounded-lg flex items-center justify-center">
-                    <i class="fi fi-rr-check-circle w-6 h-6 text-green-400"></i>
-                </div>
+            <div class="text-right">
+                <p class="text-3xl font-bold text-white" id="unread-count">{{ $notifications->where('read_at', null)->count() }}</p>
+                <p class="text-sm text-gray-400">Não lidas</p>
             </div>
         </div>
     </div>
 
-    <!-- Notifications List -->
-    <div class="bg-gray-800/50 backdrop-blur-xl rounded-xl border border-gray-700/50">
+    <!-- Read -->
+    <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-green-500/50 transition-all duration-300 group">
+        <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <i class="fi fi-rr-check-circle w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
+            </div>
+            <div class="text-right">
+                <p class="text-3xl font-bold text-white">{{ $notifications->where('read_at', '!=', null)->count() }}</p>
+                <p class="text-sm text-gray-400">Lidas</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Notifications List -->
+<div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50">
         <div class="p-6 border-b border-gray-700/50">
             <h3 class="text-lg font-semibold text-white">Todas as Notificações</h3>
         </div>
@@ -127,46 +129,31 @@
         </div>
 
         <!-- Pagination -->
-        @if($notifications->hasPages())
+        @if(method_exists($notifications, 'hasPages') && $notifications->hasPages())
             <div class="p-6 border-t border-gray-700/50">
-                {{ $notifications->links('pagination::custom-pagination') }}
+                {{ $notifications->links() }}
             </div>
         @endif
     </div>
 
-    <!-- Test Notification Button (Development Only) -->
-    @if(config('app.debug'))
-        <div class="bg-yellow-600/20 border border-yellow-600/50 rounded-xl p-4">
-            <div class="flex items-center justify-between">
-                <div>
-                    <h4 class="text-yellow-400 font-medium">Modo de Desenvolvimento</h4>
-                    <p class="text-yellow-300/80 text-sm">Criar notificação de teste</p>
-                </div>
-                <button onclick="createTestNotification()" class="btn btn-outline-yellow">
-                    <i class="fi fi-rr-test w-4 h-4 mr-2"></i>
-                    Criar Notificação de Teste
-                </button>
+<!-- Test Notification Button (Development Only) -->
+@if(config('app.debug'))
+    <div class="bg-yellow-600/20 border border-yellow-600/50 rounded-3xl p-6">
+        <div class="flex items-center justify-between">
+            <div>
+                <h4 class="text-yellow-400 font-medium">Modo de Desenvolvimento</h4>
+                <p class="text-yellow-300/80 text-sm">Criar notificação de teste</p>
             </div>
+            <button onclick="createTestNotification()" 
+                    class="bg-yellow-600/20 text-yellow-300 border border-yellow-600/30 hover:bg-yellow-600/30 px-6 py-3 rounded-2xl font-medium transition-all duration-300 flex items-center space-x-2">
+                <i class="fi fi-rr-test w-5 h-5"></i>
+                <span>Criar Notificação de Teste</span>
+            </button>
         </div>
-    @endif
-</div>
+    </div>
+@endif
 
-@push('styles')
-<style>
-    .btn {
-        @apply inline-flex items-center px-4 py-2 rounded-lg text-sm font-medium transition-colors;
-    }
-    .btn-secondary {
-        @apply bg-gray-700 text-white hover:bg-gray-600;
-    }
-    .btn-outline-red {
-        @apply border border-red-600 text-red-400 hover:bg-red-600/10;
-    }
-    .btn-outline-yellow {
-        @apply border border-yellow-600 text-yellow-400 hover:bg-yellow-600/10;
-    }
-</style>
-@endpush
+
 
 @push('scripts')
 <script>
