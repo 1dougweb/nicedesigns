@@ -402,4 +402,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(SupportTicket::class, 'assigned_to');
     }
+
+    /**
+     * Get user notifications
+     */
+    public function notifications()
+    {
+        return $this->hasMany(Notification::class);
+    }
 }

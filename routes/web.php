@@ -101,6 +101,19 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('profile/validate-document', [\App\Http\Controllers\Admin\ProfileController::class, 'validateDocument'])->name('profile.validate-document');
     Route::post('profile/avatar', [\App\Http\Controllers\Admin\ProfileController::class, 'uploadAvatar'])->name('profile.upload-avatar');
     Route::delete('profile/avatar', [\App\Http\Controllers\Admin\ProfileController::class, 'removeAvatar'])->name('profile.remove-avatar');
+
+    // Notification Management
+    Route::controller(\App\Http\Controllers\Admin\NotificationController::class)->prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/unread', 'getUnread')->name('unread');
+        Route::get('/check-new', 'checkNew')->name('check-new');
+        Route::post('/', 'store')->name('store');
+        Route::put('/{notification}/read', 'markAsRead')->name('mark-read');
+        Route::put('/mark-all-read', 'markAllAsRead')->name('mark-all-read');
+        Route::delete('/{notification}', 'destroy')->name('destroy');
+        Route::delete('/clear-read', 'clearRead')->name('clear-read');
+        Route::get('/{notification}/redirect', 'redirect')->name('redirect');
+    });
 });
 
 // Client Routes (Only for users with client role)
@@ -150,7 +163,6 @@ Route::get('sitemap.xml', function () {
     if (!file_exists($sitemapPath)) {
         abort(404);
     }
-    
     return response(file_get_contents($sitemapPath), 200, [
         'Content-Type' => 'application/xml'
     ]);
@@ -158,13 +170,11 @@ Route::get('sitemap.xml', function () {
 
 Route::get('robots.txt', function () {
     $robotsPath = public_path('robots.txt');
-    
     if (!file_exists($robotsPath)) {
         $baseUrl = config('app.url');
         $defaultContent = "User-agent: *\nDisallow: /admin/\nDisallow: /client/\nAllow: /\n\nSitemap: {$baseUrl}/sitemap.xml\n";
         return response($defaultContent, 200, ['Content-Type' => 'text/plain']);
     }
-    
     return response(file_get_contents($robotsPath), 200, [
         'Content-Type' => 'text/plain'
     ]);
