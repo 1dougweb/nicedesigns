@@ -93,6 +93,14 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('seo/sitemap/generate', [AdminSettingController::class, 'generateSitemap'])->name('seo.sitemap.generate');
     Route::post('seo/robots/update', [AdminSettingController::class, 'updateRobots'])->name('seo.robots.update');
     Route::post('seo/robots/reset', [AdminSettingController::class, 'resetRobots'])->name('seo.robots.reset');
+
+    // Profile Management
+    Route::get('profile', [\App\Http\Controllers\Admin\ProfileController::class, 'index'])->name('profile.index');
+    Route::put('profile', [\App\Http\Controllers\Admin\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('profile/password', [\App\Http\Controllers\Admin\ProfileController::class, 'updatePassword'])->name('profile.password');
+    Route::post('profile/validate-document', [\App\Http\Controllers\Admin\ProfileController::class, 'validateDocument'])->name('profile.validate-document');
+    Route::post('profile/avatar', [\App\Http\Controllers\Admin\ProfileController::class, 'uploadAvatar'])->name('profile.upload-avatar');
+    Route::delete('profile/avatar', [\App\Http\Controllers\Admin\ProfileController::class, 'removeAvatar'])->name('profile.remove-avatar');
 });
 
 // Client Routes (Only for users with client role)

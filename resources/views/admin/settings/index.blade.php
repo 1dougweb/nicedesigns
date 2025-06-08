@@ -118,6 +118,13 @@
                 </svg>
                 <span>Pagar.me</span>
             </button>
+            <button type="button" onclick="switchTab('profile')" 
+                    class="tab-button flex items-center space-x-2 py-2 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600 font-medium">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                <span>Meu Perfil</span>
+            </button>
         </nav>
     </div>
 </div>
@@ -779,6 +786,119 @@
             </div>
         </div>
     </div>
+
+    <!-- Profile Tab -->
+    <div id="profile-tab" class="tab-content hidden">
+        <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
+            <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                <svg class="w-6 h-6 mr-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                </svg>
+                Meu Perfil de Administrador
+            </h3>
+            
+            <div class="mb-6 p-4 bg-blue-600/10 border border-blue-500/30 rounded-xl">
+                <div class="flex items-center">
+                    <svg class="w-5 h-5 text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                    </svg>
+                    <div class="text-blue-300">
+                        <p class="font-medium">Acesso ao Perfil Completo</p>
+                        <p class="text-sm">Para gerenciar todas as informações do seu perfil, use a página dedicada do perfil.</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- Quick Profile Info -->
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="text-lg font-semibold text-white mb-4">Informações Básicas</h4>
+                        <div class="space-y-4">
+                            <div class="flex items-center justify-between p-3 bg-gray-700/30 rounded-xl">
+                                <span class="text-gray-300">Nome:</span>
+                                <span class="text-white font-medium">{{ auth()->user()->display_name ?? 'Não informado' }}</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-700/30 rounded-xl">
+                                <span class="text-gray-300">Email:</span>
+                                <span class="text-white font-medium">{{ auth()->user()->email }}</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-700/30 rounded-xl">
+                                <span class="text-gray-300">Cargo:</span>
+                                <span class="text-white font-medium">{{ auth()->user()->position ?? 'Administrador' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h4 class="text-lg font-semibold text-white mb-4">Estatísticas da Conta</h4>
+                        <div class="space-y-3">
+                            <div class="flex items-center justify-between p-3 bg-gray-700/30 rounded-xl">
+                                <span class="text-gray-300">Tipo de conta:</span>
+                                <span class="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-xs font-medium">
+                                    Administrador
+                                </span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-700/30 rounded-xl">
+                                <span class="text-gray-300">Membro desde:</span>
+                                <span class="text-white">{{ auth()->user()->created_at->format('d/m/Y') }}</span>
+                            </div>
+                            <div class="flex items-center justify-between p-3 bg-gray-700/30 rounded-xl">
+                                <span class="text-gray-300">Última atualização:</span>
+                                <span class="text-white">{{ auth()->user()->updated_at->format('d/m/Y H:i') }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Actions -->
+                <div class="space-y-6">
+                    <div>
+                        <h4 class="text-lg font-semibold text-white mb-4">Ações Rápidas</h4>
+                        <div class="space-y-4">
+                            <a href="{{ route('admin.profile.index') }}" 
+                               class="block w-full bg-purple-600/20 text-purple-300 border border-purple-600/30 hover:bg-purple-600/30 px-6 py-4 rounded-xl font-medium transition-all duration-300 text-center">
+                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                                </svg>
+                                Editar Perfil Completo
+                            </a>
+                            
+                            <button type="button" onclick="showPasswordChangeModal()" 
+                                    class="block w-full bg-yellow-600/20 text-yellow-300 border border-yellow-600/30 hover:bg-yellow-600/30 px-6 py-4 rounded-xl font-medium transition-all duration-300 text-center">
+                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+                                </svg>
+                                Alterar Senha
+                            </button>
+                        </div>
+                    </div>
+
+                    @if(auth()->user()->avatar)
+                    <div>
+                        <h4 class="text-lg font-semibold text-white mb-4">Foto do Perfil</h4>
+                        <div class="flex items-center space-x-4">
+                            <img src="{{ auth()->user()->avatar_url }}" 
+                                 alt="Avatar" 
+                                 class="w-16 h-16 rounded-full object-cover border-2 border-purple-500/30">
+                            <div>
+                                <p class="text-white font-medium">Foto atual</p>
+                                <p class="text-gray-400 text-sm">Atualize na página do perfil</p>
+                            </div>
+                        </div>
+                    </div>
+                    @endif
+
+                    <div class="p-4 bg-gray-700/30 rounded-xl">
+                        <h5 class="text-white font-medium mb-2">Dica de Segurança</h5>
+                        <p class="text-gray-300 text-sm">
+                            Mantenha suas informações de perfil atualizadas e altere sua senha regularmente para manter sua conta segura.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 
 <script>
@@ -800,6 +920,11 @@ function switchTab(tabName) {
     // Mark button as active
     event.target.closest('.tab-button').classList.add('active', 'border-blue-500', 'text-blue-400');
     event.target.closest('.tab-button').classList.remove('border-transparent', 'text-gray-400');
+}
+
+function showPasswordChangeModal() {
+    // Redirecionar para a página do perfil com foco na seção de senha
+    window.location.href = '{{ route("admin.profile.index") }}#password-section';
 }
 
 function clearCache() {
