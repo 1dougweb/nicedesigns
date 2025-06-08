@@ -41,7 +41,7 @@ class ProfileController extends Controller
                 'nullable',
                 'string',
                 function ($attribute, $value, $fail) use ($request) {
-                    if ($value && $request->input('person_type')) {
+                    if ($value && $request->has('person_type') && $request->input('person_type')) {
                         $personType = $request->input('person_type');
                         $document = preg_replace('/\D/', '', $value);
                         
@@ -73,18 +73,24 @@ class ProfileController extends Controller
             'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // 2MB max
         ]);
 
-        // Limpar formatação dos campos
-        $data = $request->all();
-        if ($data['document']) {
+        // Limpar formatação dos campos - usando apenas campos que existem na validação
+        $data = $request->only([
+            'name', 'full_name', 'email', 'person_type', 'document', 'phone', 'whatsapp',
+            'zip_code', 'address', 'address_number', 'address_complement', 'neighborhood',
+            'city', 'state', 'country', 'company_name', 'position', 'bio'
+        ]);
+
+        // Limpar formatação apenas se os campos existirem e não estiverem vazios
+        if (!empty($data['document'])) {
             $data['document'] = preg_replace('/\D/', '', $data['document']);
         }
-        if ($data['phone']) {
+        if (!empty($data['phone'])) {
             $data['phone'] = preg_replace('/\D/', '', $data['phone']);
         }
-        if ($data['whatsapp']) {
+        if (!empty($data['whatsapp'])) {
             $data['whatsapp'] = preg_replace('/\D/', '', $data['whatsapp']);
         }
-        if ($data['zip_code']) {
+        if (!empty($data['zip_code'])) {
             $data['zip_code'] = preg_replace('/\D/', '', $data['zip_code']);
         }
 
