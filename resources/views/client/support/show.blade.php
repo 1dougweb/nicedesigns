@@ -305,9 +305,7 @@
                         <div class="flex items-center justify-end space-x-4">
                             <button type="submit" 
                                     class="px-8 py-3 bg-gradient-to-r from-cyan-600 to-cyan-700 hover:from-cyan-700 hover:to-cyan-800 text-white font-medium rounded-xl transition-all duration-300 transform hover:scale-105 shadow-lg hover:shadow-cyan-500/25">
-                                <svg class="w-5 h-5 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                                </svg>
+                                    <i class="fi fi-rr-paper-plane text-white ml-2 mt-2"></i>
                                 Enviar Resposta
                             </button>
                         </div>

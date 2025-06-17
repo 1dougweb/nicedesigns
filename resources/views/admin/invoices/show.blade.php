@@ -203,34 +203,103 @@
                 <div class="space-y-4">
                     @if($invoice->payment_method)
                         <div>
-                            <h4 class="text-gray-300 font-medium mb-1">Método de Pagamento</h4>
-                            <p class="text-white">{{ ucfirst(str_replace('_', ' ', $invoice->payment_method)) }}</p>
+                            <h4 class="text-gray-300 font-medium mb-2">Método de Pagamento</h4>
+                            <p class="text-white">{{ $invoice->payment_method_label }}</p>
                         </div>
                     @endif
 
                     @if($invoice->payment_reference)
                         <div>
-                            <h4 class="text-gray-300 font-medium mb-1">Referência do Pagamento</h4>
+                            <h4 class="text-gray-300 font-medium mb-2">Referência do Pagamento</h4>
                             <p class="text-white font-mono">{{ $invoice->payment_reference }}</p>
-                        </div>
-                    @endif
-
-                    @if($invoice->payment_notes)
-                        <div>
-                            <h4 class="text-gray-300 font-medium mb-1">Observações do Pagamento</h4>
-                            <p class="text-gray-300">{{ $invoice->payment_notes }}</p>
                         </div>
                     @endif
 
                     @if($invoice->paid_date)
                         <div>
-                            <h4 class="text-gray-300 font-medium mb-1">Data do Pagamento</h4>
-                            <p class="text-green-400 font-medium">{{ $invoice->paid_date->format('d/m/Y H:i') }}</p>
+                            <h4 class="text-gray-300 font-medium mb-2">Data do Pagamento</h4>
+                            <p class="text-white">{{ $invoice->paid_date->format('d/m/Y') }}</p>
+                        </div>
+                    @endif
+
+                    @if($invoice->payment_notes)
+                        <div>
+                            <h4 class="text-gray-300 font-medium mb-2">Observações do Pagamento</h4>
+                            <div class="text-gray-300 leading-relaxed">
+                                {!! nl2br(e($invoice->payment_notes)) !!}
+                            </div>
                         </div>
                     @endif
                 </div>
             </div>
         @endif
+        
+        <!-- Invoice PDF Document -->
+        <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
+            <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                <svg class="w-6 h-6 mr-3 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                </svg>
+                Documento da Fatura
+            </h3>
+
+            @if($invoice->has_pdf)
+                <div class="bg-gray-700/30 rounded-xl p-6 mb-6">
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center">
+                            <svg class="w-12 h-12 text-pink-400 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                            <div>
+                                <h4 class="text-white font-medium">Fatura #{{ $invoice->invoice_number }}.pdf</h4>
+                                <p class="text-gray-400 text-sm">PDF da fatura</p>
+                            </div>
+                        </div>
+                        <a href="{{ $invoice->invoice_file_url }}" target="_blank" 
+                           class="inline-flex items-center px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-xl transition-colors">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                            </svg>
+                            Ver PDF
+                        </a>
+                    </div>
+                </div>
+            @else
+                <div class="bg-gray-700/30 rounded-xl p-6 mb-6 text-center">
+                    <svg class="w-16 h-16 text-gray-500 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                    </svg>
+                    <p class="text-gray-400 mb-2">Nenhum documento PDF foi anexado a esta fatura</p>
+                </div>
+            @endif
+
+            <!-- Upload PDF Form -->
+            <form action="{{ route('admin.invoices.upload-pdf', $invoice) }}" method="POST" enctype="multipart/form-data" class="mt-6">
+                @csrf
+                <h4 class="text-white font-medium mb-4">Fazer Upload de PDF</h4>
+                
+                <div class="flex items-center space-x-4">
+                    <div class="relative flex-1">
+                        <input type="file" name="invoice_pdf" id="invoice_pdf_upload" accept=".pdf" class="sr-only">
+                        <label for="invoice_pdf_upload" class="cursor-pointer bg-gray-700/50 border border-gray-600 text-white rounded-xl py-3 px-4 w-full flex items-center justify-center">
+                            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                            </svg>
+                            <span id="file_name_display">Selecionar Arquivo PDF</span>
+                        </label>
+                    </div>
+                    <button type="submit" class="bg-pink-600 hover:bg-pink-700 text-white px-6 py-3 rounded-xl font-medium transition-colors flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+                        </svg>
+                        Upload
+                    </button>
+                </div>
+                @error('invoice_pdf')
+                    <p class="text-red-400 text-sm mt-2">{{ $message }}</p>
+                @enderror
+            </form>
+        </div>
 
         <!-- Internal Notes -->
         @if($invoice->notes)
@@ -339,119 +408,6 @@
                 </button>
             </div>
         </div>
-
-        <!-- PagarMe Integration -->
-        @if($invoice->status === 'pendente')
-        <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6">
-            <h3 class="text-lg font-bold text-white mb-6 flex items-center">
-                <svg class="w-5 h-5 mr-2 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                </svg>
-                Gerar pagamento
-            </h3>
-            
-            @if($invoice->hasPagarMeCharge())
-                <!-- Se já tem cobrança PagarMe -->
-                <div class="bg-green-800/20 border border-green-700 rounded-xl p-4 mb-4">
-                    <div class="flex items-center text-green-300 mb-2">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                        Cobrança PagarMe Ativa
-                    </div>
-                    <p class="text-gray-300 text-sm mb-3">Status: <span class="font-medium">{{ $invoice->pagarme_status ?? 'pendente' }}</span></p>
-                    
-                    <div class="flex flex-wrap gap-2">
-                        @if($invoice->pix_qr_code)
-                            <button onclick="showPixCode()" class="flex items-center px-3 py-2 bg-green-600 hover:bg-green-700 text-white text-sm rounded-lg transition-colors">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M12 12h-4.01"/>
-                                </svg>
-                                Ver PIX
-                            </button>
-                        @endif
-                        
-                        @if($invoice->boleto_url)
-                            <a href="{{ $invoice->boleto_url }}" target="_blank" class="flex items-center px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded-lg transition-colors">
-                                <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                                Ver Boleto
-                            </a>
-                        @endif
-                        
-                        <button onclick="checkPagarMeStatus({{ $invoice->id }})" class="flex items-center px-3 py-2 bg-yellow-600 hover:bg-yellow-700 text-white text-sm rounded-lg transition-colors">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                            </svg>
-                            Atualizar Status
-                        </button>
-                        
-                        <button onclick="cancelPagarMeCharge({{ $invoice->id }})" class="flex items-center px-3 py-2 bg-red-600 hover:bg-red-700 text-white text-sm rounded-lg transition-colors">
-                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                            </svg>
-                            Cancelar Cobrança
-                        </button>
-                    </div>
-                </div>
-            @else
-                <!-- Se não tem cobrança ainda -->
-                <div class="space-y-3">
-                    <button onclick="generatePagarMeCharge({{ $invoice->id }}, 'pix')" 
-                            class="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl transition-all duration-300">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M12 12h-4.01"/>
-                        </svg>
-                        Gerar PIX
-                    </button>
-                    
-                    <button onclick="generatePagarMeCharge({{ $invoice->id }}, 'boleto')" 
-                            class="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-300">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                        Gerar Boleto
-                    </button>
-                    
-                    <button onclick="generatePagarMeCharge({{ $invoice->id }}, 'multi')" 
-                            class="w-full flex items-center justify-center px-4 py-3 bg-gradient-to-r from-purple-600 to-purple-700 hover:from-purple-700 hover:to-purple-800 text-white rounded-xl transition-all duration-300">
-                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                        </svg>
-                        PIX + Boleto + Cartão
-                    </button>
-                </div>
-            @endif
-            
-            <!-- Auto Charge Section -->
-            <div class="mt-6 pt-6 border-t border-gray-700">
-                <h4 class="text-white font-medium mb-3">Cobrança Automática</h4>
-                @if($invoice->auto_charge_enabled)
-                    <div class="flex items-center justify-between p-3 bg-green-800/20 border border-green-700 rounded-xl">
-                        <div class="flex items-center text-green-300">
-                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            <span class="text-sm">Ativada {{ $invoice->auto_charge_date ? '- ' . $invoice->auto_charge_date->format('d/m/Y') : '' }}</span>
-                        </div>
-                        <button onclick="toggleAutoCharge({{ $invoice->id }}, false)" 
-                                class="px-3 py-1 bg-red-600 hover:bg-red-700 text-white text-xs rounded-lg transition-colors">
-                            Desativar
-                        </button>
-                    </div>
-                @else
-                    <div class="flex items-center justify-between p-3 bg-gray-700/30 rounded-xl">
-                        <span class="text-gray-400 text-sm">Cobrança automática não configurada</span>
-                        <button onclick="toggleAutoCharge({{ $invoice->id }}, true)" 
-                                class="px-3 py-1 bg-green-600 hover:bg-green-700 text-white text-xs rounded-lg transition-colors">
-                            Ativar
-                        </button>
-                    </div>
-                @endif
-            </div>
-        </div>
-        @endif
 
         <!-- Related Content -->
         <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6">
@@ -595,159 +551,40 @@ document.getElementById('markAsPaidModal').addEventListener('click', function(e)
     }
 });
 
-// PagarMe Functions
-function generatePagarMeCharge(invoiceId, paymentMethod) {
-    if (!confirm(`Gerar cobrança ${paymentMethod.toUpperCase()} para esta fatura?`)) {
-        return;
-    }
-    
-    // Show loading
-    const button = event.target;
-    const originalText = button.innerHTML;
-    button.innerHTML = '<svg class="animate-spin -ml-1 mr-3 h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>Gerando...';
-    button.disabled = true;
-    
-    fetch(`/admin/invoices/${invoiceId}/pagarme/generate`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        },
-        body: JSON.stringify({
-            payment_method: paymentMethod
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Cobrança gerada com sucesso! A página será recarregada.');
-            window.location.reload();
-        } else {
-            alert('Erro ao gerar cobrança: ' + (data.message || 'Erro desconhecido'));
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Erro ao gerar cobrança. Verifique o console para mais detalhes.');
-    })
-    .finally(() => {
-        button.innerHTML = originalText;
-        button.disabled = false;
-    });
-}
-
-function checkPagarMeStatus(invoiceId) {
-    const button = event.target;
-    const originalText = button.innerHTML;
-    button.innerHTML = '<svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
-    button.disabled = true;
-    
-    fetch(`/admin/invoices/${invoiceId}/pagarme/status`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(`Status atualizado: ${data.status}`);
-            if (data.status_changed) {
-                window.location.reload();
+document.addEventListener('DOMContentLoaded', function() {
+    // Mark as Paid Form
+    const markAsPaidForm = document.getElementById('mark-as-paid-form');
+    if (markAsPaidForm) {
+        markAsPaidForm.addEventListener('submit', function(e) {
+            if (!confirm('Tem certeza que deseja marcar esta fatura como paga?')) {
+                e.preventDefault();
             }
-        } else {
-            alert('Erro ao verificar status: ' + (data.message || 'Erro desconhecido'));
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Erro ao verificar status. Verifique o console para mais detalhes.');
-    })
-    .finally(() => {
-        button.innerHTML = originalText;
-        button.disabled = false;
-    });
-}
-
-function cancelPagarMeCharge(invoiceId) {
-    if (!confirm('Tem certeza que deseja cancelar a cobrança PagarMe? Esta ação não pode ser desfeita.')) {
-        return;
+        });
     }
     
-    const button = event.target;
-    const originalText = button.innerHTML;
-    button.innerHTML = '<svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
-    button.disabled = true;
-    
-    fetch(`/admin/invoices/${invoiceId}/pagarme/cancel`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Cobrança cancelada com sucesso! A página será recarregada.');
-            window.location.reload();
-        } else {
-            alert('Erro ao cancelar cobrança: ' + (data.message || 'Erro desconhecido'));
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert('Erro ao cancelar cobrança. Verifique o console para mais detalhes.');
-    })
-    .finally(() => {
-        button.innerHTML = originalText;
-        button.disabled = false;
-    });
-}
-
-function toggleAutoCharge(invoiceId, enable) {
-    const action = enable ? 'enable' : 'disable';
-    const actionText = enable ? 'ativar' : 'desativar';
-    
-    if (!confirm(`Tem certeza que deseja ${actionText} a cobrança automática?`)) {
-        return;
+    // Delete Form
+    const deleteForm = document.getElementById('delete-form');
+    if (deleteForm) {
+        deleteForm.addEventListener('submit', function(e) {
+            if (!confirm('Tem certeza que deseja excluir esta fatura? Esta ação não pode ser desfeita.')) {
+                e.preventDefault();
+            }
+        });
     }
     
-    const button = event.target;
-    const originalText = button.innerHTML;
-    button.innerHTML = '<svg class="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>';
-    button.disabled = true;
+    // File Upload Display
+    const fileInput = document.getElementById('invoice_pdf_upload');
+    const fileNameDisplay = document.getElementById('file_name_display');
     
-    fetch(`/admin/invoices/${invoiceId}/pagarme/auto-charge/${action}`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(`Cobrança automática ${enable ? 'ativada' : 'desativada'} com sucesso! A página será recarregada.`);
-            window.location.reload();
-        } else {
-            alert(`Erro ao ${actionText} cobrança automática: ` + (data.message || 'Erro desconhecido'));
-        }
-    })
-    .catch(error => {
-        console.error('Error:', error);
-        alert(`Erro ao ${actionText} cobrança automática. Verifique o console para mais detalhes.`);
-    })
-    .finally(() => {
-        button.innerHTML = originalText;
-        button.disabled = false;
-    });
-}
-
-function showPixCode() {
-    // Implementar modal para mostrar QR Code PIX
-    alert('Modal do PIX será implementado aqui. Por enquanto, verifique a seção de pagamentos da fatura.');
-}
+    if (fileInput && fileNameDisplay) {
+        fileInput.addEventListener('change', function() {
+            if (this.files && this.files.length > 0) {
+                fileNameDisplay.textContent = this.files[0].name;
+            } else {
+                fileNameDisplay.textContent = 'Selecionar Arquivo PDF';
+            }
+        });
+    }
+});
 </script>
 @endpush 

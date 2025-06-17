@@ -13,9 +13,7 @@
     <div class="flex space-x-4">
         <a href="{{ route('admin.invoices.show', $invoice) }}" 
            class="inline-flex items-center px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white font-medium rounded-xl transition-colors">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
-            </svg>
+           <i class="fi fi-rr-arrow-small-left text-white text-2xl mt-2 mr-2"></i>
             Voltar
         </a>
         <a href="{{ route('admin.invoices.index') }}" 

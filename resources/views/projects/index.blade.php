@@ -58,15 +58,11 @@
             <button class="filter-btn active bg-gradient-to-r from-purple-600 to-purple-700 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105" data-filter="all">
                 Todos os Projetos
             </button>
-            <button class="filter-btn bg-gray-800/50 border border-gray-700 text-gray-300 hover:text-white hover:border-blue-500/50 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105" data-filter="web">
-                Web Design
+            @foreach($categories as $category)
+            <button class="filter-btn bg-gray-800/50 border border-gray-700 text-gray-300 hover:text-white hover:border-blue-500/50 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105" data-filter="{{ $category->slug }}">
+                {{ $category->name }}
             </button>
-            <button class="filter-btn bg-gray-800/50 border border-gray-700 text-gray-300 hover:text-white hover:border-green-500/50 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105" data-filter="ecommerce">
-                E-commerce
-            </button>
-            <button class="filter-btn bg-gray-800/50 border border-gray-700 text-gray-300 hover:text-white hover:border-pink-500/50 px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105" data-filter="mobile">
-                Mobile
-            </button>
+            @endforeach
         </div>
     </div>
 </section>
@@ -77,11 +73,11 @@
         @if($projects->count() > 0)
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="projects-grid">
                 @foreach($projects as $project)
-                    <div class="project-card group bg-gray-800/50 backdrop-blur-md rounded-3xl overflow-hidden border border-gray-700 hover:border-purple-500/50 transition-all duration-500 transform hover:-translate-y-4 shadow-2xl hover:shadow-purple-500/25" data-category="{{ strtolower($project->category ? $project->category->name : 'web') }}">
+                    <div class="project-card group bg-gray-800/50 backdrop-blur-md rounded-3xl overflow-hidden border border-gray-700 hover:border-purple-500/50 transition-all duration-500 transform hover:-translate-y-4 shadow-2xl hover:shadow-purple-500/25" data-category="{{ $project->category ? $project->category->slug : 'web' }}">
                         <!-- Project Image -->
                         <div class="relative overflow-hidden h-64">
-                            @if($project->image)
-                                <img src="{{ Storage::url($project->image) }}" 
+                            @if($project->featured_image)
+                                <img src="{{ $project->featured_image }}" 
                                      alt="{{ $project->title }}" 
                                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             @else
@@ -98,7 +94,7 @@
                             <!-- Overlay -->
                             <div class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                                 <div class="text-center">
-                                    <a href="{{ route('projects.show', $project) }}" 
+                                    <a href="{{ route('projects.show', $project->slug) }}" 
                                        class="bg-white/20 backdrop-blur-md text-white px-6 py-3 rounded-xl font-semibold hover:bg-white/30 transition-all duration-300 inline-flex items-center">
                                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -111,12 +107,8 @@
 
                             <!-- Status Badge -->
                             <div class="absolute top-4 right-4">
-                                @if($project->status === 'completed')
-                                    <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold animate-float">Concluído</span>
-                                @elseif($project->status === 'in_progress')
-                                    <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold animate-float">Em Desenvolvimento</span>
-                                @else
-                                    <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-semibold animate-float">Planejamento</span>
+                                @if($project->is_featured)
+                                    <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold animate-float">Destaque</span>
                                 @endif
                             </div>
                         </div>
@@ -127,8 +119,8 @@
                                 <span class="bg-purple-600/20 text-purple-400 px-3 py-1 rounded-full text-sm font-semibold">
                                     {{ $project->category ? $project->category->name : 'Web Design' }}
                                 </span>
-                                @if($project->client)
-                                    <span class="text-gray-400 text-sm">{{ $project->client }}</span>
+                                @if($project->client_name)
+                                    <span class="text-gray-400 text-sm">{{ $project->client_name }}</span>
                                 @endif
                             </div>
 
@@ -143,12 +135,7 @@
                             <!-- Technologies -->
                             @if($project->technologies)
                                 <div class="flex flex-wrap gap-2 mb-6">
-                                    @php
-                                        $technologies = is_array($project->technologies) 
-                                            ? $project->technologies 
-                                            : explode(',', $project->technologies);
-                                    @endphp
-                                    @foreach($technologies as $tech)
+                                    @foreach(array_slice($project->technologies, 0, 3) as $tech)
                                         <span class="bg-gray-700/50 text-gray-300 px-2 py-1 rounded-lg text-xs">
                                             {{ trim($tech) }}
                                         </span>
@@ -159,8 +146,8 @@
                             <!-- Project Links -->
                             <div class="flex justify-between items-center">
                                 <div class="flex space-x-3">
-                                    @if($project->demo_url)
-                                        <a href="{{ $project->demo_url }}" 
+                                    @if($project->project_url)
+                                        <a href="{{ $project->project_url }}" 
                                            target="_blank"
                                            class="text-purple-400 hover:text-purple-300 transition-colors">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -168,17 +155,8 @@
                                             </svg>
                                         </a>
                                     @endif
-                                    @if($project->github_url)
-                                        <a href="{{ $project->github_url }}" 
-                                           target="_blank"
-                                           class="text-gray-400 hover:text-white transition-colors">
-                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                                <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-                                            </svg>
-                                        </a>
-                                    @endif
                                 </div>
-                                <a href="{{ route('projects.show', $project) }}" 
+                                <a href="{{ route('projects.show', $project->slug) }}" 
                                    class="text-purple-400 hover:text-purple-300 transition-colors font-semibold">
                                     Detalhes →
                                 </a>

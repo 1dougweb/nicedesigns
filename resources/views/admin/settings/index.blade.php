@@ -13,17 +13,13 @@
     <div class="flex space-x-4">
         <button type="button" onclick="clearCache()"
                 class="bg-yellow-600/20 text-yellow-300 border border-yellow-600/30 hover:bg-yellow-600/30 px-6 py-3 rounded-2xl font-medium transition-all duration-300 flex items-center space-x-2">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-            </svg>
+            <i class="fi fi-rr-broom text-xl mt-2"></i>
             <span>Limpar Cache</span>
         </button>
         <button type="submit" form="settings-form"
                 class="bg-blue-600/20 text-blue-300 border border-blue-600/30 hover:bg-blue-600/30 px-6 py-3 rounded-2xl font-medium transition-all duration-300 flex items-center space-x-2"
                 id="save-button">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-            </svg>
+            <i class="fi fi-rr-disk text-xl mt-2"></i>
             <span>Salvar Configurações</span>
         </button>
     </div>
@@ -32,18 +28,14 @@
 <!-- Alert Messages -->
 @if(session('success'))
 <div class="mb-6 bg-green-500/20 border border-green-500/30 text-green-300 px-6 py-4 rounded-2xl flex items-center">
-    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-    </svg>
+    <i class="fi fi-rr-check-circle text-xl mr-3 mt-2"></i>
     {{ session('success') }}
 </div>
 @endif
 
 @if(session('error'))
 <div class="mb-6 bg-red-500/20 border border-red-500/30 text-red-300 px-6 py-4 rounded-2xl flex items-center">
-    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-    </svg>
+    <i class="fi fi-rr-cross-circle text-xl mr-3"></i>
     {{ session('error') }}
 </div>
 @endif
@@ -51,9 +43,7 @@
 @if($errors->any())
 <div class="mb-6 bg-red-500/20 border border-red-500/30 text-red-300 px-6 py-4 rounded-2xl">
     <div class="flex items-center mb-2">
-        <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
-        </svg>
+        <i class="fi fi-rr-exclamation-triangle text-xl mr-3"></i>
         <strong>Erros de Validação:</strong>
     </div>
     <ul class="list-disc list-inside ml-8">
@@ -66,63 +56,69 @@
 
 <!-- Tabs Navigation -->
 <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 mb-8">
-    <div class=" border-gray-700/50">
-        <nav class="flex space-x-8 px-8 py-4" id="settings-tabs">
-            <button type="button" onclick="switchTab('general')" 
-                    class="tab-button active flex items-center space-x-2 py-2 px-1 border-b-2 border-blue-500 text-blue-400 font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
+    <div class="border-gray-700/50">
+        <nav class="flex space-x-4 px-8 py-4" id="settings-tabs">
+            <button 
+                data-tab="general-tab"
+                class="tab-button flex items-center space-x-2 py-2 px-3 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-300 text-gray-400"
+            >
+                <i class="fi fi-rr-settings text-xl mt-2"></i>
                 <span>Geral</span>
             </button>
-            <button type="button" onclick="switchTab('contact')" 
-                    class="tab-button flex items-center space-x-2 py-2 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600 font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                </svg>
+            
+            <button 
+                data-tab="contact-tab"
+                class="tab-button flex items-center space-x-2 py-2 px-3 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-300 text-gray-400"
+            >
+                <i class="fi fi-rr-envelope text-xl mt-2"></i>
                 <span>Contato</span>
             </button>
-            <button type="button" onclick="switchTab('social')" 
-                    class="tab-button flex items-center space-x-2 py-2 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600 font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                </svg>
+            
+            <button 
+                data-tab="social-tab"
+                class="tab-button flex items-center space-x-2 py-2 px-3 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-300 text-gray-400"
+            >
+                <i class="fi fi-rr-share text-xl mt-2"></i>
                 <span>Redes Sociais</span>
             </button>
-            <button type="button" onclick="switchTab('seo')" 
-                    class="tab-button flex items-center space-x-2 py-2 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600 font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
+            
+            <button 
+                data-tab="seo-tab"
+                class="tab-button flex items-center space-x-2 py-2 px-3 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-300 text-gray-400"
+            >
+                <i class="fi fi-rr-search text-xl mt-2"></i>
                 <span>SEO</span>
             </button>
-            <button type="button" onclick="switchTab('email')" 
-                    class="tab-button flex items-center space-x-2 py-2 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600 font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
-                </svg>
+            
+            <button 
+                data-tab="email-tab"
+                class="tab-button flex items-center space-x-2 py-2 px-3 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-300 text-gray-400"
+            >
+                <i class="fi fi-rr-at text-xl mt-2"></i>
                 <span>Email</span>
             </button>
-            <button type="button" onclick="switchTab('appearance')" 
-                    class="tab-button flex items-center space-x-2 py-2 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600 font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM7 3H5a2 2 0 00-2 2v12a4 4 0 004 4h2V3z"/>
-                </svg>
+            
+            <button 
+                data-tab="appearance-tab"
+                class="tab-button flex items-center space-x-2 py-2 px-3 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-300 text-gray-400"
+            >
+                <i class="fi fi-rr-palette text-xl mt-2"></i>
                 <span>Aparência</span>
             </button>
-            <button type="button" onclick="switchTab('pagarme')" 
-                    class="tab-button flex items-center space-x-2 py-2 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600 font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                <span>Pagar.me</span>
+            
+            <button 
+                data-tab="abacatepay-tab"
+                class="tab-button flex items-center space-x-2 py-2 px-3 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-300 text-gray-400"
+            >
+                <i class="fi fi-rr-credit-card text-xl mt-2"></i>
+                <span>AbacatePay</span>
             </button>
-            <button type="button" onclick="switchTab('profile')" 
-                    class="tab-button flex items-center space-x-2 py-2 px-1 border-b-2 border-transparent text-gray-400 hover:text-gray-300 hover:border-gray-600 font-medium">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                </svg>
+            
+            <button 
+                data-tab="profile-tab"
+                class="tab-button flex items-center space-x-2 py-2 px-3 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-300 text-gray-400"
+            >
+                <i class="fi fi-rr-user text-xl mt-2"></i>
                 <span>Meu Perfil</span>
             </button>
         </nav>
@@ -138,10 +134,7 @@
     <div id="general-tab" class="tab-content">
         <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
             <h3 class="text-xl font-bold text-white mb-6 flex items-center">
-                <svg class="w-6 h-6 mr-3 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                </svg>
+                <i class="fi fi-rr-settings text-blue-400 text-2xl mr-3 mt-2"></i>
                 Configurações Gerais
             </h3>
             
@@ -175,7 +168,7 @@
                     <input type="text" id="site_keywords" name="site_keywords" 
                            value="{{ $settings['general']->where('key', 'site_keywords')->first()->value ?? '' }}"
                            class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                           placeholder="web design, desenvolvimento, agência digital">
+                           placeholder="palavra1, palavra2, palavra3">
                 </div>
                 
                 <div>
@@ -253,9 +246,7 @@
     <div id="contact-tab" class="tab-content hidden">
         <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
             <h3 class="text-xl font-bold text-white mb-6 flex items-center">
-                <svg class="w-6 h-6 mr-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                </svg>
+                <i class="fi fi-rr-envelope text-green-400 text-2xl mr-3 mt-2"></i>
                 Informações de Contato
             </h3>
             
@@ -342,9 +333,7 @@
     <div id="social-tab" class="tab-content hidden">
         <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
             <h3 class="text-xl font-bold text-white mb-6 flex items-center">
-                <svg class="w-6 h-6 mr-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
-                </svg>
+                <i class="fi fi-rr-share text-purple-400 text-2xl mr-3"></i>
                 Redes Sociais
             </h3>
             
@@ -412,9 +401,7 @@
     <div id="seo-tab" class="tab-content hidden">
         <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
             <h3 class="text-xl font-bold text-white mb-6 flex items-center">
-                <svg class="w-6 h-6 mr-3 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
+                <i class="fi fi-rr-search text-yellow-400 text-2xl mr-3"></i>
                 SEO e Analytics
             </h3>
             
@@ -465,9 +452,7 @@
     <div id="email-tab" class="tab-content hidden">
         <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
             <h3 class="text-xl font-bold text-white mb-6 flex items-center">
-                <svg class="w-6 h-6 mr-3 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
-                </svg>
+                <i class="fi fi-rr-at text-red-400 text-2xl mr-3"></i>
                 Configurações de Email
             </h3>
             
@@ -535,9 +520,7 @@
                                class="flex-1 bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
                         <button type="button" onclick="testEmail(this)"
                                 class="bg-green-600/20 text-green-300 border border-green-600/30 hover:bg-green-600/30 px-6 py-3 rounded-xl font-medium transition-all duration-300 flex items-center space-x-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/>
-                            </svg>
+                            <i class="fi fi-rr-check text-xl"></i>
                             <span>Testar Email</span>
                         </button>
                     </div>
@@ -553,9 +536,7 @@
     <div id="appearance-tab" class="tab-content hidden">
         <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
             <h3 class="text-xl font-bold text-white mb-6 flex items-center">
-                <svg class="w-6 h-6 mr-3 text-pink-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM7 3H5a2 2 0 00-2 2v12a4 4 0 004 4h2V3z"/>
-                </svg>
+                <i class="fi fi-rr-palette text-pink-400 text-2xl mr-3"></i>
                 Aparência
             </h3>
             
@@ -598,191 +579,82 @@
         </div>
     </div>
 
-    <!-- PagarMe Tab -->
-    <div id="pagarme-tab" class="tab-content hidden">
+    <!-- AbacatePay Settings Tab -->
+    <div id="abacatepay-tab" class="tab-content hidden">
         <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
             <h3 class="text-xl font-bold text-white mb-6 flex items-center">
-                <svg class="w-6 h-6 mr-3 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                </svg>
-                Configurações Pagar.me
+                <i class="fi fi-rr-credit-card text-emerald-400 text-2xl mr-3"></i>
+                Configurações do AbacatePay
             </h3>
-            
-            <div class="mb-8 p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
-                <div class="flex items-start space-x-3">
-                    <svg class="w-5 h-5 text-blue-400 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <div>
-                        <h4 class="text-blue-300 font-medium mb-1">Configuração da Integração Pagar.me</h4>
-                        <p class="text-blue-200 text-sm">
-                            Configure suas credenciais da API Pagar.me para processar pagamentos. Use o ambiente <strong>sandbox</strong> para testes e <strong>live</strong> para produção.
-                        </p>
-                    </div>
-                </div>
-            </div>
-            
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Environment -->
-                <div class="md:col-span-2">
-                    <label for="pagarme_environment" class="block text-sm font-medium text-gray-300 mb-2">
-                        Ambiente <span class="text-red-400">*</span>
-                    </label>
-                    <select id="pagarme_environment" name="pagarme_environment" 
-                            class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                            onchange="togglePagarMeEnvironment()">
-                        <option value="sandbox" {{ ($settings['pagarme']->where('key', 'pagarme_environment')->first()->value ?? 'sandbox') == 'sandbox' ? 'selected' : '' }}>Sandbox (Testes)</option>
-                        <option value="live" {{ ($settings['pagarme']->where('key', 'pagarme_environment')->first()->value ?? 'sandbox') == 'live' ? 'selected' : '' }}>Live (Produção)</option>
-                    </select>
-                </div>
-
-                <!-- API Key -->
+                <!-- Token -->
                 <div>
-                    <label for="pagarme_api_key" class="block text-sm font-medium text-gray-300 mb-2">
-                        API Key <span class="text-red-400">*</span>
-                        <span class="text-xs text-gray-400 ml-2" id="api-key-hint">(Inicia com ak_test_ para sandbox)</span>
-                    </label>
-                    <div class="relative">
-                        <input type="password" id="pagarme_api_key" name="pagarme_api_key" 
-                               value="{{ $settings['pagarme']->where('key', 'pagarme_api_key')->first()->value ?? '' }}"
-                               class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                               placeholder="ak_test_...">
-                        <button type="button" onclick="togglePasswordVisibility('pagarme_api_key')" 
-                                class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Encryption Key -->
-                <div>
-                    <label for="pagarme_encryption_key" class="block text-sm font-medium text-gray-300 mb-2">
-                        Encryption Key <span class="text-red-400">*</span>
-                        <span class="text-xs text-gray-400 ml-2" id="encryption-key-hint">(Inicia com ek_test_ para sandbox)</span>
-                    </label>
-                    <div class="relative">
-                        <input type="password" id="pagarme_encryption_key" name="pagarme_encryption_key" 
-                               value="{{ $settings['pagarme']->where('key', 'pagarme_encryption_key')->first()->value ?? '' }}"
-                               class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                               placeholder="ek_test_...">
-                        <button type="button" onclick="togglePasswordVisibility('pagarme_encryption_key')" 
-                                class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
-                        </button>
-                    </div>
+                    <label for="abacatepay_token" class="block text-sm font-medium text-gray-300 mb-2">Token da API</label>
+                    <input
+                        type="password"
+                        id="abacatepay_token"
+                        name="abacatepay[token]"
+                        value="{{ old('abacatepay.token', $settings['abacatepay']['token'] ?? '') }}"
+                        class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                        placeholder="Digite o token da API"
+                    />
+                    <p class="mt-2 text-sm text-gray-400">
+                        Token de acesso à API do AbacatePay. Encontre no painel do AbacatePay em Configurações > API Keys.
+                    </p>
+                    @error('abacatepay.token')
+                        <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
+                    @enderror
                 </div>
 
                 <!-- Webhook Secret -->
                 <div>
-                    <label for="pagarme_webhook_secret" class="block text-sm font-medium text-gray-300 mb-2">
-                        Webhook Secret
-                        <span class="text-xs text-gray-400 ml-2">(Opcional - para validação de webhooks)</span>
-                    </label>
-                    <div class="relative">
-                        <input type="password" id="pagarme_webhook_secret" name="pagarme_webhook_secret" 
-                               value="{{ $settings['pagarme']->where('key', 'pagarme_webhook_secret')->first()->value ?? '' }}"
-                               class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 pr-10 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                               placeholder="whsec_...">
-                        <button type="button" onclick="togglePasswordVisibility('pagarme_webhook_secret')" 
-                                class="absolute inset-y-0 right-0 pr-3 flex items-center">
-                            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                            </svg>
-                        </button>
-                    </div>
+                    <label for="abacatepay_webhook_secret" class="block text-sm font-medium text-gray-300 mb-2">Webhook Secret</label>
+                    <input
+                        type="password"
+                        id="abacatepay_webhook_secret"
+                        name="abacatepay[webhook_secret]"
+                        value="{{ old('abacatepay.webhook_secret', $settings['abacatepay']['webhook_secret'] ?? '') }}"
+                        class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                        placeholder="Digite o webhook secret"
+                    />
+                    <p class="mt-2 text-sm text-gray-400">
+                        Chave secreta para validação dos webhooks. Encontre no painel do AbacatePay em Configurações > Webhooks.
+                    </p>
+                    @error('abacatepay.webhook_secret')
+                        <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                <!-- Payment Methods -->
-                <div>
-                    <label for="pagarme_default_methods" class="block text-sm font-medium text-gray-300 mb-2">
-                        Métodos de Pagamento Padrão
-                    </label>
-                    <input type="text" id="pagarme_default_methods" name="pagarme_default_methods" 
-                           value="{{ $settings['pagarme']->where('key', 'pagarme_default_methods')->first()->value ?? 'boleto,pix' }}"
-                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                           placeholder="boleto,pix">
-                    <p class="text-xs text-gray-400 mt-1">Separados por vírgula: boleto, pix, credit_card</p>
-                </div>
-
-                <!-- Auto Charge Days -->
-                <div>
-                    <label for="pagarme_auto_charge_days" class="block text-sm font-medium text-gray-300 mb-2">
-                        Dias para Cobrança Automática
-                    </label>
-                    <input type="number" id="pagarme_auto_charge_days" name="pagarme_auto_charge_days" min="0" max="30"
-                           value="{{ $settings['pagarme']->where('key', 'pagarme_auto_charge_days')->first()->value ?? 0 }}"
-                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
-                    <p class="text-xs text-gray-400 mt-1">0 = desabilitado</p>
-                </div>
-
-                <!-- Max Retry Attempts -->
-                <div>
-                    <label for="pagarme_max_retry_attempts" class="block text-sm font-medium text-gray-300 mb-2">
-                        Máximo de Tentativas
-                    </label>
-                    <input type="number" id="pagarme_max_retry_attempts" name="pagarme_max_retry_attempts" min="1" max="10"
-                           value="{{ $settings['pagarme']->where('key', 'pagarme_max_retry_attempts')->first()->value ?? 3 }}"
-                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
-                </div>
-
-                <!-- Send Email on Generation -->
-                <div>
-                    <label class="flex items-center">
-                        <input type="checkbox" name="pagarme_send_email_on_generation" value="1"
-                               {{ ($settings['pagarme']->where('key', 'pagarme_send_email_on_generation')->first()->value ?? true) ? 'checked' : '' }}
-                               class="sr-only peer">
-                        <div class="relative w-11 h-6 bg-gray-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                        <span class="ml-3 text-gray-300">Enviar Email na Geração</span>
-                    </label>
-                </div>
-
-                <!-- Boleto Instructions -->
+                <!-- Ambiente -->
                 <div class="md:col-span-2">
-                    <label for="pagarme_boleto_instructions" class="block text-sm font-medium text-gray-300 mb-2">
-                        Instruções do Boleto
-                    </label>
-                    <textarea id="pagarme_boleto_instructions" name="pagarme_boleto_instructions" rows="3"
-                              class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">{{ $settings['pagarme']->where('key', 'pagarme_boleto_instructions')->first()->value ?? 'Pagar preferencialmente em bancos digitais para compensação mais rápida.' }}</textarea>
+                    <label for="abacatepay_environment" class="block text-sm font-medium text-gray-300 mb-2">Ambiente</label>
+                    <select
+                        id="abacatepay_environment"
+                        name="abacatepay[environment]"
+                        class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                    >
+                        <option value="sandbox" {{ (old('abacatepay.environment', $settings['abacatepay']['environment'] ?? '') == 'sandbox') ? 'selected' : '' }}>Sandbox (Testes)</option>
+                        <option value="production" {{ (old('abacatepay.environment', $settings['abacatepay']['environment'] ?? '') == 'production') ? 'selected' : '' }}>Produção</option>
+                    </select>
+                    <p class="mt-2 text-sm text-gray-400">
+                        Escolha o ambiente de operação. Use Sandbox para testes e Produção para ambiente real.
+                    </p>
+                    @error('abacatepay.environment')
+                        <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
+                    @enderror
                 </div>
+            </div>
 
-                <!-- Test Connection -->
-                <div class="md:col-span-2 pt-6 border-t border-gray-700/50">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <h4 class="text-white font-medium mb-1">Testar Conexão</h4>
-                            <p class="text-gray-400 text-sm">Verifique se as credenciais estão funcionando corretamente</p>
-                        </div>
-                        <button type="button" onclick="testPagarMeConnection()"
-                                class="bg-green-600/20 text-green-300 border border-green-600/30 hover:bg-green-600/30 px-6 py-3 rounded-xl font-medium transition-all duration-300 flex items-center space-x-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                            <span>Testar Conexão</span>
-                        </button>
-                    </div>
-                    
-                    <!-- Webhook URL Info -->
-                    <div class="mt-6 p-4 bg-gray-700/30 rounded-xl">
-                        <h5 class="text-gray-300 font-medium mb-2">URL do Webhook</h5>
-                        <div class="flex items-center space-x-2">
-                            <input type="text" readonly 
-                                   value="{{ route('pagarme.webhook') }}"
-                                   class="flex-1 bg-gray-600/50 border border-gray-500/50 text-gray-300 rounded-lg px-3 py-2 text-sm font-mono">
-                            <button type="button" onclick="copyToClipboard('{{ route('pagarme.webhook') }}')"
-                                    class="bg-gray-600/50 hover:bg-gray-600/70 text-gray-300 px-3 py-2 rounded-lg text-sm transition-colors">
-                                Copiar
-                            </button>
-                        </div>
-                        <p class="text-xs text-gray-400 mt-2">Configure esta URL no painel do Pagar.me para receber notificações de pagamento</p>
-                    </div>
-                </div>
+            <!-- Botão de teste -->
+            <div class="flex items-center justify-end space-x-4 mt-8">
+                <a
+                    href="{{ route('admin.settings.abacatepay.test') }}"
+                    class="bg-yellow-600/20 text-yellow-300 border border-yellow-600/30 hover:bg-yellow-600/30 px-6 py-3 rounded-2xl font-medium transition-all duration-300 flex items-center space-x-2"
+                >
+                    <i class="fi fi-rr-refresh text-xl"></i>
+                    <span>Testar Conexão</span>
+                </a>
             </div>
         </div>
     </div>
@@ -791,17 +663,13 @@
     <div id="profile-tab" class="tab-content hidden">
         <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
             <h3 class="text-xl font-bold text-white mb-6 flex items-center">
-                <svg class="w-6 h-6 mr-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                </svg>
+                <i class="fi fi-rr-user text-purple-400 text-2xl mr-3"></i>
                 Meu Perfil de Administrador
             </h3>
             
             <div class="mb-6 p-4 bg-blue-600/10 border border-blue-500/30 rounded-xl">
                 <div class="flex items-center">
-                    <svg class="w-5 h-5 text-blue-400 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
+                    <i class="fi fi-rr-user text-blue-400 text-2xl mr-3"></i>
                     <div class="text-blue-300">
                         <p class="font-medium">Acesso ao Perfil Completo</p>
                         <p class="text-sm">Para gerenciar todas as informações do seu perfil, use a página dedicada do perfil.</p>
@@ -858,17 +726,13 @@
                         <div class="space-y-4">
                             <a href="{{ route('admin.profile.index') }}" 
                                class="block w-full bg-purple-600/20 text-purple-300 border border-purple-600/30 hover:bg-purple-600/30 px-6 py-4 rounded-xl font-medium transition-all duration-300 text-center">
-                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
-                                </svg>
+                                <i class="fi fi-rr-user-edit text-xl inline mr-2"></i>
                                 Editar Perfil Completo
                             </a>
                             
                             <button type="button" onclick="showPasswordChangeModal()" 
                                     class="block w-full bg-yellow-600/20 text-yellow-300 border border-yellow-600/30 hover:bg-yellow-600/30 px-6 py-4 rounded-xl font-medium transition-all duration-300 text-center">
-                                <svg class="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
-                                </svg>
+                                <i class="fi fi-rr-key text-xl inline mr-2"></i>
                                 Alterar Senha
                             </button>
                         </div>
@@ -901,27 +765,60 @@
     </div>
 </form>
 
+@push('scripts')
 <script>
-function switchTab(tabName) {
-    // Hide all tab contents
-    document.querySelectorAll('.tab-content').forEach(tab => {
-        tab.classList.add('hidden');
+document.addEventListener('DOMContentLoaded', function() {
+    // Função para alternar entre as abas
+    function switchTab(tabId) {
+        // Esconde todas as abas
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.add('hidden');
+        });
+        
+        // Remove a classe ativa de todos os botões
+        document.querySelectorAll('.tab-button').forEach(button => {
+            button.classList.remove('bg-gray-700/50', 'text-white');
+            button.classList.add('text-gray-400', 'hover:text-white');
+        });
+        
+        // Mostra a aba selecionada
+        document.getElementById(tabId).classList.remove('hidden');
+        
+        // Ativa o botão selecionado
+        document.querySelector(`[data-tab="${tabId}"]`).classList.remove('text-gray-400', 'hover:text-white');
+        document.querySelector(`[data-tab="${tabId}"]`).classList.add('bg-gray-700/50', 'text-white');
+        
+        // Atualiza a URL com o hash da aba
+        window.location.hash = tabId;
+    }
+    
+    // Adiciona os event listeners aos botões das abas
+    document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            const tabId = this.getAttribute('data-tab');
+            switchTab(tabId);
+        });
     });
     
-    // Remove active class from all buttons
-    document.querySelectorAll('.tab-button').forEach(btn => {
-        btn.classList.remove('active', 'border-blue-500', 'text-blue-400');
-        btn.classList.add('border-transparent', 'text-gray-400');
-    });
-    
-    // Show selected tab
-    document.getElementById(tabName + '-tab').classList.remove('hidden');
-    
-    // Mark button as active
-    event.target.closest('.tab-button').classList.add('active', 'border-blue-500', 'text-blue-400');
-    event.target.closest('.tab-button').classList.remove('border-transparent', 'text-gray-400');
-}
+    // Verifica se há um hash na URL e ativa a aba correspondente
+    if (window.location.hash) {
+        const tabId = window.location.hash.substring(1);
+        if (document.getElementById(tabId)) {
+            switchTab(tabId);
+        }
+    } else {
+        // Se não houver hash, ativa a primeira aba
+        const firstTab = document.querySelector('.tab-button');
+        if (firstTab) {
+            switchTab(firstTab.getAttribute('data-tab'));
+        }
+    }
+});
+</script>
+@endpush
 
+<script>
 function showPasswordChangeModal() {
     // Redirecionar para a página do perfil com foco na seção de senha
     window.location.href = '{{ route("admin.profile.index") }}#password-section';
@@ -932,7 +829,7 @@ function clearCache() {
     const originalText = button.innerHTML;
     
     // Mostrar loading
-    button.innerHTML = '<svg class="w-4 h-4 animate-spin mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Limpando...';
+    button.innerHTML = '<i class="fi fi-rr-spinner animate-spin mr-2"></i>Limpando...';
     button.disabled = true;
     
     fetch('{{ route("admin.settings.clear-cache") }}', {
@@ -970,7 +867,7 @@ function testEmail(button) {
     const originalText = button.innerHTML;
     
     // Mostrar loading
-    button.innerHTML = '<svg class="w-4 h-4 animate-spin mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Enviando...';
+    button.innerHTML = '<i class="fi fi-rr-spinner animate-spin mr-2"></i>Enviando...';
     button.disabled = true;
     
     fetch('{{ route("admin.settings.test-email") }}', {
@@ -999,74 +896,10 @@ function testEmail(button) {
     });
 }
 
-function togglePagarMeEnvironment() {
-    const environment = document.getElementById('pagarme_environment').value;
-    const apiKey = document.getElementById('pagarme_api_key');
-    const encryptionKey = document.getElementById('pagarme_encryption_key');
-    const webhookSecret = document.getElementById('pagarme_webhook_secret');
-
-    if (environment === 'live') {
-        apiKey.disabled = true;
-        encryptionKey.disabled = true;
-        webhookSecret.disabled = true;
-    } else {
-        apiKey.disabled = false;
-        encryptionKey.disabled = false;
-        webhookSecret.disabled = false;
-    }
-}
-
 function togglePasswordVisibility(inputId) {
     const input = document.getElementById(inputId);
     const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
     input.setAttribute('type', type);
-}
-
-function testPagarMeConnection() {
-    const environment = document.getElementById('pagarme_environment').value;
-    const apiKey = document.getElementById('pagarme_api_key').value;
-    const encryptionKey = document.getElementById('pagarme_encryption_key').value;
-    const webhookSecret = document.getElementById('pagarme_webhook_secret').value;
-
-    if (!environment || !apiKey || !encryptionKey) {
-        alert('Por favor, preencha pelo menos Ambiente, API Key e Encryption Key antes de testar a conexão.');
-        return;
-    }
-
-    const button = event.target;
-    const originalText = button.innerHTML;
-    button.innerHTML = '<svg class="w-4 h-4 animate-spin mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Testando...';
-    button.disabled = true;
-
-    fetch('{{ route("admin.settings.test-pagarme-connection") }}', {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-            environment: environment,
-            api_key: apiKey,
-            encryption_key: encryptionKey,
-            webhook_secret: webhookSecret
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert('Conexão com Pagar.me estabelecida com sucesso!');
-        } else {
-            alert('Erro ao testar conexão: ' + data.message);
-        }
-    })
-    .catch(error => {
-        alert('Erro ao testar conexão');
-        console.error('Error:', error);
-    })
-    .finally(() => {
-        button.innerHTML = originalText;
-        button.disabled = false;
-    });
 }
 
 function copyToClipboard(text) {
@@ -1087,10 +920,11 @@ document.addEventListener('DOMContentLoaded', function() {
     if (form && saveButton) {
         form.addEventListener('submit', function() {
             const originalText = saveButton.innerHTML;
-            saveButton.innerHTML = '<svg class="w-4 h-4 animate-spin mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg>Salvando...';
+            saveButton.innerHTML = '<i class="fi fi-rr-spinner animate-spin mr-2"></i>Salvando...';
             saveButton.disabled = true;
         });
     }
 });
 </script>
 @endsection 
+

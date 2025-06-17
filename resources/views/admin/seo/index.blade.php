@@ -17,9 +17,7 @@
         <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
             <div class="flex items-center mb-6">
                 <div class="bg-green-500/20 p-3 rounded-xl mr-4">
-                    <svg class="w-8 h-8 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                    </svg>
+                <i class="fi fi-rr-document text-green-400 text-2xl mt-2"></i>
                 </div>
                 <div>
                     <h2 class="text-xl font-bold text-white">Sitemap XML</h2>
@@ -63,9 +61,7 @@
             <div class="space-y-3">
                 <button id="generate-sitemap" 
                         class="w-full bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105">
-                    <svg class="inline w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                    </svg>
+                        <i class="fi fi-rr-refresh  text-white ml-2 justify-center align-middle"></i>
                     Gerar Sitemap
                 </button>
                 
@@ -88,9 +84,7 @@
         <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
             <div class="flex items-center mb-6">
                 <div class="bg-red-500/20 p-3 rounded-xl mr-4">
-                    <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                    </svg>
+                <i class="fi fi-rr-robot text-red-400 text-2xl mt-2"></i>
                 </div>
                 <div>
                     <h2 class="text-xl font-bold text-white">Robots.txt</h2>
@@ -110,17 +104,13 @@
                 <div class="flex space-x-3">
                     <button id="save-robots" 
                             class="flex-1 bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 text-white font-semibold py-3 px-6 rounded-xl transition-all duration-300 transform hover:scale-105">
-                        <svg class="inline w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"/>
-                        </svg>
+                            <i class="fi fi-rr-disk text-white ml-2 justify-center align-middle mt-2"></i>
                         Salvar
                     </button>
                     
                     <button id="reset-robots" 
                             class="flex-1 bg-gray-700 hover:bg-gray-600 text-white font-medium py-3 px-6 rounded-xl transition-all duration-300">
-                        <svg class="inline w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                        </svg>
+                            <i class="fi fi-rr-refresh  text-white ml-2 justify-center align-middle mt-2"></i>
                         Restaurar
                     </button>
                 </div>

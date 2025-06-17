@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Carbon\Carbon;
+use App\Notifications\InvoiceStatusChanged;
+use App\Notifications\InvoicePaymentReceived;
+use Illuminate\Support\Facades\Notification;
 
 class Invoice extends Model
 {
@@ -33,26 +36,29 @@ class Invoice extends Model
         'attachments',
         'notes',
         'payment_instructions',
-        // Campos PagarMe
-        'pagarme_charge_id',
-        'pagarme_transaction_id',
-        'pagarme_status',
-        'pagarme_data',
-        'payment_url',
-        'boleto_url',
-        'boleto_barcode',
-        'pix_qr_code',
-        'pix_code',
+
         'auto_charge_enabled',
         'auto_charge_date',
         'webhook_received_at',
+
+        // AbacatePay fields
+        'abacatepay_billing_id',
+        'abacatepay_customer_id',
+        'abacatepay_status',
+        'abacatepay_data',
+        'payment_url',
+        'pix_qr_code',
+        'pix_qr_code_url',
+        'boleto_url',
+        'boleto_barcode',
     ];
 
     protected function casts(): array
     {
         return [
             'attachments' => 'array',
-            'pagarme_data' => 'array',
+            'abacatepay_data' => 'array',
+
             'issue_date' => 'date',
             'due_date' => 'date',
             'paid_date' => 'date',
@@ -310,18 +316,6 @@ class Invoice extends Model
     }
 
     /**
-     * Métodos PagarMe
-     */
-
-    /**
-     * Verificar se tem cobrança PagarMe ativa
-     */
-    public function hasPagarMeCharge(): bool
-    {
-        return !empty($this->pagarme_charge_id) || !empty($this->pagarme_transaction_id);
-    }
-
-    /**
      * Verificar se pode gerar cobrança automática
      */
     public function canAutoCharge(): bool
@@ -329,7 +323,6 @@ class Invoice extends Model
         return $this->auto_charge_enabled && 
                $this->auto_charge_date &&
                $this->auto_charge_date->isToday() &&
-               !$this->hasPagarMeCharge() &&
                in_array($this->status, ['pendente']);
     }
 
@@ -355,84 +348,237 @@ class Invoice extends Model
         ]);
     }
 
+    public function scopeAutoChargeReady($query)
+    {
+        return $query->where('auto_charge_enabled', true)
+                    ->whereDate('auto_charge_date', '<=', now())
+                    ->where('status', 'pendente');
+    }
+
     /**
-     * Tem boleto disponível
+     * AbacatePay Methods
      */
-    public function hasBoleto(): bool
+    
+    /**
+     * Verificar se tem cobrança AbacatePay ativa
+     */
+    public function hasAbacatePayCharge(): bool
+    {
+        return !empty($this->abacatepay_billing_id);
+    }
+
+    /**
+     * Obter status da cobrança AbacatePay formatado
+     */
+    public function getAbacatePayStatusLabelAttribute(): string
+    {
+        if (!$this->abacatepay_status) {
+            return 'Sem cobrança';
+        }
+
+        $statusLabels = [
+            'pending' => 'Pendente',
+            'waiting_payment' => 'Aguardando pagamento',
+            'paid' => 'Pago',
+            'completed' => 'Completo',
+            'cancelled' => 'Cancelado',
+            'expired' => 'Expirado',
+            'failed' => 'Falhou',
+        ];
+
+        return $statusLabels[$this->abacatepay_status] ?? ucfirst($this->abacatepay_status);
+    }
+
+    /**
+     * Obter cor do status AbacatePay
+     */
+    public function getAbacatePayStatusColorAttribute(): string
+    {
+        if (!$this->abacatepay_status) {
+            return 'gray';
+        }
+
+        $statusColors = [
+            'pending' => 'yellow',
+            'waiting_payment' => 'blue',
+            'paid' => 'green',
+            'completed' => 'green',
+            'cancelled' => 'gray',
+            'expired' => 'red',
+            'failed' => 'red',
+        ];
+
+        return $statusColors[$this->abacatepay_status] ?? 'gray';
+    }
+
+    /**
+     * Verificar se pode gerar cobrança AbacatePay
+     */
+    public function canGenerateAbacatePayCharge(): bool
+    {
+        return in_array($this->status, ['pendente', 'vencida']) && 
+               $this->total_amount > 0;
+    }
+
+    /**
+     * Verificar se a cobrança AbacatePay está pendente
+     */
+    public function isAbacatePayPending(): bool
+    {
+        return $this->hasAbacatePayCharge() && 
+               in_array($this->abacatepay_status, ['pending', 'waiting_payment']);
+    }
+
+    /**
+     * Verificar se a cobrança AbacatePay foi paga
+     */
+    public function isAbacatePayPaid(): bool
+    {
+        return $this->hasAbacatePayCharge() && 
+               in_array($this->abacatepay_status, ['paid', 'completed']);
+    }
+
+    /**
+     * Obter URL do PIX QR Code se disponível
+     */
+    public function getPixQrCodeUrlAttribute(): ?string
+    {
+        return $this->pix_qr_code_url;
+    }
+
+    /**
+     * Obter código PIX se disponível
+     */
+    public function getPixCodeAttribute(): ?string
+    {
+        return $this->pix_qr_code;
+    }
+
+    /**
+     * Obter URL do boleto se disponível
+     */
+    public function getBoletoUrlAttribute(): ?string
+    {
+        return $this->boleto_url;
+    }
+
+    /**
+     * Obter código de barras do boleto se disponível
+     */
+    public function getBoletoCodeAttribute(): ?string
+    {
+        return $this->boleto_barcode;
+    }
+
+    /**
+     * Verificar se tem PIX disponível
+     */
+    public function hasPixAvailable(): bool
+    {
+        return !empty($this->pix_qr_code) || !empty($this->pix_qr_code_url);
+    }
+
+    /**
+     * Verificar se tem boleto disponível
+     */
+    public function hasBoletoAvailable(): bool
     {
         return !empty($this->boleto_url);
     }
 
     /**
-     * Tem PIX disponível
+     * Get file URL for PDF attachment
      */
-    public function hasPix(): bool
+    public function getInvoiceFileUrlAttribute(): ?string
     {
-        return !empty($this->pix_qr_code) || !empty($this->pix_code);
+        if (!$this->pdf_path) {
+            return null;
+        }
+        
+        if (filter_var($this->pdf_path, FILTER_VALIDATE_URL)) {
+            return $this->pdf_path;
+        }
+        
+        return asset('storage/' . $this->pdf_path);
     }
 
     /**
-     * Status da cobrança PagarMe
+     * Check if the invoice has a PDF attached
      */
-    public function getPagarMeStatusLabelAttribute(): string
+    public function getHasPdfAttribute(): bool
     {
-        if (!$this->pagarme_status) return 'Não enviado';
-
-        return match($this->pagarme_status) {
-            'paid' => 'Pago',
-            'pending' => 'Pendente',
-            'processing' => 'Processando',
-            'waiting_payment' => 'Aguardando Pagamento',
-            'canceled' => 'Cancelado',
-            'failed' => 'Falhou',
-            'refunded' => 'Estornado',
-            default => ucfirst($this->pagarme_status)
-        };
+        return !empty($this->pdf_path);
     }
 
     /**
-     * Cor do status PagarMe
+     * Get formatted due date
      */
-    public function getPagarMeStatusColorAttribute(): string
+    public function getFormattedDueDateAttribute(): string
     {
-        if (!$this->pagarme_status) return 'gray';
-
-        return match($this->pagarme_status) {
-            'paid' => 'green',
-            'pending', 'processing', 'waiting_payment' => 'yellow',
-            'canceled', 'failed' => 'red',
-            'refunded' => 'orange',
-            default => 'gray'
-        };
+        return $this->due_date ? $this->due_date->format('d/m/Y') : 'N/A';
     }
 
     /**
-     * Scopes para PagarMe
+     * Get formatted issue date
      */
-    public function scopeWithPagarMeCharge($query)
+    public function getFormattedIssueDateAttribute(): string
     {
-        return $query->whereNotNull('pagarme_charge_id')
-                    ->orWhereNotNull('pagarme_transaction_id');
+        return $this->issue_date ? $this->issue_date->format('d/m/Y') : 'N/A';
     }
 
-    public function scopeAutoChargeReady($query)
+    /**
+     * Get formatted paid date
+     */
+    public function getFormattedPaidDateAttribute(): string
     {
-        return $query->where('auto_charge_enabled', true)
-                    ->whereDate('auto_charge_date', '<=', now())
-                    ->whereNull('pagarme_charge_id')
-                    ->whereNull('pagarme_transaction_id')
-                    ->where('status', 'pendente');
+        return $this->paid_date ? $this->paid_date->format('d/m/Y') : 'N/A';
     }
 
-    public function scopeNeedsBoleto($query)
+    /**
+     * Boot the model.
+     */
+    protected static function boot()
     {
-        return $query->where('status', 'pendente')
-                    ->whereNull('boleto_url');
+        parent::boot();
+        
+        static::updating(function(Invoice $invoice) {
+            // Se o status mudou, enviar notificação
+            if ($invoice->isDirty('status') && $invoice->getOriginal('status') !== $invoice->status) {
+                $oldStatus = $invoice->getOriginal('status');
+                
+                // Notificar cliente sobre mudança de status
+                if ($invoice->user) {
+                    $invoice->user->notify(new InvoiceStatusChanged(
+                        $invoice,
+                        $oldStatus,
+                        $invoice->status
+                    ));
+                }
+                
+                // Notificar administrador quando o pagamento é recebido
+                if ($invoice->status === 'paga' && $oldStatus !== 'paga') {
+                    // Encontrar admins para notificar
+                    $admins = User::where('is_admin', true)->get();
+                    
+                    // Notificar cliente que pagamento foi recebido
+                    if ($invoice->user) {
+                        $invoice->user->notify(new InvoicePaymentReceived($invoice));
+                    }
+                    
+                    // Notificar admins
+                    Notification::send($admins, new InvoicePaymentReceived($invoice));
+                }
+            }
+        });
     }
 
-    public function scopeNeedsPix($query)
+    /**
+     * Enviar lembrete de vencimento
+     */
+    public function sendDueReminder(int $daysUntilDue): void
     {
-        return $query->where('status', 'pendente')
-                    ->whereNull('pix_qr_code');
+        if ($this->user) {
+            $this->user->notify(new \App\Notifications\InvoiceDueReminder($this, $daysUntilDue));
+        }
     }
 }

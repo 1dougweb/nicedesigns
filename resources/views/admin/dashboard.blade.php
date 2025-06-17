@@ -17,8 +17,8 @@
                 </p>
             </div>
             <div class="hidden sm:block lg:block flex-shrink-0">
-                <div class="w-16 h-16 sm:w-20 sm:h-20 lg:w-24 lg:h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                    <i class="fi fi-rr-stats w-8 h-8 sm:w-10 sm:h-10 lg:w-12 lg:h-12 text-white"></i>
+                <div class=" lg:w-24 lg:h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <i class="fi fi-rr-stats text-white text-4xl"></i>
                 </div>
             </div>
         </div>
@@ -30,9 +30,9 @@
     <!-- Posts Stats -->
     <div class="bg-gray-800/50 backdrop-blur-md rounded-2xl lg:rounded-3xl border border-gray-700/50 p-4 sm:p-6 hover:border-blue-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-3 sm:mb-4">
-            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <i class="fi fi-rr-edit w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
-            </div>
+        <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <i class="fi fi-rr-edit text-white text-3xl mt-2"></i>
+        </div>
             <div class="text-right">
                 <p class="text-2xl sm:text-3xl font-bold text-white">{{ $stats['posts']['total'] }}</p>
                 <p class="text-xs sm:text-sm text-gray-400">Posts</p>
@@ -56,7 +56,7 @@
     <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-purple-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-4">
             <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <i class="fi fi-rr-briefcase w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
+                <i class="fi fi-rr-briefcase text-white text-3xl mt-2"></i>
             </div>
             <div class="text-right">
                 <p class="text-3xl font-bold text-white">{{ $stats['projects']['total'] }}</p>
@@ -81,7 +81,7 @@
     <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-cyan-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-4">
             <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <i class="fi fi-rr-users w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
+                <i class="fi fi-rr-users text-white text-3xl mt-2"></i>
             </div>
             <div class="text-right">
                 <p class="text-3xl font-bold text-white">{{ $stats['client_projects']['total'] }}</p>
@@ -106,7 +106,7 @@
     <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-emerald-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-4">
             <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <i class="fi fi-rr-receipt w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
+                <i class="fi fi-rr-receipt text-white text-3xl mt-2"></i>
             </div>
             <div class="text-right">
                 <p class="text-3xl font-bold text-white">{{ $stats['invoices']['total'] }}</p>
@@ -134,7 +134,7 @@
     <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-orange-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-4">
             <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <i class="fi fi-rr-headset w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
+                <i class="fi fi-rr-headset text-white text-3xl mt-2"></i>
             </div>
             <div class="text-right">
                 <p class="text-3xl font-bold text-white">{{ $stats['support_tickets']['total'] }}</p>
@@ -159,7 +159,7 @@
     <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-pink-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-4">
             <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-pink-500 to-pink-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <i class="fi fi-rr-envelope w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
+                <i class="fi fi-rr-envelope text-white text-3xl mt-2"></i>
             </div>
             <div class="text-right">
                 <p class="text-3xl font-bold text-white">{{ $stats['contacts']['total'] }}</p>
@@ -184,7 +184,7 @@
     <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-indigo-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-4">
             <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <i class="fi fi-rr-user w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
+                <i class="fi fi-rr-user text-white text-3xl mt-2"></i>
             </div>
             <div class="text-right">
                 <p class="text-3xl font-bold text-white">{{ $stats['clients']['total'] }}</p>
@@ -209,7 +209,7 @@
     <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-green-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-4">
             <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <i class="fi fi-rr-dollar w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
+                <i class="fi fi-rr-dollar text-white text-3xl mt-2"></i>
             </div>
             <div class="text-right">
                 <p class="text-2xl font-bold text-white">R$ {{ number_format($stats['invoices']['total_amount'], 0, ',', '.') }}</p>
@@ -236,7 +236,7 @@
     @if($urgentTickets->count() > 0)
     <div class="bg-red-600/10 border border-red-500/30 rounded-2xl lg:rounded-3xl p-4 sm:p-6">
         <h3 class="text-lg sm:text-xl font-bold text-red-400 mb-3 sm:mb-4 flex items-center">
-            <i class="fi fi-rr-triangle-warning w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3"></i>
+            <i class="fi fi-rr-triangle-warning text-white text-3xl mt-2"></i>
             <span class="truncate">Tickets Urgentes</span>
         </h3>
         <div class="space-y-3">
@@ -297,28 +297,28 @@
         <div class="grid grid-cols-2 gap-3 sm:gap-4">
             <a href="{{ route('admin.posts.create') }}" class="flex flex-col items-center p-3 sm:p-4 bg-blue-600/20 rounded-xl sm:rounded-2xl hover:bg-blue-600/30 transition-all duration-300 group border border-blue-500/30">
                 <div class="w-10 h-10 sm:w-12 sm:h-12 bg-blue-600 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-2 sm:mb-3">
-                    <i class="fi fi-rr-plus w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
+                    <i class="fi fi-rr-plus text-white text-2xl mt-2"></i>
                 </div>
                 <span class="text-xs sm:text-sm font-medium text-white text-center">Novo Post</span>
             </a>
 
             <a href="{{ route('admin.projects.create') }}" class="flex flex-col items-center p-3 sm:p-4 bg-purple-600/20 rounded-xl sm:rounded-2xl hover:bg-purple-600/30 transition-all duration-300 group border border-purple-500/30">
                 <div class="w-10 h-10 sm:w-12 sm:h-12 bg-purple-600 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-2 sm:mb-3">
-                    <i class="fi fi-rr-plus w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
+                    <i class="fi fi-rr-plus text-white text-2xl mt-2"></i>
                 </div>
                 <span class="text-xs sm:text-sm font-medium text-white text-center">Novo Projeto</span>
             </a>
 
             <a href="{{ route('admin.client-projects.create') }}" class="flex flex-col items-center p-3 sm:p-4 bg-cyan-600/20 rounded-xl sm:rounded-2xl hover:bg-cyan-600/30 transition-all duration-300 group border border-cyan-500/30">
                 <div class="w-10 h-10 sm:w-12 sm:h-12 bg-cyan-600 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-2 sm:mb-3">
-                    <i class="fi fi-rr-plus w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
+                    <i class="fi fi-rr-plus text-white text-2xl mt-2"></i>
                 </div>
                 <span class="text-xs sm:text-sm font-medium text-white text-center">Projeto Cliente</span>
             </a>
 
             <a href="{{ route('admin.invoices.create') }}" class="flex flex-col items-center p-3 sm:p-4 bg-emerald-600/20 rounded-xl sm:rounded-2xl hover:bg-emerald-600/30 transition-all duration-300 group border border-emerald-500/30">
                 <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-600 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-2 sm:mb-3">
-                    <i class="fi fi-rr-plus w-5 h-5 sm:w-6 sm:h-6 text-white"></i>
+                    <i class="fi fi-rr-plus text-white text-2xl mt-2"></i>
                 </div>
                 <span class="text-xs sm:text-sm font-medium text-white text-center">Nova Fatura</span>
             </a>

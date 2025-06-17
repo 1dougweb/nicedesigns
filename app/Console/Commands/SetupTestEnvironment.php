@@ -17,7 +17,7 @@ class SetupTestEnvironment extends Command
     protected $signature = 'test:setup
                           {--fresh : Executar fresh migrations (apaga todos os dados)}
                           {--seed-only : Apenas executar seeders (não migrar)}
-                          {--with-pagarme : Configurar com dados PagarMe de teste}';
+                          ';
 
     /**
      * The console command description.
@@ -53,10 +53,7 @@ class SetupTestEnvironment extends Command
             // Configurar cache
             $this->setupCache();
 
-            // Configurar PagarMe se solicitado
-            if ($this->option('with-pagarme')) {
-                $this->setupPagarMeTestKeys();
-            }
+                    // Sistema configurado
 
             // Mostrar resumo
             $this->showTestSummary();
@@ -172,46 +169,7 @@ class SetupTestEnvironment extends Command
         $this->info('   ✅ Cache limpo e configurado');
     }
 
-    /**
-     * Configurar chaves de teste do PagarMe
-     */
-    private function setupPagarMeTestKeys(): void
-    {
-        $this->info('🔐 Configurando PagarMe para testes...');
 
-        $this->line('   Para usar o PagarMe, você precisará:');
-        $this->line('   1. Criar uma conta no PagarMe Dashboard');
-        $this->line('   2. Obter as chaves de teste (sandbox)');
-        $this->line('   3. Configurar webhook URL');
-        $this->newLine();
-
-        if ($this->confirm('Deseja configurar as chaves do PagarMe agora?')) {
-            $apiKey = $this->ask('API Key de teste (ak_test_...)');
-            $encryptionKey = $this->ask('Encryption Key de teste (ek_test_...)');
-            $webhookSecret = $this->ask('Webhook Secret (opcional)', 'test_secret');
-
-            if ($apiKey && $encryptionKey) {
-                // Atualizar .env
-                $this->updateEnvFile([
-                    'PAGARME_API_KEY' => $apiKey,
-                    'PAGARME_ENCRYPTION_KEY' => $encryptionKey,
-                    'PAGARME_WEBHOOK_SECRET' => $webhookSecret,
-                    'PAGARME_ENVIRONMENT' => 'sandbox'
-                ]);
-
-                $this->info('   ✅ Chaves PagarMe configuradas no .env');
-                
-                // Testar conexão
-                $this->line('   Testando conexão...');
-                Artisan::call('pagarme:test');
-                $this->line(Artisan::output());
-            }
-        }
-
-        $this->info('   📋 URLs importantes:');
-        $this->line('      • Webhook URL: ' . url('/pagarme/webhook'));
-        $this->line('      • Test URL: ' . url('/pagarme/webhook/test'));
-    }
 
     /**
      * Atualizar arquivo .env
@@ -270,9 +228,7 @@ class SetupTestEnvironment extends Command
         $this->info('🚀 PRÓXIMOS PASSOS:');
         $this->line('   1. Acesse: ' . url('/admin'));
         $this->line('   2. Login: admin@nicedesigns.com.br / password');
-        $this->line('   3. Configure as chaves reais do PagarMe');
-        $this->line('   4. Execute: php artisan queue:work');
-        $this->line('   5. Teste: php artisan pagarme:test');
+        $this->line('   3. Execute: php artisan queue:work');
         $this->newLine();
         $this->line('💡 Para testar faturas automáticas:');
         $this->line('   php artisan invoices:process-auto');

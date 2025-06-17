@@ -113,7 +113,7 @@ class ResetTestEnvironment extends Command
         $this->line('   URL: ' . url('/admin'));
         $this->newLine();
         $this->line('📋 Comandos úteis:');
-        $this->line('   php artisan pagarme:test');
+        $this->line('   php artisan queue:work');
         $this->line('   php artisan invoices:process-auto');
         $this->line('   php artisan queue:work');
     }

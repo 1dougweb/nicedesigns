@@ -14,7 +14,8 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\ContactController as AdminContactController;
 use App\Http\Controllers\Admin\SettingController as AdminSettingController;
 use App\Http\Controllers\Client\DashboardController as ClientDashboardController;
-use App\Http\Controllers\PagarMeWebhookController;
+use App\Http\Controllers\AbacatePayWebhookController;
+
 
 // Public Routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -55,7 +56,8 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::put('settings', [AdminSettingController::class, 'update'])->name('settings.update');
     Route::post('settings/test-email', [AdminSettingController::class, 'testEmail'])->name('settings.test-email');
     Route::post('settings/clear-cache', [AdminSettingController::class, 'clearCache'])->name('settings.clear-cache');
-    Route::post('settings/test-pagarme-connection', [AdminSettingController::class, 'testPagarMeConnection'])->name('settings.test-pagarme-connection');
+    Route::post('settings/test-abacatepay', [AdminSettingController::class, 'testAbacatePayConnection'])->name('settings.test-abacatepay');
+
     
     // Client Projects Management
     Route::resource('client-projects', \App\Http\Controllers\Admin\ClientProjectController::class);
@@ -64,14 +66,16 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     // Invoices Management
     Route::resource('invoices', \App\Http\Controllers\Admin\InvoiceController::class);
     Route::post('invoices/{invoice}/mark-as-paid', [\App\Http\Controllers\Admin\InvoiceController::class, 'markAsPaid'])->name('invoices.mark-as-paid');
+    Route::post('invoices/{invoice}/upload-pdf', [\App\Http\Controllers\Admin\InvoiceController::class, 'uploadInvoicePdf'])->name('invoices.upload-pdf');
     Route::get('ajax/client-projects', [\App\Http\Controllers\Admin\InvoiceController::class, 'getClientProjects'])->name('ajax.client-projects');
     
-    // PagarMe Integration for Invoices
-    Route::post('invoices/{invoice}/pagarme/generate', [\App\Http\Controllers\Admin\InvoiceController::class, 'generatePagarMeCharge'])->name('invoices.pagarme.generate');
-    Route::post('invoices/{invoice}/pagarme/auto-charge/enable', [\App\Http\Controllers\Admin\InvoiceController::class, 'enableAutoCharge'])->name('invoices.pagarme.auto-charge.enable');
-    Route::post('invoices/{invoice}/pagarme/auto-charge/disable', [\App\Http\Controllers\Admin\InvoiceController::class, 'disableAutoCharge'])->name('invoices.pagarme.auto-charge.disable');
-    Route::post('invoices/{invoice}/pagarme/status', [\App\Http\Controllers\Admin\InvoiceController::class, 'checkPagarMeStatus'])->name('invoices.pagarme.status');
-    Route::post('invoices/{invoice}/pagarme/cancel', [\App\Http\Controllers\Admin\InvoiceController::class, 'cancelPagarMeCharge'])->name('invoices.pagarme.cancel');
+    // AbacatePay Integration
+    Route::post('invoices/{invoice}/abacatepay/pix', [\App\Http\Controllers\Admin\InvoiceController::class, 'generateAbacatePayPix'])->name('invoices.abacatepay.pix');
+    Route::post('invoices/{invoice}/abacatepay/boleto', [\App\Http\Controllers\Admin\InvoiceController::class, 'generateAbacatePayBoleto'])->name('invoices.abacatepay.boleto');
+    Route::post('invoices/{invoice}/abacatepay/charge', [\App\Http\Controllers\Admin\InvoiceController::class, 'generateAbacatePayCharge'])->name('invoices.abacatepay.charge');
+    Route::get('invoices/{invoice}/abacatepay/status', [\App\Http\Controllers\Admin\InvoiceController::class, 'checkAbacatePayStatus'])->name('invoices.abacatepay.status');
+    Route::delete('invoices/{invoice}/abacatepay/cancel', [\App\Http\Controllers\Admin\InvoiceController::class, 'cancelAbacatePayCharge'])->name('invoices.abacatepay.cancel');
+
     
     // Support Tickets Management
     Route::resource('support-tickets', \App\Http\Controllers\Admin\SupportTicketController::class)->only(['index', 'show', 'destroy']);
@@ -114,6 +118,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::delete('/clear-read', 'clearRead')->name('clear-read');
         Route::get('/{notification}/redirect', 'redirect')->name('redirect');
     });
+
+    // Configurações do AbacatePay
+    Route::get('/settings/abacatepay', [AdminSettingController::class, 'abacatePay'])->name('settings.abacatepay');
+    Route::post('/settings/abacatepay', [AdminSettingController::class, 'storeAbacatePay'])->name('settings.abacatepay.store');
+    Route::get('/settings/abacatepay/test', [AdminSettingController::class, 'testAbacatePayConnection'])->name('settings.abacatepay.test');
 });
 
 // Client Routes (Only for users with client role)
@@ -145,11 +154,7 @@ Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(
     Route::delete('/profile/avatar', [\App\Http\Controllers\Client\ProfileController::class, 'removeAvatar'])->name('profile.remove-avatar');
 });
 
-// PagarMe Webhook Routes (sem middleware de autenticação)
-Route::prefix('pagarme')->name('pagarme.')->group(function () {
-    Route::post('/webhook', [\App\Http\Controllers\PagarMeWebhookController::class, 'receive'])->name('webhook');
-    Route::post('/webhook/test', [\App\Http\Controllers\PagarMeWebhookController::class, 'test'])->name('webhook.test');
-});
+
 
 // Auth Routes (Laravel/UI)
 Auth::routes();
@@ -179,3 +184,7 @@ Route::get('robots.txt', function () {
         'Content-Type' => 'text/plain'
     ]);
 });
+
+// AbacatePay Webhook
+Route::post('webhooks/abacatepay', [\App\Http\Controllers\AbacatePayWebhookController::class, 'handle'])
+    ->name('webhooks.abacatepay');

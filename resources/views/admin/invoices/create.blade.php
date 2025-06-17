@@ -23,7 +23,7 @@
 
 <!-- Form Card -->
 <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
-    <form action="{{ route('admin.invoices.store') }}" method="POST" class="space-y-8">
+    <form action="{{ route('admin.invoices.store') }}" method="POST" class="space-y-8" enctype="multipart/form-data">
         @csrf
 
         <!-- Basic Information -->
@@ -215,7 +215,7 @@
                     <input type="date" 
                            name="due_date" 
                            id="due_date"
-                           value="{{ old('due_date') }}"
+                           value="{{ old('due_date', date('Y-m-d', strtotime('+30 days'))) }}"
                            required
                            class="w-full bg-gray-700/50 border border-gray-600 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('due_date') border-red-500 @enderror">
                     @error('due_date')
@@ -229,13 +229,14 @@
                         Status <span class="text-red-400">*</span>
                     </label>
                     <select name="status" 
-                            id="status" 
+                            id="status"
                             required
                             class="w-full bg-gray-700/50 border border-gray-600 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('status') border-red-500 @enderror">
-                        <option value="pendente" {{ old('status', 'pendente') === 'pendente' ? 'selected' : '' }}>Pendente</option>
-                        <option value="paga" {{ old('status') === 'paga' ? 'selected' : '' }}>Paga</option>
-                        <option value="vencida" {{ old('status') === 'vencida' ? 'selected' : '' }}>Vencida</option>
-                        <option value="cancelada" {{ old('status') === 'cancelada' ? 'selected' : '' }}>Cancelada</option>
+                        @foreach($statusOptions as $key => $label)
+                            <option value="{{ $key }}" {{ old('status', 'pendente') == $key ? 'selected' : '' }}>
+                                {{ $label }}
+                            </option>
+                        @endforeach
                     </select>
                     @error('status')
                         <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
@@ -244,38 +245,49 @@
             </div>
 
             <!-- Currency -->
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                <div>
-                    <label for="currency" class="block text-sm font-medium text-gray-300 mb-2">
-                        Moeda
-                    </label>
-                    <select name="currency" 
-                            id="currency"
-                            class="w-full bg-gray-700/50 border border-gray-600 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('currency') border-red-500 @enderror">
-                        <option value="R$" {{ old('currency', 'R$') === 'R$' ? 'selected' : '' }}>Real (R$)</option>
-                        <option value="US$" {{ old('currency') === 'US$' ? 'selected' : '' }}>Dólar (US$)</option>
-                        <option value="€" {{ old('currency') === '€' ? 'selected' : '' }}>Euro (€)</option>
-                    </select>
-                    @error('currency')
-                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
-                    @enderror
+            <div>
+                <label for="currency" class="block text-sm font-medium text-gray-300 mb-2">
+                    Moeda <span class="text-red-400">*</span>
+                </label>
+                <select name="currency" 
+                        id="currency"
+                        required
+                        class="w-full bg-gray-700/50 border border-gray-600 text-white rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('currency') border-red-500 @enderror">
+                    <option value="BRL" {{ old('currency', 'BRL') == 'BRL' ? 'selected' : '' }}>Real (BRL)</option>
+                    <option value="USD" {{ old('currency') == 'USD' ? 'selected' : '' }}>Dólar (USD)</option>
+                    <option value="EUR" {{ old('currency') == 'EUR' ? 'selected' : '' }}>Euro (EUR)</option>
+                </select>
+                @error('currency')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+            
+            <!-- Invoice PDF Upload -->
+            <div>
+                <label for="invoice_pdf" class="block text-sm font-medium text-gray-300 mb-2">
+                    Arquivo da Fatura (PDF)
+                </label>
+                <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-600 border-dashed rounded-xl">
+                    <div class="space-y-1 text-center">
+                        <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                            <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        </svg>
+                        <div class="flex text-sm text-gray-400">
+                            <label for="invoice_pdf" class="relative cursor-pointer bg-gray-700 rounded-md font-medium text-emerald-400 hover:text-emerald-300 focus-within:outline-none">
+                                <span>Faça upload de um arquivo</span>
+                                <input id="invoice_pdf" name="invoice_pdf" type="file" accept=".pdf" class="sr-only">
+                            </label>
+                            <p class="pl-1">ou arraste e solte</p>
+                        </div>
+                        <p class="text-xs text-gray-400">
+                            PDF até 10MB
+                        </p>
+                    </div>
                 </div>
-
-                <!-- Payment Terms -->
-                <div>
-                    <label for="payment_terms" class="block text-sm font-medium text-gray-300 mb-2">
-                        Condições de Pagamento
-                    </label>
-                    <input type="text" 
-                           name="payment_terms" 
-                           id="payment_terms"
-                           value="{{ old('payment_terms', 'Pagamento à vista') }}"
-                           placeholder="Ex: À vista, 30 dias, etc."
-                           class="w-full bg-gray-700/50 border border-gray-600 text-white placeholder-gray-400 rounded-xl px-4 py-3 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-transparent @error('payment_terms') border-red-500 @enderror">
-                    @error('payment_terms')
-                        <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
+                <div id="file-name" class="mt-2 text-sm text-gray-300"></div>
+                @error('invoice_pdf')
+                    <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
+                @enderror
             </div>
         </div>
 
@@ -390,5 +402,68 @@ document.getElementById('user_id').addEventListener('change', function() {
 
 // Initialize calculation
 calculateTotal();
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Cálculo de valores
+    const subtotalInput = document.getElementById('subtotal');
+    const discountInput = document.getElementById('discount');
+    const taxInput = document.getElementById('tax');
+    const totalDisplay = document.getElementById('total-amount');
+    
+    const calculateTotal = () => {
+        const subtotal = parseFloat(subtotalInput.value) || 0;
+        const discount = parseFloat(discountInput.value) || 0;
+        const tax = parseFloat(taxInput.value) || 0;
+        
+        const taxAmount = (subtotal - discount) * (tax / 100);
+        const total = subtotal - discount + taxAmount;
+        
+        totalDisplay.textContent = 'R$ ' + total.toFixed(2).replace('.', ',');
+    };
+    
+    subtotalInput.addEventListener('input', calculateTotal);
+    discountInput.addEventListener('input', calculateTotal);
+    taxInput.addEventListener('input', calculateTotal);
+    
+    calculateTotal(); // Calcular inicialmente
+    
+    // Mostrar o nome do arquivo selecionado
+    const fileInput = document.getElementById('invoice_pdf');
+    const fileNameDisplay = document.getElementById('file-name');
+    
+    fileInput.addEventListener('change', function() {
+        if (this.files && this.files.length > 0) {
+            fileNameDisplay.textContent = 'Arquivo selecionado: ' + this.files[0].name;
+        } else {
+            fileNameDisplay.textContent = '';
+        }
+    });
+    
+    // Buscar projetos do cliente
+    const clientSelect = document.getElementById('user_id');
+    const projectSelect = document.getElementById('client_project_id');
+    
+    clientSelect.addEventListener('change', function() {
+        const clientId = this.value;
+        if (!clientId) {
+            projectSelect.innerHTML = '<option value="">Nenhum projeto selecionado</option>';
+            return;
+        }
+        
+        fetch(`/admin/ajax/client-projects?client_id=${clientId}`)
+            .then(response => response.json())
+            .then(data => {
+                projectSelect.innerHTML = '<option value="">Nenhum projeto selecionado</option>';
+                
+                data.forEach(project => {
+                    const option = document.createElement('option');
+                    option.value = project.id;
+                    option.textContent = project.name;
+                    projectSelect.appendChild(option);
+                });
+            })
+            .catch(error => console.error('Erro ao buscar projetos:', error));
+    });
+});
 </script>
 @endpush 

@@ -7,6 +7,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Str;
 
 class Project extends Model
 {
@@ -27,6 +28,7 @@ class Project extends Model
         'is_published',
         'category_id',
         'user_id',
+        'seo',
     ];
 
     protected function casts(): array
@@ -37,6 +39,7 @@ class Project extends Model
             'completion_date' => 'date',
             'is_featured' => 'boolean',
             'is_published' => 'boolean',
+            'seo' => 'array',
         ];
     }
 
@@ -58,5 +61,29 @@ class Project extends Model
     public function scopeFeatured($query)
     {
         return $query->where('is_featured', true);
+    }
+
+    /**
+     * Get the meta title for SEO.
+     */
+    public function getMetaTitleAttribute(): string
+    {
+        return $this->seo['meta_title'] ?? $this->title;
+    }
+
+    /**
+     * Get the meta description for SEO.
+     */
+    public function getMetaDescriptionAttribute(): string
+    {
+        return $this->seo['meta_description'] ?? Str::limit($this->description, 160);
+    }
+
+    /**
+     * Get the Open Graph image URL.
+     */
+    public function getOgImageAttribute(): ?string
+    {
+        return $this->seo['og_image'] ?? $this->featured_image;
     }
 } 

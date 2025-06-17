@@ -1,6 +1,49 @@
 {
     "packages": [
         {
+            "name": "abacatepay/php-sdk",
+            "version": "v1.0.0",
+            "version_normalized": "1.0.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/AbacatePay/abacatepay-php-sdk.git",
+                "reference": "fef149eb9f7e03d5aa746732e909c4026b79bd0a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/AbacatePay/abacatepay-php-sdk/zipball/fef149eb9f7e03d5aa746732e909c4026b79bd0a",
+                "reference": "fef149eb9f7e03d5aa746732e909c4026b79bd0a",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.9"
+            },
+            "require-dev": {
+                "pestphp/pest": "^3.6"
+            },
+            "time": "2024-12-08T03:32:25+00:00",
+            "type": "library",
+            "installation-source": "dist",
+            "autoload": {
+                "psr-4": {
+                    "AbacatePay\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Julimar Junior",
+                    "email": "julimargomesjr@hotmail.com"
+                }
+            ],
+            "description": "An AbacatePay SDK for PHP",
+            "support": {
+                "issues": "https://github.com/AbacatePay/abacatepay-php-sdk/issues",
+                "source": "https://github.com/AbacatePay/abacatepay-php-sdk/tree/v1.0.0"
+            },
+            "install-path": "../abacatepay/php-sdk"
+        },
+        {
             "name": "brick/math",
             "version": "0.12.3",
             "version_normalized": "0.12.3.0",
@@ -3385,57 +3428,6 @@
                 }
             ],
             "install-path": "../nunomaduro/termwind"
-        },
-        {
-            "name": "pagarme/pagarme-php",
-            "version": "v4.4.0",
-            "version_normalized": "4.4.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/pagarme/pagarme-php.git",
-                "reference": "5751f86f6e7cf15c0a5f3c74fe4ef94845dbf695"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/pagarme/pagarme-php/zipball/5751f86f6e7cf15c0a5f3c74fe4ef94845dbf695",
-                "reference": "5751f86f6e7cf15c0a5f3c74fe4ef94845dbf695",
-                "shasum": ""
-            },
-            "require": {
-                "guzzlehttp/guzzle": ">=6.3",
-                "php": ">=5.6.0"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "^5.7",
-                "squizlabs/php_codesniffer": "^3.3"
-            },
-            "time": "2024-08-02T23:27:07+00:00",
-            "type": "lib",
-            "installation-source": "dist",
-            "autoload": {
-                "psr-4": {
-                    "PagarMe\\": "src/"
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "description": "Pagar.Me PHP Library",
-            "homepage": "http://pagar.me",
-            "keywords": [
-                "api",
-                "pagamento brasil",
-                "pagamentos",
-                "pagar.me",
-                "pagarme",
-                "payments brazil"
-            ],
-            "support": {
-                "issues": "https://github.com/pagarme/pagarme-php/issues",
-                "source": "https://github.com/pagarme/pagarme-php/tree/v4.4.0"
-            },
-            "install-path": "../pagarme/pagarme-php"
         },
         {
             "name": "phar-io/manifest",

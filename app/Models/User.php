@@ -42,6 +42,7 @@ class User extends Authenticatable
         'avatar',
         'preferences',
         'profile_completed_at',
+        'abacatepay_customer_id',
     ];
 
     /**
@@ -401,6 +402,22 @@ class User extends Authenticatable
     public function assignedTickets()
     {
         return $this->hasMany(SupportTicket::class, 'assigned_to');
+    }
+
+    /**
+     * Get user posts
+     */
+    public function posts()
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    /**
+     * Get user projects
+     */
+    public function projects()
+    {
+        return $this->hasMany(Project::class);
     }
 
     /**

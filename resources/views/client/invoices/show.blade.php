@@ -142,6 +142,59 @@
                 </div>
             </div>
         @endif
+
+        @if($invoice->pix_qr_code)
+            <div class="mt-6">
+                <h4 class="text-gray-300 font-medium mb-3">Pague com PIX</h4>
+                <div class="bg-gray-700/30 rounded-xl p-6 text-center">
+                    <div class="flex justify-center mb-4">
+                        <img src="{{ $invoice->pix_qr_code_url }}" alt="QR Code PIX" class="max-w-full h-48 bg-white p-2 rounded-lg">
+                    </div>
+                    <p class="text-sm text-gray-400 mb-4">Escaneie o QR Code acima com o seu aplicativo de banco para pagar via PIX</p>
+                    
+                    @if($invoice->pix_code)
+                        <div class="mt-4">
+                            <label for="pix-code" class="block text-sm font-medium text-gray-300 mb-2">Código PIX Copia e Cola</label>
+                            <div class="relative">
+                                <textarea id="pix-code" rows="2" readonly class="w-full bg-gray-700/50 border border-gray-600 text-white rounded-xl px-4 py-2 font-mono text-sm">{{ $invoice->pix_code }}</textarea>
+                                <button type="button" onclick="copyToClipboard('pix-code')" class="absolute right-2 top-2 bg-blue-600/20 text-blue-300 border border-blue-600/30 hover:bg-blue-600/30 p-2 rounded-lg">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H10m0 0l3-3m-3 3l3 3"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    @endif
+                </div>
+            </div>
+        @endif
+        
+        <!-- Invoice PDF Document -->
+        @if($invoice->has_pdf)
+        <div class="mt-6">
+            <h4 class="text-gray-300 font-medium mb-3">Documento da Fatura</h4>
+            <div class="bg-gray-700/30 rounded-xl p-6">
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <svg class="w-12 h-12 text-pink-400 mr-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                        </svg>
+                        <div>
+                            <h4 class="text-white font-medium">Fatura #{{ $invoice->invoice_number }}.pdf</h4>
+                            <p class="text-gray-400 text-sm">PDF da fatura</p>
+                        </div>
+                    </div>
+                    <a href="{{ $invoice->invoice_file_url }}" target="_blank" 
+                        class="inline-flex items-center px-4 py-2 bg-pink-600 hover:bg-pink-700 text-white rounded-xl transition-colors">
+                        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                        </svg>
+                        Ver PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+        @endif
     </div>
 
     <!-- Sidebar -->

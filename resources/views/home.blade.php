@@ -39,7 +39,7 @@
                 <a href="{{ route('projects.index') }}" 
                    class="group bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-10 py-5 rounded-xl text-lg font-semibold transition-all duration-300 transform hover:scale-105 hover:shadow-2xl hover:shadow-blue-500/25">
                     <span class="inline-flex items-center">
-                        Ver Portfolio
+                        Ver Projetos
                         <i class="fi fi-rr-arrow-right w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" aria-hidden="true"></i>
                     </span>
                 </a>
@@ -96,7 +96,7 @@
             <!-- Web Design -->
             <div class="group bg-gray-800/50 backdrop-blur-md p-10 rounded-3xl border border-gray-700 hover:border-blue-500/50 hover:bg-gray-700/50 transition-all duration-500 transform hover:-translate-y-4 shadow-2xl hover:shadow-blue-500/25">
                 <div class="w-16 h-16 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                    <i class="fi fi-rr-computer w-8 h-8 text-white" aria-hidden="true"></i>
+                <i class="fi fi-rr-laptop-mobile text-white text-3xl mt-2"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-white mb-4">Web Design</h3>
                 <p class="text-gray-300 mb-6 leading-relaxed">
@@ -121,7 +121,7 @@
             <!-- Desenvolvimento -->
             <div class="group bg-gray-800/50 backdrop-blur-md p-10 rounded-3xl border border-gray-700 hover:border-purple-500/50 hover:bg-gray-700/50 transition-all duration-500 transform hover:-translate-y-4 shadow-2xl hover:shadow-purple-500/25">
                 <div class="w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                    <i class="fi fi-rr-code w-8 h-8 text-white" aria-hidden="true"></i>
+                <i class="fi fi-rr-system-cloud text-white text-3xl mt-2"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-white mb-4">Desenvolvimento</h3>
                 <p class="text-gray-300 mb-6 leading-relaxed">
@@ -146,7 +146,7 @@
             <!-- SEO & Performance -->
             <div class="group bg-gray-800/50 backdrop-blur-md p-10 rounded-3xl border border-gray-700 hover:border-green-500/50 hover:bg-gray-700/50 transition-all duration-500 transform hover:-translate-y-4 shadow-2xl hover:shadow-green-500/25">
                 <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 shadow-lg">
-                    <i class="fi fi-rr-bolt w-8 h-8 text-white" aria-hidden="true"></i>
+                <i class="fi fi-rr-discover text-white text-3xl mt-2"></i>
                 </div>
                 <h3 class="text-2xl font-bold text-white mb-4">SEO & Performance</h3>
                 <p class="text-gray-300 mb-6 leading-relaxed">
@@ -200,7 +200,7 @@
                     </div>
                     <div class="flex-1 flex justify-center">
                         <div class="bg-gray-600/50 px-3 py-1 rounded text-sm text-gray-300 flex items-center">
-                            <i class="fi fi-br-github w-4 h-4 mr-2 text-orange-400" aria-hidden="true"></i>
+                            <i class="fi fi-rr-code-branch text-orange-400 mt-1 mr-2"></i>
                             UserController.php
                         </div>
                     </div>
@@ -248,7 +248,7 @@
                     </div>
                     <div class="flex-1 flex justify-center">
                         <div class="bg-gray-600/50 px-3 py-1 rounded text-sm text-gray-300 flex items-center">
-                            <i class="fi fi-br-github w-4 h-4 mr-2 text-green-400" aria-hidden="true"></i>
+                        <i class="fi fi-rr-code-branch text-orange-400 mt-1 mr-2"></i>
                             Dashboard.vue
                         </div>
                     </div>
@@ -393,86 +393,52 @@
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Projeto 1 -->
+            @forelse($featuredProjects as $project)
+            <!-- Projeto Dinâmico -->
             <div class="group bg-gray-700/50 backdrop-blur-md rounded-2xl overflow-hidden border border-gray-600 hover:border-green-500/50 transition-all duration-300 hover:scale-105 shadow-2xl">
                 <div class="relative overflow-hidden">
+                    @if($project->featured_image)
+                    <div class="h-48 bg-cover bg-center" style="background-image: url('{{ $project->featured_image }}');">
+                    </div>
+                    @else
                     <div class="h-48 bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center">
-                        <span class="text-white text-2xl font-bold">E-commerce</span>
+                        <span class="text-white text-2xl font-bold">{{ $project->title }}</span>
                     </div>
+                    @endif
                     <div class="absolute top-4 right-4">
-                        <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold animate-float">Concluído</span>
+                        <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold animate-float">
+                            {{ $project->category->name ?? 'Projeto' }}
+                        </span>
                     </div>
                 </div>
                 <div class="p-6">
-                    <h3 class="text-xl font-bold text-white mb-3">Loja Virtual Premium</h3>
-                    <p class="text-gray-300 mb-4">Sistema completo de e-commerce com gestão de produtos, pagamentos e relatórios avançados.</p>
+                    <h3 class="text-xl font-bold text-white mb-3">{{ $project->title }}</h3>
+                    <p class="text-gray-300 mb-4">{{ Str::limit($project->description, 100) }}</p>
                     <div class="flex flex-wrap gap-2 mb-4">
-                        <span class="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-sm">Laravel</span>
-                        <span class="bg-green-600/20 text-green-400 px-3 py-1 rounded-full text-sm">Vue.js</span>
-                        <span class="bg-purple-600/20 text-purple-400 px-3 py-1 rounded-full text-sm">MySQL</span>
+                        @if(is_array($project->technologies) && count($project->technologies) > 0)
+                            @foreach(array_slice($project->technologies, 0, 3) as $tech)
+                                <span class="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-sm">{{ $tech }}</span>
+                            @endforeach
+                        @endif
                     </div>
                     <div class="flex justify-between items-center">
-                        <span class="text-gray-400 text-sm">6 meses</span>
-                        <a href="#" class="text-green-400 hover:text-green-300 transition-colors">
+                        <span class="text-gray-400 text-sm">
+                            @if($project->completion_date)
+                                {{ $project->completion_date->format('M Y') }}
+                            @endif
+                        </span>
+                        <a href="{{ route('projects.show', $project->slug) }}" class="text-green-400 hover:text-green-300 transition-colors">
                             Ver detalhes →
                         </a>
                     </div>
                 </div>
             </div>
-
-            <!-- Projeto 2 -->
-            <div class="group bg-gray-700/50 backdrop-blur-md rounded-2xl overflow-hidden border border-gray-600 hover:border-blue-500/50 transition-all duration-300 hover:scale-105 shadow-2xl">
-                <div class="relative overflow-hidden">
-                    <div class="h-48 bg-gradient-to-br from-green-500 to-teal-600 flex items-center justify-center">
-                        <span class="text-white text-2xl font-bold">Dashboard</span>
-                    </div>
-                    <div class="absolute top-4 right-4">
-                        <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold animate-float">Em desenvolvimento</span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <h3 class="text-xl font-bold text-white mb-3">Sistema de Gestão</h3>
-                    <p class="text-gray-300 mb-4">Plataforma administrativa com analytics em tempo real e controle completo de dados.</p>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <span class="bg-red-600/20 text-red-400 px-3 py-1 rounded-full text-sm">Laravel</span>
-                        <span class="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-sm">React</span>
-                        <span class="bg-yellow-600/20 text-yellow-400 px-3 py-1 rounded-full text-sm">PostgreSQL</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-400 text-sm">4 meses</span>
-                        <a href="#" class="text-blue-400 hover:text-blue-300 transition-colors">
-                            Ver detalhes →
-                        </a>
-                    </div>
-                </div>
+            @empty
+            <!-- Fallback quando não há projetos -->
+            <div class="col-span-3 text-center py-12">
+                <p class="text-gray-400 text-lg">Nenhum projeto em destaque no momento.</p>
             </div>
-
-            <!-- Projeto 3 -->
-            <div class="group bg-gray-700/50 backdrop-blur-md rounded-2xl overflow-hidden border border-gray-600 hover:border-purple-500/50 transition-all duration-300 hover:scale-105 shadow-2xl">
-                <div class="relative overflow-hidden">
-                    <div class="h-48 bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
-                        <span class="text-white text-2xl font-bold">Mobile App</span>
-                    </div>
-                    <div class="absolute top-4 right-4">
-                        <span class="bg-yellow-500 text-white px-3 py-1 rounded-full text-sm font-semibold animate-float">Planejamento</span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <h3 class="text-xl font-bold text-white mb-3">App de Delivery</h3>
-                    <p class="text-gray-300 mb-4">Aplicativo mobile para delivery com rastreamento em tempo real e pagamentos integrados.</p>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        <span class="bg-blue-600/20 text-blue-400 px-3 py-1 rounded-full text-sm">Flutter</span>
-                        <span class="bg-red-600/20 text-red-400 px-3 py-1 rounded-full text-sm">Laravel API</span>
-                        <span class="bg-green-600/20 text-green-400 px-3 py-1 rounded-full text-sm">Firebase</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-400 text-sm">8 meses</span>
-                        <a href="#" class="text-purple-400 hover:text-purple-300 transition-colors">
-                            Ver detalhes →
-                        </a>
-                    </div>
-                </div>
-            </div>
+            @endforelse
         </div>
 
         <div class="text-center mt-12">
@@ -672,119 +638,57 @@
         </div>
 
         <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <!-- Post 1 -->
+            @forelse($latestPosts as $post)
+            <!-- Post Dinâmico -->
             <article class="group bg-gray-700/50 backdrop-blur-md rounded-2xl overflow-hidden border border-gray-600 hover:border-purple-500/50 transition-all duration-300 hover:scale-105 shadow-2xl">
                 <div class="relative overflow-hidden">
+                    @if($post->featured_image)
+                    <div class="h-48 bg-cover bg-center" style="background-image: url('{{ $post->featured_image }}');">
+                    </div>
+                    @else
                     <div class="h-48 bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
                         <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
                         </svg>
                     </div>
+                    @endif
                     <div class="absolute top-4 left-4">
-                        <span class="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-semibold animate-float">Desenvolvimento</span>
+                        <span class="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-semibold animate-float">
+                            {{ $post->category->name ?? 'Blog' }}
+                        </span>
                     </div>
                 </div>
                 <div class="p-6">
                     <div class="flex items-center text-gray-400 text-sm mb-3">
-                        <span>15 de Dezembro, 2024</span>
+                        <span>{{ $post->published_at ? $post->published_at->format('d \d\e M, Y') : 'Publicado' }}</span>
                         <span class="mx-2">•</span>
-                        <span>5 min de leitura</span>
+                        <span>{{ ceil(str_word_count($post->content) / 200) }} min de leitura</span>
                     </div>
                     <h3 class="text-xl font-bold text-white mb-3 group-hover:text-purple-400 transition-colors">
-                        As Tendências de Web Development para 2025
+                        {{ $post->title }}
                     </h3>
                     <p class="text-gray-300 mb-4 leading-relaxed">
-                        Descubra as principais tecnologias e frameworks que dominarão o mercado de desenvolvimento web no próximo ano.
+                        {{ Str::limit($post->excerpt ?? strip_tags($post->content), 100) }}
                     </p>
                     <div class="flex justify-between items-center">
                         <div class="flex items-center">
                             <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center mr-3">
-                                <span class="text-white font-bold text-sm">ND</span>
+                                <span class="text-white font-bold text-sm">{{ $post->author ? substr($post->author->name, 0, 2) : 'ND' }}</span>
                             </div>
-                            <span class="text-gray-400 text-sm">NiceDesigns Team</span>
+                            <span class="text-gray-400 text-sm">{{ $post->author->name ?? 'NiceDesigns Team' }}</span>
                         </div>
-                        <a href="#" class="text-purple-400 hover:text-purple-300 transition-colors">
+                        <a href="{{ route('posts.show', $post->slug) }}" class="text-purple-400 hover:text-purple-300 transition-colors">
                             Ler mais →
                         </a>
                     </div>
                 </div>
             </article>
-
-            <!-- Post 2 -->
-            <article class="group bg-gray-700/50 backdrop-blur-md rounded-2xl overflow-hidden border border-gray-600 hover:border-blue-500/50 transition-all duration-300 hover:scale-105 shadow-2xl">
-                <div class="relative overflow-hidden">
-                    <div class="h-48 bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center">
-                        <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zM21 5a2 2 0 00-2-2h-4a2 2 0 00-2 2v12a4 4 0 004 4 4 4 0 004-4V5z"/>
-                        </svg>
-                    </div>
-                    <div class="absolute top-4 left-4">
-                        <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-semibold animate-float">Design</span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex items-center text-gray-400 text-sm mb-3">
-                        <span>10 de Dezembro, 2024</span>
-                        <span class="mx-2">•</span>
-                        <span>8 min de leitura</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-3 group-hover:text-blue-400 transition-colors">
-                        UI/UX: Como Criar Interfaces que Convertem
-                    </h3>
-                    <p class="text-gray-300 mb-4 leading-relaxed">
-                        Aprenda os princípios fundamentais de design que transformam visitantes em clientes através de interfaces intuitivas.
-                    </p>
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center">
-                            <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mr-3">
-                                <span class="text-white font-bold text-sm">ND</span>
-                            </div>
-                            <span class="text-gray-400 text-sm">NiceDesigns Team</span>
-                        </div>
-                        <a href="#" class="text-blue-400 hover:text-blue-300 transition-colors">
-                            Ler mais →
-                        </a>
-                    </div>
-                </div>
-            </article>
-
-            <!-- Post 3 -->
-            <article class="group bg-gray-700/50 backdrop-blur-md rounded-2xl overflow-hidden border border-gray-600 hover:border-green-500/50 transition-all duration-300 hover:scale-105 shadow-2xl">
-                <div class="relative overflow-hidden">
-                    <div class="h-48 bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
-                        <svg class="w-16 h-16 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
-                        </svg>
-                    </div>
-                    <div class="absolute top-4 left-4">
-                        <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-semibold animate-float">SEO</span>
-                    </div>
-                </div>
-                <div class="p-6">
-                    <div class="flex items-center text-gray-400 text-sm mb-3">
-                        <span>5 de Dezembro, 2024</span>
-                        <span class="mx-2">•</span>
-                        <span>6 min de leitura</span>
-                    </div>
-                    <h3 class="text-xl font-bold text-white mb-3 group-hover:text-green-400 transition-colors">
-                        SEO em 2025: Estratégias que Realmente Funcionam
-                    </h3>
-                    <p class="text-gray-300 mb-4 leading-relaxed">
-                        Conheça as técnicas de SEO mais eficazes para posicionar seu site no topo dos resultados do Google.
-                    </p>
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center">
-                            <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded-full flex items-center justify-center mr-3">
-                                <span class="text-white font-bold text-sm">ND</span>
-                            </div>
-                            <span class="text-gray-400 text-sm">NiceDesigns Team</span>
-                        </div>
-                        <a href="#" class="text-green-400 hover:text-green-300 transition-colors">
-                            Ler mais →
-                        </a>
-                    </div>
-                </div>
-            </article>
+            @empty
+            <!-- Fallback quando não há posts -->
+            <div class="col-span-3 text-center py-12">
+                <p class="text-gray-400 text-lg">Nenhum post publicado no momento.</p>
+            </div>
+            @endforelse
         </div>
 
         <div class="text-center mt-12">

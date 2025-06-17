@@ -170,12 +170,7 @@ class CheckExampleCredentials extends Command
     {
         // Configurações que devem ter valores padrão específicos
         $defaults = [
-            'pagarme_environment' => 'sandbox',
-            'pagarme_auto_charge_days' => '0',
-            'pagarme_default_methods' => 'boleto,pix',
-            'pagarme_max_retry_attempts' => '3',
-            'pagarme_send_email_on_generation' => '1',
-            'pagarme_boleto_instructions' => 'Pagar preferencialmente em bancos digitais para compensação mais rápida.',
+
         ];
 
         return $defaults[$key] ?? '';

@@ -197,18 +197,14 @@
         <!-- Empty State -->
         <div class="text-center py-16">
             <div class="w-24 h-24 bg-gray-700/50 rounded-full flex items-center justify-center mx-auto mb-6">
-                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                </svg>
+            <i class="fi fi-rr-envelope-open-text text-gray-400 text-4xl mt-2"></i>
             </div>
             <h3 class="text-xl font-semibold text-white mb-2">Nenhuma mensagem encontrada</h3>
             <p class="text-gray-400 mb-8">Quando alguém entrar em contato, as mensagens aparecerão aqui.</p>
             <a href="{{ route('contact') }}" 
                target="_blank"
                class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-8 py-4 rounded-2xl font-medium transition-all duration-300 inline-flex items-center space-x-2 shadow-lg hover:shadow-green-500/25">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                </svg>
+               <i class="fi fi-rr-link-alt text-white ml-2 justify-center align-middle mt-2"></i>
                 <span>Ver Página de Contato</span>
             </a>
         </div>

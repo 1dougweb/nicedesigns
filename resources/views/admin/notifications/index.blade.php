@@ -4,6 +4,7 @@
 @section('page-title', 'Notificações')
 
 @section('content')
+<div class="max-w-7xl mx-auto">
 <!-- Header Actions -->
 <div class="flex items-center justify-between mb-8">
     <div>
@@ -33,7 +34,7 @@
                 <i class="fi fi-rr-bell w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
             </div>
             <div class="text-right">
-                <p class="text-3xl font-bold text-white">{{ $notifications->count() }}</p>
+                <p class="text-3xl font-bold text-white">{{ method_exists($notifications, 'count') ? $notifications->count() : count($notifications) }}</p>
                 <p class="text-sm text-gray-400">Total</p>
             </div>
         </div>
@@ -46,7 +47,13 @@
                 <i class="fi fi-rr-bell-ring w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
             </div>
             <div class="text-right">
-                <p class="text-3xl font-bold text-white" id="unread-count">{{ $notifications->where('read_at', null)->count() }}</p>
+                <p class="text-3xl font-bold text-white" id="unread-count">
+                    @if(method_exists($notifications, 'where'))
+                        {{ $notifications->where('read_at', null)->count() }}
+                    @else
+                        {{ collect($notifications)->where('read_at', null)->count() }}
+                    @endif
+                </p>
                 <p class="text-sm text-gray-400">Não lidas</p>
             </div>
         </div>
@@ -59,7 +66,13 @@
                 <i class="fi fi-rr-check-circle w-7 h-7 sm:w-8 sm:h-8 text-white"></i>
             </div>
             <div class="text-right">
-                <p class="text-3xl font-bold text-white">{{ $notifications->where('read_at', '!=', null)->count() }}</p>
+                <p class="text-3xl font-bold text-white">
+                    @if(method_exists($notifications, 'where'))
+                        {{ $notifications->where('read_at', '!=', null)->count() }}
+                    @else
+                        {{ collect($notifications)->where('read_at', '!=', null)->count() }}
+                    @endif
+                </p>
                 <p class="text-sm text-gray-400">Lidas</p>
             </div>
         </div>
@@ -68,7 +81,7 @@
 
 <!-- Notifications List -->
 <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50">
-        <div class="p-6 border-b border-gray-700/50">
+        <div class="p-6">
             <h3 class="text-lg font-semibold text-white">Todas as Notificações</h3>
         </div>
         
@@ -91,13 +104,19 @@
                                     @if(!$notification->read_at)
                                         <span class="w-2 h-2 bg-blue-500 rounded-full"></span>
                                     @endif
-                                    <span class="text-xs text-gray-500">{{ $notification->created_at->diffForHumans() }}</span>
+                                    <span class="text-xs text-gray-500">
+                                        @if(is_object($notification->created_at) && method_exists($notification->created_at, 'diffForHumans'))
+                                            {{ $notification->created_at->diffForHumans() }}
+                                        @else
+                                            {{ \Carbon\Carbon::parse($notification->created_at)->diffForHumans() }}
+                                        @endif
+                                    </span>
                                 </div>
                             </div>
                             <p class="text-sm text-gray-400 mt-1">{{ $notification->message }}</p>
                             
                             @if($notification->url)
-                                <a href="{{ route('admin.notifications.redirect', $notification) }}" class="inline-flex items-center text-xs text-blue-400 hover:text-blue-300 transition-colors mt-2">
+                                <a href="{{ $notification->url }}" class="inline-flex items-center text-xs text-blue-400 hover:text-blue-300 transition-colors mt-2">
                                     <i class="fi fi-rr-arrow-right w-3 h-3 mr-1"></i>
                                     Ver detalhes
                                 </a>
@@ -131,27 +150,17 @@
         <!-- Pagination -->
         @if(method_exists($notifications, 'hasPages') && $notifications->hasPages())
             <div class="p-6 border-t border-gray-700/50">
-                {{ $notifications->links() }}
+                <div class="text-center text-gray-400 text-sm">
+                    @if(method_exists($notifications, 'count') && method_exists($notifications, 'total'))
+                        Mostrando {{ $notifications->count() }} de {{ $notifications->total() }} notificações
+                    @else
+                        {{ count($notifications) }} notificações
+                    @endif
+                </div>
             </div>
         @endif
     </div>
 
-<!-- Test Notification Button (Development Only) -->
-@if(config('app.debug'))
-    <div class="bg-yellow-600/20 border border-yellow-600/50 rounded-3xl p-6">
-        <div class="flex items-center justify-between">
-            <div>
-                <h4 class="text-yellow-400 font-medium">Modo de Desenvolvimento</h4>
-                <p class="text-yellow-300/80 text-sm">Criar notificação de teste</p>
-            </div>
-            <button onclick="createTestNotification()" 
-                    class="bg-yellow-600/20 text-yellow-300 border border-yellow-600/30 hover:bg-yellow-600/30 px-6 py-3 rounded-2xl font-medium transition-all duration-300 flex items-center space-x-2">
-                <i class="fi fi-rr-test w-5 h-5"></i>
-                <span>Criar Notificação de Teste</span>
-            </button>
-        </div>
-    </div>
-@endif
 
 
 
@@ -309,3 +318,5 @@
     @endif
 </script>
 @endpush 
+</div>
+@endsection

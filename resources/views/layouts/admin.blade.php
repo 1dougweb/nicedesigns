@@ -11,8 +11,11 @@
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
+    <!-- Script para suprimir warnings -->
+    <script src="{{ asset('js/suppress-warnings.js') }}"></script>
+    
     <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.tailwindcss.com?plugins=forms"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -24,6 +27,30 @@
             }
         }
     </script>
+
+    <style>
+        /* Remove o outline padrão de todos os elementos de formulário */
+        input,
+        textarea,
+        select,
+        button {
+        outline: none;
+        box-shadow: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: 0; /* opcional: remove cantos arredondados em iOS/Safari */
+        }
+
+        /* Para focos visuais personalizados, caso queira colocar depois */
+        input:focus,
+        textarea:focus,
+        select:focus,
+        button:focus {
+        outline: none;
+        
+        }
+    </style>
 
     <!-- Flaticon CSS -->
     <link rel="stylesheet" href="https://cdn-uicons.flaticon.com/2.6.0/uicons-regular-rounded/css/uicons-regular-rounded.css">
@@ -40,16 +67,6 @@
     <div class="min-h-screen flex">
         <!-- Sidebar -->
         <div class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-800/50 backdrop-blur-xl border-r border-gray-700/50 transform -translate-x-full transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0" id="sidebar">
-            <!-- Logo -->
-            <div class="flex items-center justify-center h-16 px-4 bg-gradient-to-r from-blue-600/20 to-purple-600/20 border-b border-gray-700/50">
-                <a href="{{ route('admin.dashboard') }}" class="flex items-center space-x-3">
-                    <div class="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                        <i class="fi fi-rr-dashboard w-5 h-5 text-white"></i>
-                    </div>
-                    <span class="text-xl font-bold text-white">Admin</span>
-                </a>
-            </div>
-
             <!-- Navigation -->
             <nav class="mt-6 sm:mt-8 px-3 sm:px-4 space-y-1 sm:space-y-2">
                 <!-- Dashboard -->
@@ -155,7 +172,7 @@
                     <div class="flex items-center justify-between">
                         <!-- Mobile menu button -->
                         <button type="button" class="lg:hidden p-2 rounded-md text-gray-400 hover:text-white hover:bg-gray-700/50 transition-colors" onclick="toggleSidebar()">
-                            <i class="fi fi-rr-menu-burger w-5 h-5 sm:w-6 sm:h-6"></i>
+                        <i class="fi fi-br-chart-simple-horizontal text-1xl mt-2"></i>
                         </button>
 
                         <!-- Page Title -->
@@ -168,7 +185,7 @@
                             <!-- Notifications -->
                             <div class="relative" id="notifications-dropdown">
                                 <button id="notifications-button" class="p-1.5 sm:p-2 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-lg sm:rounded-xl transition-colors relative">
-                                    <i class="fi fi-rr-bell w-5 h-5 sm:w-6 sm:h-6"></i>
+                                    <i class="fi fi-rr-bell text-white text-2xl mt-4"></i>
                                     <span id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center text-[10px] sm:text-xs hidden">0</span>
                                 </button>
 
@@ -218,15 +235,16 @@
                                 </button>
 
                                 <!-- User Dropdown Menu -->
-                                <div id="user-panel" class="absolute right-0 mt-2 w-56 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-40 hidden">
+                                <div id="user-panel" class="absolute right-0 mt-2 w-58 bg-gray-800 border border-gray-700 rounded-xl shadow-xl z-40 hidden">
                                     <div class="p-3 border-b border-gray-700">
                                         <div class="flex items-center space-x-3">
                                             @if(auth()->user()->avatar)
                                                 <img src="{{ asset('storage/' . auth()->user()->avatar) }}" alt="{{ auth()->user()->name }}" class="w-10 h-10 rounded-full object-cover">
                                             @else
-                                                <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                                                    <span class="text-white font-bold">{{ substr(auth()->user()->name, 0, 2) }}</span>
-                                                </div>
+                                            <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center p-3">
+    <span class="text-white font-bold text-sm leading-none">{{ substr(auth()->user()->name, 0, 2) }}</span>
+</div>
+
                                             @endif
                                             <div>
                                                 <p class="font-medium text-white">{{ auth()->user()->name }}</p>
@@ -265,8 +283,6 @@
             </main>
         </div>
     </div>
-
-
 
     <!-- Sidebar Mobile Overlay -->
     <div class="fixed inset-0 bg-gray-900 bg-opacity-50 transition-opacity lg:hidden hidden" id="sidebar-overlay" onclick="toggleSidebar()"></div>

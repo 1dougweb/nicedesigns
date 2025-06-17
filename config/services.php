@@ -14,6 +14,13 @@ return [
     |
     */
 
+    'mailgun' => [
+        'domain' => env('MAILGUN_DOMAIN'),
+        'secret' => env('MAILGUN_SECRET'),
+        'endpoint' => env('MAILGUN_ENDPOINT', 'api.mailgun.net'),
+        'scheme' => 'https',
+    ],
+
     'postmark' => [
         'token' => env('POSTMARK_TOKEN'),
     ],
@@ -35,11 +42,10 @@ return [
         ],
     ],
 
-    'pagarme' => [
-        'api_key' => env('PAGARME_API_KEY'),
-        'encryption_key' => env('PAGARME_ENCRYPTION_KEY'),
-        'webhook_secret' => env('PAGARME_WEBHOOK_SECRET'),
-        'environment' => env('PAGARME_ENVIRONMENT', 'sandbox'),
+    'abacatepay' => [
+        'token' => env('ABACATEPAY_TOKEN'),
+        'environment' => env('ABACATEPAY_ENVIRONMENT', 'sandbox'),
+        'webhook_secret' => env('ABACATEPAY_WEBHOOK_SECRET'),
     ],
 
 ];

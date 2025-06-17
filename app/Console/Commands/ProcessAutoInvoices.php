@@ -27,7 +27,7 @@ class ProcessAutoInvoices extends Command
      *
      * @var string
      */
-    protected $description = 'Processar automaticamente faturas agendadas para cobrança via PagarMe';
+            protected $description = 'Processar automaticamente faturas agendadas para cobrança';
 
     /**
      * Execute the console command.
@@ -53,8 +53,7 @@ class ProcessAutoInvoices extends Command
             $query = Invoice::autoChargeReady()->with(['user']);
 
             if (!$force) {
-                $query->whereNull('pagarme_charge_id')
-                      ->whereNull('pagarme_transaction_id');
+                                // Faturas sem cobrança ativa
             }
 
             $invoices = $query->limit($limit)->get();
@@ -183,7 +182,7 @@ class ProcessAutoInvoices extends Command
             'Faturas pendentes' => Invoice::where('status', 'pendente')->count(),
             'Com cobrança automática' => Invoice::where('auto_charge_enabled', true)->count(),
             'Prontas para processamento' => Invoice::autoChargeReady()->count(),
-            'Com PagarMe ativo' => Invoice::withPagarMeCharge()->count(),
+            'Processadas' => Invoice::where('status', '!=', 'pendente')->count(),
         ];
 
         foreach ($stats as $label => $count) {

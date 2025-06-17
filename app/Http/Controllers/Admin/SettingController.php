@@ -7,16 +7,38 @@ use App\Models\Setting;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Http\JsonResponse;
+use App\Services\AbacatePayService;
+use Illuminate\Support\Facades\Config;
 
 class SettingController extends Controller
 {
+    private AbacatePayService $abacatePayService;
+
+    public function __construct(AbacatePayService $abacatePayService)
+    {
+        $this->abacatePayService = $abacatePayService;
+    }
+
     /**
      * Display the settings page
      */
     public function index()
     {
-        $settings = Setting::all()->groupBy('group');
-        
+        $settings = [
+            'general' => \App\Models\Setting::where('group', 'general')->get(),
+            'contact' => \App\Models\Setting::where('group', 'contact')->get(),
+            'social' => \App\Models\Setting::where('group', 'social')->get(),
+            'seo' => \App\Models\Setting::where('group', 'seo')->get(),
+            'email' => \App\Models\Setting::where('group', 'email')->get(),
+            'appearance' => \App\Models\Setting::where('group', 'appearance')->get(),
+            'abacatepay' => [
+                'token' => Config::get('services.abacatepay.token'),
+                'environment' => Config::get('services.abacatepay.environment'),
+                'webhook_secret' => Config::get('services.abacatepay.webhook_secret'),
+            ],
+        ];
+
         return view('admin.settings.index', compact('settings'));
     }
 
@@ -40,16 +62,10 @@ class SettingController extends Controller
             'timezone' => 'required|string',
             'date_format' => 'required|string',
             'currency' => 'required|string|max:10',
-            // Pagar.me validation
-            'pagarme_environment' => 'required|string|in:sandbox,live',
-            'pagarme_api_key' => 'nullable|string|max:255',
-            'pagarme_encryption_key' => 'nullable|string|max:255',
-            'pagarme_webhook_secret' => 'nullable|string|max:255',
-            'pagarme_default_methods' => 'nullable|string|max:100',
-            'pagarme_auto_charge_days' => 'nullable|integer|min:0|max:30',
-            'pagarme_boleto_instructions' => 'nullable|string|max:500',
-            'pagarme_send_email_on_generation' => 'nullable|boolean',
-            'pagarme_max_retry_attempts' => 'nullable|integer|min:1|max:10',
+            // AbacatePay validation
+            'abacatepay.token' => 'nullable|string',
+            'abacatepay.environment' => 'nullable|in:sandbox,production',
+            'abacatepay.webhook_secret' => 'nullable|string',
         ]);
 
         try {
@@ -95,11 +111,23 @@ class SettingController extends Controller
                 'custom_css', 'custom_js'
             ]);
 
-            $this->saveSettingsGroup($request, 'pagarme', [
-                'pagarme_api_key', 'pagarme_encryption_key', 'pagarme_webhook_secret',
-                'pagarme_environment', 'pagarme_default_methods', 'pagarme_auto_charge_days',
-                'pagarme_boleto_instructions', 'pagarme_send_email_on_generation', 'pagarme_max_retry_attempts'
-            ]);
+            // Salvar configurações do AbacatePay se estiverem presentes
+            if ($request->has('abacatepay')) {
+                $abacatepay = $request->input('abacatepay');
+                
+                if (!empty($abacatepay['token']) && !empty($abacatepay['webhook_secret']) && !empty($abacatepay['environment'])) {
+                    $this->updateEnvFile([
+                        'ABACATEPAY_TOKEN' => $abacatepay['token'],
+                        'ABACATEPAY_ENVIRONMENT' => $abacatepay['environment'],
+                        'ABACATEPAY_WEBHOOK_SECRET' => $abacatepay['webhook_secret'],
+                    ]);
+                    
+                    // Atualiza o cache de configuração
+                    Config::set('services.abacatepay.token', $abacatepay['token']);
+                    Config::set('services.abacatepay.environment', $abacatepay['environment']);
+                    Config::set('services.abacatepay.webhook_secret', $abacatepay['webhook_secret']);
+                }
+            }
 
             // Contar configurações depois
             $settingsCountAfter = Setting::count();
@@ -155,17 +183,17 @@ class SettingController extends Controller
     private function getSettingType(string $key, mixed $value): string
     {
         // Boolean settings
-        if (in_array($key, ['maintenance_mode', 'allow_registration', 'pagarme_send_email_on_generation'])) {
+        if (in_array($key, ['maintenance_mode', 'allow_registration'])) {
             return 'boolean';
         }
         
         // Integer settings
-        if (in_array($key, ['posts_per_page', 'projects_per_page', 'smtp_port', 'pagarme_auto_charge_days', 'pagarme_max_retry_attempts'])) {
+        if (in_array($key, ['posts_per_page', 'projects_per_page', 'smtp_port'])) {
             return 'integer';
         }
         
         // Text/Textarea settings
-        if (in_array($key, ['custom_css', 'custom_js', 'google_search_console', 'pagarme_boleto_instructions'])) {
+        if (in_array($key, ['custom_css', 'custom_js', 'google_search_console'])) {
             return 'text';
         }
         
@@ -219,58 +247,6 @@ class SettingController extends Controller
                 'mail.from.address' => $emailSettings->get('mail_from_address')->value ?? 'noreply@nicedesigns.com.br',
                 'mail.from.name' => $emailSettings->get('mail_from_name')->value ?? 'Nice Designs',
             ]);
-        }
-    }
-
-    /**
-     * Test Pagar.me connection
-     */
-    public function testPagarMeConnection(Request $request)
-    {
-        $request->validate([
-            'environment' => 'required|string|in:sandbox,live',
-            'api_key' => 'required|string',
-            'encryption_key' => 'required|string',
-            'webhook_secret' => 'nullable|string'
-        ]);
-
-        try {
-            // Temporariamente configurar as credenciais para teste
-            $originalApiKey = Setting::get('pagarme_api_key');
-            $originalEncryptionKey = Setting::get('pagarme_encryption_key');
-            $originalEnvironment = Setting::get('pagarme_environment');
-
-            // Configurar temporariamente
-            Setting::set('pagarme_api_key', $request->api_key, 'string', 'pagarme');
-            Setting::set('pagarme_encryption_key', $request->encryption_key, 'string', 'pagarme');
-            Setting::set('pagarme_environment', $request->environment, 'string', 'pagarme');
-
-            // Testar a conexão usando o PagarMeService
-            $pagarMeService = new \App\Services\PagarMeService();
-            $result = $pagarMeService->testConnection();
-
-            // Restaurar configurações originais
-            if ($originalApiKey) {
-                Setting::set('pagarme_api_key', $originalApiKey, 'string', 'pagarme');
-            }
-            if ($originalEncryptionKey) {
-                Setting::set('pagarme_encryption_key', $originalEncryptionKey, 'string', 'pagarme');
-            }
-            if ($originalEnvironment) {
-                Setting::set('pagarme_environment', $originalEnvironment, 'string', 'pagarme');
-            }
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Conexão com Pagar.me estabelecida com sucesso!',
-                'data' => $result
-            ]);
-
-        } catch (\Exception $e) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Erro ao conectar com Pagar.me: ' . $e->getMessage()
-            ], 500);
         }
     }
 
@@ -489,5 +465,86 @@ class SettingController extends Controller
                "\n" .
                "# Sitemap\n" .
                "Sitemap: {$baseUrl}/sitemap.xml\n";
+    }
+
+    /**
+     * Testar conexão com o AbacatePay
+     */
+    public function testAbacatePayConnection()
+    {
+        try {
+            $result = $this->abacatePayService->testConnection();
+
+            if ($result['success']) {
+                return redirect()
+                    ->route('admin.settings.index')
+                    ->with('success', 'Conexão com AbacatePay testada com sucesso!');
+            }
+
+            return redirect()
+                ->route('admin.settings.index')
+                ->with('error', 'Erro ao testar conexão com AbacatePay. Verifique suas credenciais.');
+        } catch (\Exception $e) {
+            return redirect()
+                ->route('admin.settings.index')
+                ->with('error', 'Erro ao testar conexão com AbacatePay: ' . $e->getMessage());
+        }
+    }
+
+    public function abacatePay()
+    {
+        $settings = [
+            'token' => Config::get('services.abacatepay.token'),
+            'environment' => Config::get('services.abacatepay.environment'),
+            'webhook_secret' => Config::get('services.abacatepay.webhook_secret'),
+        ];
+
+        return view('admin.settings.abacatepay', compact('settings'));
+    }
+
+    public function storeAbacatePay(Request $request)
+    {
+        $validated = $request->validate([
+            'abacatepay.token' => 'required|string',
+            'abacatepay.environment' => 'required|in:sandbox,production',
+            'abacatepay.webhook_secret' => 'required|string',
+        ]);
+
+        // Atualiza o arquivo .env
+        $this->updateEnvFile([
+            'ABACATEPAY_TOKEN' => $validated['abacatepay']['token'],
+            'ABACATEPAY_ENVIRONMENT' => $validated['abacatepay']['environment'],
+            'ABACATEPAY_WEBHOOK_SECRET' => $validated['abacatepay']['webhook_secret'],
+        ]);
+
+        // Limpa o cache de configuração
+        Config::set('services.abacatepay.token', $validated['abacatepay']['token']);
+        Config::set('services.abacatepay.environment', $validated['abacatepay']['environment']);
+        Config::set('services.abacatepay.webhook_secret', $validated['abacatepay']['webhook_secret']);
+
+        Artisan::call('config:clear');
+
+        return redirect()
+            ->route('admin.settings.index')
+            ->with('success', 'Configurações do AbacatePay salvas com sucesso!');
+    }
+
+    private function updateEnvFile(array $values)
+    {
+        $envFile = base_path('.env');
+        $envContent = file_get_contents($envFile);
+
+        foreach ($values as $key => $value) {
+            $pattern = "/^{$key}=.*/m";
+            $replacement = "{$key}={$value}";
+
+            if (preg_match($pattern, $envContent)) {
+                $envContent = preg_replace($pattern, $replacement, $envContent);
+            } else {
+                $envContent .= "\n{$replacement}";
+            }
+        }
+
+        file_put_contents($envFile, $envContent);
     }
 }

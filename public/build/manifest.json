@@ -1,20 +1,8 @@
 {
-  "_vendor-z1xuIYmo.js": {
-    "file": "assets/vendor-z1xuIYmo.js",
-    "name": "vendor"
-  },
-  "resources/css/app.css": {
-    "file": "assets/app-C6G_3qQV.css",
-    "src": "resources/css/app.css",
-    "isEntry": true
-  },
   "resources/js/app.js": {
-    "file": "assets/app-rAMml0F7.js",
+    "file": "assets/app-T1DpEqax.js",
     "name": "app",
     "src": "resources/js/app.js",
-    "isEntry": true,
-    "imports": [
-      "_vendor-z1xuIYmo.js"
-    ]
+    "isEntry": true
   }
 }

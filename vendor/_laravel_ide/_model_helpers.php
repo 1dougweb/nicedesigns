@@ -1022,17 +1022,15 @@ namespace App\Models {
      * App\Models\Invoice
      *
      * @property \Illuminate\Support\Carbon|null $webhook_received_at
+     * @property string|null $boleto_barcode
+     * @property string|null $pix_qr_code
+     * @property string|null $payment_url
+     * @property array|null $abacatepay_data
+     * @property string|null $abacatepay_status
+     * @property string|null $abacatepay_customer_id
+     * @property string|null $abacatepay_billing_id
      * @property \Illuminate\Support\Carbon|null $auto_charge_date
      * @property boolean $auto_charge_enabled
-     * @property string|null $pix_code
-     * @property string|null $pix_qr_code
-     * @property string|null $boleto_barcode
-     * @property string|null $boleto_url
-     * @property string|null $payment_url
-     * @property array|null $pagarme_data
-     * @property string|null $pagarme_status
-     * @property string|null $pagarme_transaction_id
-     * @property string|null $pagarme_charge_id
      * @property \Illuminate\Support\Carbon|null $updated_at
      * @property \Illuminate\Support\Carbon|null $created_at
      * @property string|null $payment_instructions
@@ -1058,6 +1056,9 @@ namespace App\Models {
      * @property int|null $client_project_id
      * @property int $user_id
      * @property int $id
+     * @property-read mixed $pix_code
+     * @property-read mixed $pix_qr_code_url
+     * @property-read mixed $boleto_url
      * @property-read mixed $status_label
      * @property-read mixed $status_color
      * @property-read mixed $payment_method_label
@@ -1068,8 +1069,14 @@ namespace App\Models {
      * @property-read mixed $days_until_due
      * @property-read mixed $is_overdue
      * @property-read mixed $due_status
-     * @property-read mixed $pagar_me_status_label
-     * @property-read mixed $pagar_me_status_color
+     * @property-read mixed $abacate_pay_status_label
+     * @property-read mixed $abacate_pay_status_color
+     * @property-read mixed $boleto_code
+     * @property-read mixed $invoice_file_url
+     * @property-read mixed $has_pdf
+     * @property-read mixed $formatted_due_date
+     * @property-read mixed $formatted_issue_date
+     * @property-read mixed $formatted_paid_date
      * @property-read \App\Models\User $user
      * @property-read \App\Models\ClientProject $clientProject
      * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice whereId($value)
@@ -1097,27 +1104,22 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice wherePaymentInstructions($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice whereCreatedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice whereUpdatedAt($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice wherePagarmeChargeId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice wherePagarmeTransactionId($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice wherePagarmeStatus($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice wherePagarmeData($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice wherePaymentUrl($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice whereBoletoUrl($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice whereBoletoBarcode($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice wherePixQrCode($value)
-     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice wherePixCode($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice whereAutoChargeEnabled($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice whereAutoChargeDate($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice whereAbacatepayBillingId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice whereAbacatepayCustomerId($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice whereAbacatepayStatus($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice whereAbacatepayData($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice wherePaymentUrl($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice wherePixQrCode($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice whereBoletoBarcode($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice whereWebhookReceivedAt($value)
      * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice pending()
      * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice paid()
      * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice overdue()
      * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice dueSoon()
      * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice byStatus()
-     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice withPagarMeCharge()
      * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice autoChargeReady()
-     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice needsBoleto()
-     * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice needsPix()
      * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice newModelQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice newQuery()
      * @method static \Illuminate\Database\Eloquent\Builder<Invoice>|Invoice query()
@@ -3735,6 +3737,7 @@ namespace App\Models {
     /**
      * App\Models\User
      *
+     * @property string|null $abacatepay_customer_id
      * @property \Illuminate\Support\Carbon|null $profile_completed_at
      * @property array|null $preferences
      * @property string|null $avatar
@@ -3808,6 +3811,7 @@ namespace App\Models {
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereAvatar($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User wherePreferences($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereProfileCompletedAt($value)
+     * @method static \Illuminate\Database\Eloquent\Builder<User>|User whereAbacatepayCustomerId($value)
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User admins()
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User clients()
      * @method static \Illuminate\Database\Eloquent\Builder<User>|User newModelQuery()

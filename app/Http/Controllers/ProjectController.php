@@ -18,9 +18,15 @@ class ProjectController extends Controller
             ->with(['category'])
             ->paginate(12);
 
+        // Get all active categories with project count
         $categories = Category::where('is_active', true)
-            ->withCount('projects')
-            ->get();
+            ->withCount(['projects' => function($query) {
+                $query->published();
+            }])
+            ->get()
+            ->filter(function($category) {
+                return $category->projects_count > 0;
+            });
 
         return view('projects.index', compact('projects', 'categories'));
     }

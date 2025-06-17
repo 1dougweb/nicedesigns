@@ -164,7 +164,7 @@
             <div class="space-y-6">
                 <!-- Initial Message -->
                 <div class="flex space-x-4">
-                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center flex-shrink-0">
+                    <div class="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 width=[200px] rounded-full flex items-center justify-center flex-shrink-0">
                         <span class="text-white font-bold text-sm">{{ substr($supportTicket->user->full_name, 0, 2) }}</span>
                     </div>
                     <div class="flex-1">

@@ -196,9 +196,7 @@
         <div class="flex flex-col sm:flex-row gap-4 pt-6">
             <button type="submit" 
                     class="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-8 py-3 rounded-xl font-medium transition-all duration-300 transform hover:scale-105 shadow-lg flex items-center justify-center">
-                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
-                </svg>
+                    <i class="fi fi-rr-paper-plane text-white ml-2 mt-2"></i>
                 Enviar Ticket
             </button>
             
