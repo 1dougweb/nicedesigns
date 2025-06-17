@@ -367,7 +367,14 @@ class SettingController extends Controller
      */
     private function buildSitemapXml(): string
     {
-        $baseUrl = config('app.url');
+        // Forçar o uso do domínio configurado no .env
+        $baseUrl = env('APP_URL', 'https://nicedesigns.com.br');
+        
+        // Verificar se a URL está correta (não é localhost)
+        if (strpos($baseUrl, 'localhost') !== false) {
+            $baseUrl = 'https://nicedesigns.com.br';
+        }
+        
         $xml = '<?xml version="1.0" encoding="UTF-8"?>' . "\n";
         $xml .= '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">' . "\n";
 
