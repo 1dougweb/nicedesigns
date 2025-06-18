@@ -155,7 +155,7 @@
                             </div>
                             <div>
                                 <h3 class="text-lg font-semibold text-white mb-2">E-mail</h3>
-                                <p class="text-gray-300">contato@nicedesigns.com.br</p>
+                                <p class="text-gray-300">{{ contact_info('email') ?: 'contato@nicedesigns.com.br' }}</p>
                                 <p class="text-gray-400 text-sm mt-1">Resposta em até 24h</p>
                             </div>
                         </div>
@@ -171,7 +171,7 @@
                             </div>
                             <div>
                                 <h3 class="text-lg font-semibold text-white mb-2">Telefone</h3>
-                                <p class="text-gray-300">(11) 99999-9999</p>
+                                <p class="text-gray-300">{{ contact_info('phone') ?: '(11) 99999-9999' }}</p>
                                 <p class="text-gray-400 text-sm mt-1">Seg à Sex, 9h às 18h</p>
                             </div>
                         </div>
@@ -187,7 +187,13 @@
                             </div>
                             <div>
                                 <h3 class="text-lg font-semibold text-white mb-2">Localização</h3>
-                                <p class="text-gray-300">São Paulo, SP</p>
+                                <p class="text-gray-300">
+                                    @if(contact_info('city') && contact_info('state'))
+                                        {{ contact_info('city') }}, {{ contact_info('state') }}
+                                    @else
+                                        São Paulo, SP
+                                    @endif
+                                </p>
                                 <p class="text-gray-400 text-sm mt-1">Atendimento remoto e presencial</p>
                             </div>
                         </div>

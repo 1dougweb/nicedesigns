@@ -47,36 +47,72 @@ class SettingController extends Controller
      */
     public function update(Request $request)
     {
-        // Validação simplificada para debug
-        $request->validate([
-            'site_name' => 'required|string|max:255',
-            'contact_email' => 'required|email',
-            'contact_phone' => 'required|string|max:20',
-            'address' => 'required|string|max:255',
-            'city' => 'required|string|max:100',
-            'state' => 'required|string|max:50',
-            'zip_code' => 'required|string|max:10',
-            'country' => 'required|string|max:50',
-            'posts_per_page' => 'required|integer|min:1|max:50',
-            'projects_per_page' => 'required|integer|min:1|max:50',
-            'timezone' => 'required|string',
-            'date_format' => 'required|string',
-            'currency' => 'required|string|max:10',
-            // AbacatePay validation
-            'abacatepay.token' => 'nullable|string',
-            'abacatepay.environment' => 'nullable|in:sandbox,production',
-            'abacatepay.webhook_secret' => 'nullable|string',
-        ]);
-
         try {
-            \Log::info('Iniciando salvamento de configurações', [
-                'user_id' => auth()->id(),
-                'request_data' => $request->all()
+            // Validação flexível - todos os campos são opcionais mas com tipos específicos
+            $validated = $request->validate([
+                // Campos gerais
+                'site_name' => 'nullable|string|max:255',
+                'site_description' => 'nullable|string|max:500',
+                'site_keywords' => 'nullable|string|max:500',
+                'site_logo' => 'nullable|string|max:500',
+                'site_favicon' => 'nullable|string|max:500',
+                'posts_per_page' => 'nullable|integer|min:1|max:50',
+                'projects_per_page' => 'nullable|integer|min:1|max:50',
+                'timezone' => 'nullable|string|max:100',
+                'date_format' => 'nullable|string|max:20',
+                'currency' => 'nullable|string|max:10',
+                'maintenance_mode' => 'nullable|boolean',
+                'allow_registration' => 'nullable|boolean',
+                
+                // Campos de contato
+                'contact_email' => 'nullable|email|max:255',
+                'contact_phone' => 'nullable|string|max:20',
+                'contact_whatsapp' => 'nullable|string|max:20',
+                'address' => 'nullable|string|max:255',
+                'address_complement' => 'nullable|string|max:255',
+                'city' => 'nullable|string|max:100',
+                'state' => 'nullable|string|max:50',
+                'zip_code' => 'nullable|string|max:15',
+                'country' => 'nullable|string|max:50',
+                
+                // Campos de redes sociais
+                'facebook_url' => 'nullable|string|max:500',
+                'instagram_url' => 'nullable|string|max:500',
+                'twitter_url' => 'nullable|string|max:500',
+                'linkedin_url' => 'nullable|string|max:500',
+                'youtube_url' => 'nullable|string|max:500',
+                'github_url' => 'nullable|string|max:500',
+                'behance_url' => 'nullable|string|max:500',
+                'dribbble_url' => 'nullable|string|max:500',
+                
+                // Campos de SEO
+                'meta_title' => 'nullable|string|max:255',
+                'meta_description' => 'nullable|string|max:500',
+                'google_analytics_id' => 'nullable|string|max:100',
+                'google_search_console' => 'nullable|string',
+                'facebook_pixel_id' => 'nullable|string|max:100',
+                
+                // Campos de email
+                'smtp_host' => 'nullable|string|max:100',
+                'smtp_port' => 'nullable|integer|min:1|max:65535',
+                'smtp_username' => 'nullable|string|max:100',
+                'smtp_password' => 'nullable|string|max:100',
+                'smtp_encryption' => 'nullable|string|max:10',
+                'mail_from_address' => 'nullable|email|max:255',
+                'mail_from_name' => 'nullable|string|max:100',
+                
+                // Campos de aparência
+                'primary_color' => 'nullable|string|max:7',
+                'secondary_color' => 'nullable|string|max:7',
+                'accent_color' => 'nullable|string|max:7',
+                'custom_css' => 'nullable|string',
+                'custom_js' => 'nullable|string',
+                
+                // AbacatePay
+                'abacatepay.token' => 'nullable|string',
+                'abacatepay.environment' => 'nullable|in:sandbox,production',
+                'abacatepay.webhook_secret' => 'nullable|string',
             ]);
-
-            // Contar configurações antes
-            $settingsCountBefore = Setting::count();
-            \Log::info('Configurações antes do salvamento: ' . $settingsCountBefore);
 
             // Salvar configurações por grupo
             $this->saveSettingsGroup($request, 'general', [
@@ -129,28 +165,39 @@ class SettingController extends Controller
                 }
             }
 
-            // Contar configurações depois
-            $settingsCountAfter = Setting::count();
-            \Log::info('Configurações após o salvamento: ' . $settingsCountAfter);
-
             // Limpar cache de configurações
-            Artisan::call('config:clear');
-            Artisan::call('view:clear');
-
-            \Log::info('Configurações salvas com sucesso');
+            try {
+                Artisan::call('config:clear');
+                Artisan::call('view:clear');
+            } catch (\Exception $cacheException) {
+                \Log::warning('Aviso: Erro ao limpar cache (continuando...): ' . $cacheException->getMessage());
+            }
 
             return Redirect::route('admin.settings.index')
                 ->with('success', 'Configurações atualizadas com sucesso!');
                 
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            \Log::error('Erro de validação ao salvar configurações:', [
+                'errors' => $e->errors(),
+                'user_id' => auth()->id(),
+            ]);
+            
+            return Redirect::route('admin.settings.index')
+                ->withErrors($e->errors())
+                ->withInput();
+                
         } catch (\Exception $e) {
-            \Log::error('Erro ao salvar configurações: ' . $e->getMessage(), [
+            \Log::error('Erro geral ao salvar configurações: ' . $e->getMessage(), [
                 'exception' => $e,
                 'user_id' => auth()->id(),
+                'file' => $e->getFile(),
+                'line' => $e->getLine(),
                 'trace' => $e->getTraceAsString()
             ]);
             
             return Redirect::route('admin.settings.index')
-                ->with('error', 'Erro ao salvar configurações: ' . $e->getMessage());
+                ->with('error', 'Erro ao salvar configurações: ' . $e->getMessage())
+                ->withInput();
         }
     }
 
@@ -173,7 +220,17 @@ class SettingController extends Controller
                 $value = '';
             }
             
-            Setting::set($key, $value, $type, $group);
+            try {
+                Setting::set($key, $value, $type, $group);
+            } catch (\Exception $e) {
+                \Log::error("Erro ao salvar configuração {$key}: " . $e->getMessage(), [
+                    'group' => $group,
+                    'value' => $value,
+                    'type' => $type,
+                    'exception' => $e
+                ]);
+                throw $e;
+            }
         }
     }
 
@@ -554,4 +611,6 @@ class SettingController extends Controller
 
         file_put_contents($envFile, $envContent);
     }
+
+
 }

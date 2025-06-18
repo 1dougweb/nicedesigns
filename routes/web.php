@@ -58,6 +58,7 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::post('settings/clear-cache', [AdminSettingController::class, 'clearCache'])->name('settings.clear-cache');
     Route::post('settings/test-abacatepay', [AdminSettingController::class, 'testAbacatePayConnection'])->name('settings.test-abacatepay');
 
+
     
     // Client Projects Management
     Route::resource('client-projects', \App\Http\Controllers\Admin\ClientProjectController::class);

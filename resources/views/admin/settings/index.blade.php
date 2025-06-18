@@ -143,8 +143,7 @@
                     <label for="site_name" class="block text-sm font-medium text-gray-300 mb-2">Nome do Site</label>
                     <input type="text" id="site_name" name="site_name" 
                            value="{{ $settings['general']->where('key', 'site_name')->first()->value ?? '' }}"
-                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                           required>
+                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
                 </div>
                 
                 <div>
@@ -250,21 +249,29 @@
                 Informações de Contato
             </h3>
             
+            <div class="mb-6 p-4 bg-blue-600/20 border border-blue-400/30 rounded-xl">
+                <div class="flex items-center text-blue-300">
+                    <i class="fi fi-rr-info text-xl mr-3"></i>
+                    <div>
+                        <p class="font-medium">Informações Importantes</p>
+                        <p class="text-sm text-blue-200">Os campos de email e telefone são essenciais para o funcionamento do site de contato.</p>
+                    </div>
+                </div>
+            </div>
+            
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label for="contact_email" class="block text-sm font-medium text-gray-300 mb-2">Email de Contato</label>
                     <input type="email" id="contact_email" name="contact_email" 
                            value="{{ $settings['contact']->where('key', 'contact_email')->first()->value ?? '' }}"
-                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                           required>
+                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
                 </div>
                 
                 <div>
                     <label for="contact_phone" class="block text-sm font-medium text-gray-300 mb-2">Telefone</label>
                     <input type="text" id="contact_phone" name="contact_phone" 
                            value="{{ $settings['contact']->where('key', 'contact_phone')->first()->value ?? '' }}"
-                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                           required>
+                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
                 </div>
                 
                 <div>
@@ -279,16 +286,14 @@
                     <label for="city" class="block text-sm font-medium text-gray-300 mb-2">Cidade</label>
                     <input type="text" id="city" name="city" 
                            value="{{ $settings['contact']->where('key', 'city')->first()->value ?? '' }}"
-                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                           required>
+                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
                 </div>
                 
                 <div class="md:col-span-2">
                     <label for="address" class="block text-sm font-medium text-gray-300 mb-2">Endereço</label>
                     <input type="text" id="address" name="address" 
                            value="{{ $settings['contact']->where('key', 'address')->first()->value ?? '' }}"
-                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                           required>
+                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
                 </div>
                 
                 <div>
@@ -303,16 +308,14 @@
                     <label for="zip_code" class="block text-sm font-medium text-gray-300 mb-2">CEP</label>
                     <input type="text" id="zip_code" name="zip_code" 
                            value="{{ $settings['contact']->where('key', 'zip_code')->first()->value ?? '' }}"
-                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                           required>
+                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
                 </div>
                 
                 <div>
                     <label for="state" class="block text-sm font-medium text-gray-300 mb-2">Estado</label>
                     <input type="text" id="state" name="state" 
                            value="{{ $settings['contact']->where('key', 'state')->first()->value ?? '' }}"
-                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
-                           required>
+                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
                 </div>
                 
                 <div>
@@ -768,6 +771,8 @@
 @push('scripts')
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    let currentActiveTab = 'general-tab';
+    
     // Função para alternar entre as abas
     function switchTab(tabId) {
         // Esconde todas as abas
@@ -788,8 +793,13 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector(`[data-tab="${tabId}"]`).classList.remove('text-gray-400', 'hover:text-white');
         document.querySelector(`[data-tab="${tabId}"]`).classList.add('bg-gray-700/50', 'text-white');
         
+        // Atualiza a aba ativa atual
+        currentActiveTab = tabId;
+        
         // Atualiza a URL com o hash da aba
         window.location.hash = tabId;
+        
+
     }
     
     // Adiciona os event listeners aos botões das abas
@@ -813,6 +823,47 @@ document.addEventListener('DOMContentLoaded', function() {
         if (firstTab) {
             switchTab(firstTab.getAttribute('data-tab'));
         }
+    }
+    
+    // Interceptar submit do formulário para validação customizada
+    const form = document.getElementById('settings-form');
+    if (form) {
+        form.addEventListener('submit', function(e) {
+
+            
+            // Remover todos os atributos required temporariamente para evitar conflitos
+            const allInputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+            allInputs.forEach(input => {
+                input.removeAttribute('required');
+            });
+            
+            // Validação básica no JavaScript apenas para campos críticos
+            let hasErrors = false;
+            const errors = [];
+            
+            // Validar apenas se estivermos na aba de contato ou se for um submit geral
+            if (currentActiveTab === 'contact-tab' || true) {
+                const contactEmail = document.getElementById('contact_email');
+                const contactPhone = document.getElementById('contact_phone');
+                
+                if (contactEmail && contactEmail.value.trim() === '') {
+                    errors.push('Email de contato é obrigatório');
+                    hasErrors = true;
+                }
+                
+                if (contactPhone && contactPhone.value.trim() === '') {
+                    errors.push('Telefone de contato é obrigatório');
+                    hasErrors = true;
+                }
+            }
+            
+            if (hasErrors) {
+                alert('Por favor, preencha os campos obrigatórios:\n' + errors.join('\n'));
+                e.preventDefault();
+                return false;
+            }
+            // O formulário será enviado normalmente
+        });
     }
 });
 </script>
@@ -849,7 +900,6 @@ function clearCache() {
     })
     .catch(error => {
         alert('Erro ao limpar cache');
-        console.error('Error:', error);
     })
     .finally(() => {
         button.innerHTML = originalText;
@@ -888,7 +938,6 @@ function testEmail(button) {
     })
     .catch(error => {
         alert('Erro ao enviar email de teste');
-        console.error('Error:', error);
     })
     .finally(() => {
         button.innerHTML = originalText;
@@ -918,12 +967,22 @@ document.addEventListener('DOMContentLoaded', function() {
     const saveButton = document.getElementById('save-button');
     
     if (form && saveButton) {
-        form.addEventListener('submit', function() {
+        form.addEventListener('submit', function(e) {
             const originalText = saveButton.innerHTML;
             saveButton.innerHTML = '<i class="fi fi-rr-spinner animate-spin mr-2"></i>Salvando...';
             saveButton.disabled = true;
+            
+            // Timeout para reabilitar o botão em caso de erro
+            setTimeout(() => {
+                if (saveButton.disabled) {
+                    saveButton.innerHTML = originalText;
+                    saveButton.disabled = false;
+                }
+            }, 30000); // 30 segundos
         });
     }
+    
+
 });
 </script>
 @endsection 

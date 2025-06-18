@@ -179,6 +179,44 @@ return [
     |
     */
 
-    'attributes' => [],
+    'attributes' => [
+        'name' => 'nome',
+        'email' => 'e-mail',
+        'password' => 'senha',
+        'password_confirmation' => 'confirmação de senha',
+        'terms' => 'termos de serviço',
+        'current_password' => 'senha atual',
+        'new_password' => 'nova senha',
+        'remember_me' => 'lembrar de mim',
+        
+        // Campos de configurações
+        'site_name' => 'nome do site',
+        'site_description' => 'descrição do site',
+        'site_keywords' => 'palavras-chave do site',
+        'contact_email' => 'e-mail de contato',
+        'contact_phone' => 'telefone de contato',
+        'contact_whatsapp' => 'WhatsApp de contato',
+        'address' => 'endereço',
+        'city' => 'cidade',
+        'state' => 'estado',
+        'zip_code' => 'CEP',
+        'country' => 'país',
+        
+        // Redes sociais
+        'facebook_url' => 'URL do Facebook',
+        'twitter_url' => 'URL do Twitter',
+        'instagram_url' => 'URL do Instagram',
+        'linkedin_url' => 'URL do LinkedIn',
+        'youtube_url' => 'URL do YouTube',
+        
+        // Configurações de e-mail
+        'smtp_host' => 'servidor SMTP',
+        'smtp_port' => 'porta SMTP',
+        'smtp_username' => 'usuário SMTP',
+        'smtp_password' => 'senha SMTP',
+        'smtp_encryption' => 'criptografia SMTP',
+        'mail_from_address' => 'e-mail remetente',
+        'mail_from_name' => 'nome remetente',
+    ],
 
 ]; 
