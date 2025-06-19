@@ -128,6 +128,19 @@
                     @endif
                 </a>
 
+                <!-- Notifications -->
+                <a href="{{ route('admin.notifications.index') }}" 
+                   class="flex items-center px-4 py-3 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-200 group {{ request()->routeIs('admin.notifications.*') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' : '' }}">
+                    <i class="fi fi-rr-bell w-5 h-5 mr-3"></i>
+                    Notificações
+                    @php
+                        $adminUnreadCount = \App\Models\Notification::forAdmins()->unread()->notExpired()->count();
+                    @endphp
+                    @if($adminUnreadCount > 0)
+                        <span class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">{{ $adminUnreadCount > 9 ? '9+' : $adminUnreadCount }}</span>
+                    @endif
+                </a>
+
                 <!-- Settings -->
                 <a href="{{ route('admin.settings.index') }}" 
                    class="flex items-center px-4 py-3 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-200 group {{ request()->routeIs('admin.settings.*') ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : '' }}">
@@ -186,7 +199,12 @@
                             <div class="relative" id="notifications-dropdown">
                                 <button id="notifications-button" class="p-1.5 sm:p-2 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-lg sm:rounded-xl transition-colors relative">
                                     <i class="fi fi-rr-bell text-white text-2xl mt-4"></i>
-                                    <span id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center text-[10px] sm:text-xs hidden">0</span>
+                                    @php
+                                        $unreadCount = \App\Models\Notification::forAdmins()->unread()->notExpired()->count();
+                                    @endphp
+                                    <span id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-4 h-4 sm:w-5 sm:h-5 rounded-full flex items-center justify-center text-[10px] sm:text-xs {{ $unreadCount > 0 ? '' : 'hidden' }}">
+                                        {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                                    </span>
                                 </button>
 
                                 <!-- Notifications Dropdown -->

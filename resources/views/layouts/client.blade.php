@@ -89,6 +89,21 @@
                     Suporte
                 </a>
 
+                <!-- Notificações -->
+                <a href="{{ route('client.notifications.index') }}" 
+                   class="flex items-center px-4 py-3 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-200 group {{ request()->routeIs('client.notifications.*') ? 'bg-indigo-600/20 text-indigo-400 border border-indigo-500/30' : '' }}">
+                    <i class="fi fi-rr-bell w-5 h-5 mr-3"></i>
+                    Notificações
+                    @php
+                        $unreadCount = \App\Models\Notification::forUser(auth()->id())->unread()->notExpired()->count();
+                    @endphp
+                    @if($unreadCount > 0)
+                        <span class="ml-auto bg-red-500 text-white text-xs px-2 py-1 rounded-full">
+                            {{ $unreadCount > 9 ? '9+' : $unreadCount }}
+                        </span>
+                    @endif
+                </a>
+
                 <!-- Perfil -->
                 <a href="{{ route('client.profile.index') }}" 
                    class="flex items-center px-4 py-3 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-200 group {{ request()->routeIs('client.profile.*') ? 'bg-pink-600/20 text-pink-400 border border-pink-500/30' : '' }}">
@@ -144,15 +159,46 @@
 
                         <!-- User Menu -->
                         <div class="flex items-center space-x-4">
-                            <!-- Notifications -->
-                            <button class="p-2 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-xl transition-colors relative">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-5 5v-5zM10.5 3.5a6 6 0 0 1 6 6v2l1.5 3h-15l1.5-3v-2a6 6 0 0 1 6-6z"/>
-                                </svg>
-                                @if(isset($newNotifications) && $newNotifications > 0)
-                                    <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">{{ $newNotifications }}</span>
-                                @endif
-                            </button>
+                            <!-- Notifications Dropdown -->
+                            <div class="relative" id="notifications-dropdown">
+                                <button onclick="toggleNotifications()" class="p-2 text-gray-400 hover:text-white hover:bg-gray-700/50 rounded-xl transition-colors relative">
+                                    <i class="fi fi-rr-bell text-xl"></i>
+                                    @php
+                                        $unreadCount = \App\Models\Notification::forUser(auth()->id())->unread()->notExpired()->count();
+                                    @endphp
+                                    <span id="notification-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center {{ $unreadCount > 0 ? '' : 'hidden' }}">
+                                        <span id="notification-count">{{ $unreadCount > 9 ? '9+' : $unreadCount }}</span>
+                                    </span>
+                                </button>
+
+                                <!-- Dropdown Menu -->
+                                <div id="notifications-menu" class="absolute right-0 mt-2 w-80 bg-gray-800 rounded-2xl shadow-2xl border border-gray-700/50 backdrop-blur-xl z-50 hidden">
+                                    <!-- Header -->
+                                    <div class="p-4 border-b border-gray-700/50">
+                                        <div class="flex items-center justify-between">
+                                            <h3 class="text-lg font-semibold text-white">Notificações</h3>
+                                            <button onclick="markAllAsRead()" class="text-blue-400 hover:text-blue-300 text-sm font-medium">
+                                                Marcar todas como lidas
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    <!-- Notifications List -->
+                                    <div id="notifications-list" class="max-h-96 overflow-y-auto">
+                                        <div class="p-4 text-center text-gray-400">
+                                            <i class="fi fi-rr-spinner animate-spin text-2xl mb-2"></i>
+                                            <p>Carregando notificações...</p>
+                                        </div>
+                                    </div>
+
+                                    <!-- Footer -->
+                                    <div class="p-4 border-t border-gray-700/50">
+                                        <a href="{{ route('client.notifications.index') }}" class="block text-center text-blue-400 hover:text-blue-300 font-medium">
+                                            Ver todas as notificações
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
 
                             <!-- User Info -->
                             <div class="flex items-center space-x-3">
@@ -216,6 +262,182 @@
             if (!menuButton && !sidebar.contains(event.target) && !overlay.classList.contains('hidden')) {
                 toggleSidebar();
             }
+        });
+
+        // Notifications Dropdown
+        let notificationsOpen = false;
+        let notificationsLoaded = false;
+
+        function toggleNotifications() {
+            const menu = document.getElementById('notifications-menu');
+            
+            if (notificationsOpen) {
+                menu.classList.add('hidden');
+                notificationsOpen = false;
+            } else {
+                menu.classList.remove('hidden');
+                notificationsOpen = true;
+                
+                // Load notifications if not loaded yet
+                if (!notificationsLoaded) {
+                    loadNotifications();
+                }
+            }
+        }
+
+        function loadNotifications() {
+            fetch('/client/notifications/unread')
+                .then(response => response.json())
+                .then(data => {
+                    const list = document.getElementById('notifications-list');
+                    
+                    if (data.notifications.length === 0) {
+                        list.innerHTML = `
+                            <div class="p-6 text-center text-gray-400">
+                                <i class="fi fi-rr-bell text-3xl mb-2"></i>
+                                <p>Nenhuma notificação</p>
+                            </div>
+                        `;
+                    } else {
+                        list.innerHTML = data.notifications.map(notification => `
+                            <div class="p-4 border-b border-gray-700/30 hover:bg-gray-700/20 transition-colors">
+                                <div class="flex items-start space-x-3">
+                                    <div class="w-10 h-10 bg-${notification.color}-500/20 rounded-xl flex items-center justify-center flex-shrink-0">
+                                        <i class="${notification.icon} text-${notification.color}-400"></i>
+                                    </div>
+                                    <div class="flex-1 min-w-0">
+                                        <div class="flex items-center justify-between mb-1">
+                                            <h4 class="text-white font-medium text-sm">${notification.title}</h4>
+                                            <span class="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></span>
+                                        </div>
+                                        <p class="text-gray-300 text-sm leading-5 mb-2">${notification.message}</p>
+                                        <div class="flex items-center justify-between">
+                                            <span class="text-gray-500 text-xs">${formatDate(notification.created_at)}</span>
+                                            <div class="flex space-x-2">
+                                                ${notification.url ? `<button onclick="redirectToNotification(${notification.id}, '${notification.url}')" class="text-blue-400 hover:text-blue-300 text-xs">Ver</button>` : ''}
+                                                <button onclick="markAsRead(${notification.id})" class="text-gray-400 hover:text-white text-xs">Marcar como lida</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                    
+                    notificationsLoaded = true;
+                })
+                .catch(error => {
+                    console.error('Error loading notifications:', error);
+                    document.getElementById('notifications-list').innerHTML = `
+                        <div class="p-6 text-center text-red-400">
+                            <i class="fi fi-rr-cross-circle text-3xl mb-2"></i>
+                            <p>Erro ao carregar notificações</p>
+                        </div>
+                    `;
+                });
+        }
+
+        function markAsRead(notificationId) {
+            fetch(`/client/notifications/${notificationId}/read`, {
+                method: 'PUT',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload notifications
+                    notificationsLoaded = false;
+                    loadNotifications();
+                    updateNotificationCount();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function markAllAsRead() {
+            fetch('/client/notifications/mark-all-read', {
+                method: 'PUT',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    // Reload notifications
+                    notificationsLoaded = false;
+                    loadNotifications();
+                    updateNotificationCount();
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function redirectToNotification(notificationId, url) {
+            // Mark as read and redirect
+            fetch(`/client/notifications/${notificationId}/read`, {
+                method: 'PUT',
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
+                    'Content-Type': 'application/json',
+                },
+            })
+            .then(() => {
+                window.location.href = url;
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function updateNotificationCount() {
+            fetch('/client/notifications/check-new')
+                .then(response => response.json())
+                .then(data => {
+                    const badge = document.getElementById('notification-badge');
+                    const count = document.getElementById('notification-count');
+                    
+                    if (data.count > 0) {
+                        badge.classList.remove('hidden');
+                        count.textContent = data.count > 9 ? '9+' : data.count;
+                    } else {
+                        badge.classList.add('hidden');
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffInMinutes = Math.floor((now - date) / 60000);
+            
+            if (diffInMinutes < 1) return 'Agora';
+            if (diffInMinutes < 60) return `${diffInMinutes}m atrás`;
+            if (diffInMinutes < 1440) return `${Math.floor(diffInMinutes / 60)}h atrás`;
+            if (diffInMinutes < 2880) return 'Ontem';
+            return `${Math.floor(diffInMinutes / 1440)}d atrás`;
+        }
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(event) {
+            const dropdown = document.getElementById('notifications-dropdown');
+            const menu = document.getElementById('notifications-menu');
+            
+            if (!dropdown.contains(event.target) && notificationsOpen) {
+                menu.classList.add('hidden');
+                notificationsOpen = false;
+            }
+        });
+
+        // Check for new notifications periodically
+        setInterval(updateNotificationCount, 30000); // Every 30 seconds
+
+        // Initial load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateNotificationCount();
         });
     </script>
 

@@ -112,11 +112,9 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
         Route::get('/', 'index')->name('index');
         Route::get('/unread', 'getUnread')->name('unread');
         Route::get('/check-new', 'checkNew')->name('check-new');
-        Route::post('/', 'store')->name('store');
         Route::put('/{notification}/read', 'markAsRead')->name('mark-read');
         Route::put('/mark-all-read', 'markAllAsRead')->name('mark-all-read');
         Route::delete('/{notification}', 'destroy')->name('destroy');
-        Route::delete('/clear-read', 'clearRead')->name('clear-read');
         Route::get('/{notification}/redirect', 'redirect')->name('redirect');
     });
 
@@ -134,6 +132,8 @@ Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(
     // Projects
     Route::get('/projects', [\App\Http\Controllers\Client\ProjectController::class, 'index'])->name('projects.index');
     Route::get('/projects/{project}', [\App\Http\Controllers\Client\ProjectController::class, 'show'])->name('projects.show');
+    Route::post('/projects/{project}/approve', [\App\Http\Controllers\Client\ProjectController::class, 'approve'])->name('projects.approve');
+    Route::post('/projects/{project}/reject', [\App\Http\Controllers\Client\ProjectController::class, 'reject'])->name('projects.reject');
     
     // Invoices
     Route::get('/invoices', [\App\Http\Controllers\Client\InvoiceController::class, 'index'])->name('invoices.index');
@@ -153,6 +153,17 @@ Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(
     Route::post('/profile/validate-document', [\App\Http\Controllers\Client\ProfileController::class, 'validateDocument'])->name('profile.validate-document');
     Route::post('/profile/avatar', [\App\Http\Controllers\Client\ProfileController::class, 'uploadAvatar'])->name('profile.upload-avatar');
     Route::delete('/profile/avatar', [\App\Http\Controllers\Client\ProfileController::class, 'removeAvatar'])->name('profile.remove-avatar');
+
+    // Notifications
+    Route::controller(\App\Http\Controllers\Client\NotificationController::class)->prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', 'index')->name('index');
+        Route::get('/unread', 'getUnread')->name('unread');
+        Route::get('/check-new', 'checkNew')->name('check-new');
+        Route::put('/{notification}/read', 'markAsRead')->name('mark-read');
+        Route::put('/mark-all-read', 'markAllAsRead')->name('mark-all-read');
+        Route::delete('/{notification}', 'destroy')->name('destroy');
+        Route::get('/{notification}/redirect', 'redirect')->name('redirect');
+    });
 });
 
 

@@ -4,6 +4,48 @@
 @section('page-title', $project->name)
 
 @section('content')
+<!-- Approval Section -->
+@if($project->status === 'aguardando_aprovacao')
+    <div class="mb-8">
+        <div class="bg-gradient-to-r from-yellow-600/20 to-orange-600/20 backdrop-blur-md rounded-3xl border border-yellow-500/30 p-6">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center">
+                    <div class="w-12 h-12 bg-yellow-500/20 rounded-full flex items-center justify-center mr-4">
+                        <svg class="w-6 h-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                        </svg>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-bold text-white mb-1">Projeto Aguardando Aprovação</h3>
+                        <p class="text-gray-300">Este projeto requer sua aprovação para iniciar o desenvolvimento.</p>
+                    </div>
+                </div>
+                <div class="flex space-x-3">
+                    <form action="{{ route('client.projects.approve', $project) }}" method="POST" class="inline">
+                        @csrf
+                        <button type="submit" 
+                                onclick="return confirm('Tem certeza que deseja aprovar este projeto?')"
+                                class="bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            <span>Aprovar</span>
+                        </button>
+                    </form>
+                    <button type="button" 
+                            onclick="showRejectModal()"
+                            class="bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 transform hover:scale-105 flex items-center space-x-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                        <span>Rejeitar</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+@endif
+
 <!-- Header Section -->
 <div class="mb-8">
     <div class="bg-gradient-to-r from-{{ $project->status_color ?? 'blue' }}-600/20 to-{{ $project->priority_color ?? 'purple' }}-600/20 backdrop-blur-md rounded-3xl border border-{{ $project->status_color ?? 'blue' }}-500/30 p-8">
@@ -292,4 +334,71 @@
         </div>
     </div>
 </div>
+
+@if($project->status === 'aguardando_aprovacao')
+<!-- Modal de Rejeição -->
+<div id="rejectModal" class="fixed inset-0 bg-black bg-opacity-50 backdrop-blur-sm hidden z-50">
+    <div class="flex items-center justify-center min-h-screen p-4">
+        <div class="bg-gray-800 rounded-3xl border border-gray-700 p-8 max-w-md w-full transform transition-all">
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-red-500/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.464 0L4.35 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+                    </svg>
+                </div>
+                <h3 class="text-xl font-bold text-white mb-2">Rejeitar Projeto</h3>
+                <p class="text-gray-300">Por favor, informe o motivo da rejeição (opcional):</p>
+            </div>
+            
+            <form action="{{ route('client.projects.reject', $project) }}" method="POST">
+                @csrf
+                <div class="mb-6">
+                    <textarea name="reason" 
+                              rows="4" 
+                              placeholder="Motivo da rejeição (opcional)"
+                              class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-red-500 focus:border-transparent transition-all duration-300 resize-none"></textarea>
+                </div>
+                
+                <div class="flex space-x-3">
+                    <button type="button" 
+                            onclick="hideRejectModal()"
+                            class="flex-1 bg-gray-600 hover:bg-gray-700 text-white px-6 py-3 rounded-xl font-semibold transition-colors">
+                        Cancelar
+                    </button>
+                    <button type="submit" 
+                            class="flex-1 bg-gradient-to-r from-red-600 to-red-700 hover:from-red-700 hover:to-red-800 text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300">
+                        Rejeitar
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+function showRejectModal() {
+    document.getElementById('rejectModal').classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+function hideRejectModal() {
+    document.getElementById('rejectModal').classList.add('hidden');
+    document.body.style.overflow = 'auto';
+}
+
+// Fechar modal ao clicar fora
+document.getElementById('rejectModal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        hideRejectModal();
+    }
+});
+
+// Fechar modal com ESC
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') {
+        hideRejectModal();
+    }
+});
+</script>
+@endif
 @endsection 

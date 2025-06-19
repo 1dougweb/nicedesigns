@@ -11,6 +11,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Facades\Mail;
 use App\Models\Setting;
+use App\Models\Notification;
 
 class ContactController extends Controller
 {
@@ -21,29 +22,66 @@ class ContactController extends Controller
 
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:20',
-            'company' => 'nullable|string|max:255',
-            'subject' => 'required|string|max:255',
-            'message' => 'required|string|max:2000',
-        ]);
-
-        $contact = Contact::create($validated);
-
-        // Enviar email de notificação para o admin
         try {
-            $this->configureEmail();
-            $adminEmail = Setting::get('contact_email', 'admin@nicedesigns.com.br');
-            Mail::to($adminEmail)->send(new ContactReceived($contact));
-        } catch (\Exception $e) {
-            // Log do erro mas não falha o processo de contato
-            \Log::error('Erro ao enviar email de contato: ' . $e->getMessage());
-        }
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|max:255',
+                'phone' => 'nullable|string|max:20',
+                'company' => 'nullable|string|max:255',
+                'subject' => 'required|string|max:255',
+                'message' => 'required|string|max:2000',
+            ]);
 
-        return redirect()->back()
-            ->with('success', 'Mensagem enviada com sucesso! Entraremos em contato em breve.');
+            $contact = Contact::create($validated);
+
+            // Enviar email de notificação para o admin
+            $emailSent = false;
+            try {
+                $this->configureEmail();
+                $adminEmail = Setting::get('contact_email', 'admin@nicedesigns.com.br');
+                Mail::to($adminEmail)->send(new ContactReceived($contact));
+                $emailSent = true;
+            } catch (\Exception $e) {
+                // Log do erro mas não falha o processo de contato
+                \Log::error('Erro ao enviar email de contato: ' . $e->getMessage());
+            }
+
+            // Criar notificação para todos os administradores
+            try {
+                Notification::createForAdmins([
+                    'title' => 'Nova Mensagem de Contato',
+                    'message' => "Nova mensagem de {$contact->name} ({$contact->email}): {$contact->subject}",
+                    'type' => Notification::TYPE_NEW_CONTACT,
+                    'url' => route('admin.contacts.show', $contact->id),
+                    'data' => [
+                        'contact_id' => $contact->id,
+                        'contact_name' => $contact->name,
+                        'contact_email' => $contact->email,
+                        'subject' => $contact->subject
+                    ]
+                ]);
+            } catch (\Exception $e) {
+                \Log::error('Erro ao criar notificação de contato: ' . $e->getMessage());
+            }
+
+            // Determinar mensagem de sucesso baseada no envio do email
+            $successMessage = $emailSent 
+                ? 'Mensagem enviada com sucesso! Entraremos em contato em breve.'
+                : 'Mensagem recebida! Entraremos em contato em breve. (Email temporariamente indisponível)';
+
+            return redirect()->back()
+                ->with('success', $successMessage);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+            // Re-throw validation exceptions to show proper error messages
+            throw $e;
+        } catch (\Exception $e) {
+            \Log::error('Erro geral no formulário de contato: ' . $e->getMessage());
+            
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'Ocorreu um erro ao enviar sua mensagem. Tente novamente ou entre em contato através dos outros canais.');
+        }
     }
 
     /**

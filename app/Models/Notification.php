@@ -36,6 +36,8 @@ class Notification extends Model
     const TYPE_ERROR = 'error';
     const TYPE_NEW_CONTACT = 'new_contact';
     const TYPE_NEW_PROJECT = 'new_project';
+    const TYPE_PROJECT_APPROVED = 'project_approved';
+    const TYPE_PROJECT_REJECTED = 'project_rejected';
     const TYPE_INVOICE_PAID = 'invoice_paid';
     const TYPE_SUPPORT_TICKET = 'support_ticket';
 
@@ -99,6 +101,19 @@ class Notification extends Model
     }
 
     /**
+     * Scope para notificações de administradores
+     */
+    public function scopeForAdmins($query)
+    {
+        return $query->where(function($q) {
+            $q->whereNull('user_id') // Notificações globais
+              ->orWhereHas('user', function($userQuery) {
+                  $userQuery->where('role', 'admin');
+              });
+        });
+    }
+
+    /**
      * Scope para notificações de um tipo específico
      */
     public function scopeOfType($query, $type)
@@ -117,6 +132,8 @@ class Notification extends Model
             self::TYPE_ERROR => 'fi-rr-cross-circle',
             self::TYPE_NEW_CONTACT => 'fi-rr-envelope',
             self::TYPE_NEW_PROJECT => 'fi-rr-briefcase',
+            self::TYPE_PROJECT_APPROVED => 'fi-rr-check-circle',
+            self::TYPE_PROJECT_REJECTED => 'fi-rr-cross-circle',
             self::TYPE_INVOICE_PAID => 'fi-rr-money',
             self::TYPE_SUPPORT_TICKET => 'fi-rr-headset',
             default => 'fi-rr-info',
@@ -134,6 +151,8 @@ class Notification extends Model
             self::TYPE_ERROR => 'red',
             self::TYPE_NEW_CONTACT => 'blue',
             self::TYPE_NEW_PROJECT => 'purple',
+            self::TYPE_PROJECT_APPROVED => 'green',
+            self::TYPE_PROJECT_REJECTED => 'red',
             self::TYPE_INVOICE_PAID => 'emerald',
             self::TYPE_SUPPORT_TICKET => 'orange',
             default => 'gray',

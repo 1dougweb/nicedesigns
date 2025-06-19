@@ -368,4 +368,70 @@ class ClientProject extends Model
     {
         return $query->where('priority', $priority);
     }
+
+    /**
+     * Scope para projetos aguardando aprovação
+     */
+    public function scopeAwaitingApproval($query)
+    {
+        return $query->where('status', 'aguardando_aprovacao');
+    }
+
+    /**
+     * Aprovar projeto
+     */
+    public function approve(): void
+    {
+        $this->update([
+            'status' => 'em_andamento',
+            'last_activity_at' => now(),
+        ]);
+        
+        $this->updateActivity('Projeto aprovado pelo cliente');
+        
+        // Notificar administradores
+        Notification::createForAdmins([
+            'title' => 'Projeto Aprovado',
+            'message' => "O cliente aprovou o projeto: {$this->name}",
+            'type' => Notification::TYPE_SUCCESS,
+            'url' => route('admin.client-projects.show', $this->id),
+            'data' => [
+                'project_id' => $this->id,
+                'client_id' => $this->user_id,
+                'action' => 'approved'
+            ]
+        ]);
+    }
+
+    /**
+     * Rejeitar projeto
+     */
+    public function reject(string $reason = null): void
+    {
+        $this->update([
+            'status' => 'cancelado',
+            'last_activity_at' => now(),
+        ]);
+        
+        $message = 'Projeto rejeitado pelo cliente';
+        if ($reason) {
+            $message .= ". Motivo: {$reason}";
+        }
+        
+        $this->updateActivity($message);
+        
+        // Notificar administradores
+        Notification::createForAdmins([
+            'title' => 'Projeto Rejeitado',
+            'message' => "O cliente rejeitou o projeto: {$this->name}",
+            'type' => Notification::TYPE_WARNING,
+            'url' => route('admin.client-projects.show', $this->id),
+            'data' => [
+                'project_id' => $this->id,
+                'client_id' => $this->user_id,
+                'action' => 'rejected',
+                'reason' => $reason
+            ]
+        ]);
+    }
 }

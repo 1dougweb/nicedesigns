@@ -8,6 +8,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ClientProject;
 use App\Models\User;
 use App\Models\Project;
+use App\Models\Notification;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -160,9 +161,26 @@ class ClientProjectController extends Controller
 
         $clientProject = ClientProject::create($validated);
 
+        // Notificar o cliente sobre o novo projeto
+        $client = User::find($validated['user_id']);
+        if ($client && $clientProject->status === 'aguardando_aprovacao') {
+            Notification::create([
+                'user_id' => $client->id,
+                'title' => 'Novo Projeto para Aprovação',
+                'message' => "Você tem um novo projeto '{$clientProject->name}' aguardando sua aprovação.",
+                'type' => Notification::TYPE_NEW_PROJECT,
+                'url' => route('client.projects.show', $clientProject->id),
+                'data' => [
+                    'project_id' => $clientProject->id,
+                    'project_name' => $clientProject->name,
+                    'action_required' => 'approval'
+                ]
+            ]);
+        }
+
         return redirect()
             ->route('admin.client-projects.show', $clientProject)
-            ->with('success', 'Projeto criado com sucesso!');
+            ->with('success', 'Projeto criado com sucesso! O cliente foi notificado.');
     }
 
     /**

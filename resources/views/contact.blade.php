@@ -40,12 +40,47 @@
                 <h2 class="text-3xl font-bold text-white mb-8">Envie uma Mensagem</h2>
                 
                 @if(session('success'))
-                    <div class="bg-green-600/20 border border-green-400/30 text-green-400 px-6 py-4 rounded-xl mb-8 backdrop-blur-sm">
-                        <div class="flex items-center">
-                            <svg class="w-6 h-6 mr-3" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                            </svg>
-                            {{ session('success') }}
+                    <div id="success-notification" class="bg-gradient-to-r from-green-600/20 to-emerald-600/20 border border-green-400/30 text-green-400 px-6 py-4 rounded-xl mb-8 backdrop-blur-sm shadow-lg animate-fade-in">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center mr-3">
+                                    <svg class="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-green-300">Mensagem Enviada!</div>
+                                    <div class="text-sm text-green-400/80">{{ session('success') }}</div>
+                                </div>
+                            </div>
+                            <button onclick="closeNotification('success-notification')" class="text-green-400/60 hover:text-green-400 transition-colors">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                @endif
+
+                @if(session('error'))
+                    <div id="error-notification" class="bg-gradient-to-r from-red-600/20 to-pink-600/20 border border-red-400/30 text-red-400 px-6 py-4 rounded-xl mb-8 backdrop-blur-sm shadow-lg animate-fade-in">
+                        <div class="flex items-center justify-between">
+                            <div class="flex items-center">
+                                <div class="w-8 h-8 bg-red-500/20 rounded-full flex items-center justify-center mr-3">
+                                    <svg class="w-5 h-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+                                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <div class="font-semibold text-red-300">Erro no Envio</div>
+                                    <div class="text-sm text-red-400/80">{{ session('error') }}</div>
+                                </div>
+                            </div>
+                            <button onclick="closeNotification('error-notification')" class="text-red-400/60 hover:text-red-400 transition-colors">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                                </svg>
+                            </button>
                         </div>
                     </div>
                 @endif
@@ -305,7 +340,75 @@
     </div>
 </section>
 
+<style>
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slide-out {
+    from {
+        opacity: 1;
+        transform: translateX(0);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(100%);
+    }
+}
+
+.animate-fade-in {
+    animation: fade-in 0.5s ease-out;
+}
+
+.animate-slide-out {
+    animation: slide-out 0.3s ease-in forwards;
+}
+
+.notification-toast {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+    width: auto;
+    min-width: 300px;
+}
+
+/* Loading button state */
+.btn-loading {
+    position: relative;
+    pointer-events: none;
+}
+
+.btn-loading::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 20px;
+    height: 20px;
+    margin: -10px 0 0 -10px;
+    border: 2px solid transparent;
+    border-top: 2px solid #ffffff;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+</style>
+
 <script>
+// FAQ Toggle Function
 function toggleFaq(index) {
     const content = document.getElementById(`content-${index}`);
     const icon = document.getElementById(`icon-${index}`);
@@ -317,5 +420,143 @@ function toggleFaq(index) {
     icon.classList.toggle('rotate-180');
     button.setAttribute('aria-expanded', !isExpanded);
 }
+
+// Close notification function
+function closeNotification(id) {
+    const notification = document.getElementById(id);
+    if (notification) {
+        notification.classList.add('animate-slide-out');
+        setTimeout(() => {
+            notification.remove();
+        }, 300);
+    }
+}
+
+// Auto-hide notifications after 8 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    const successNotification = document.getElementById('success-notification');
+    const errorNotification = document.getElementById('error-notification');
+    
+    if (successNotification) {
+        setTimeout(() => {
+            closeNotification('success-notification');
+        }, 8000);
+    }
+    
+    if (errorNotification) {
+        setTimeout(() => {
+            closeNotification('error-notification');
+        }, 10000); // Keep error notifications a bit longer
+    }
+    
+    // Add form submission handling
+    const contactForm = document.querySelector('form[action="{{ route('contact.store') }}"]');
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            const submitButton = this.querySelector('button[type="submit"]');
+            const buttonText = submitButton.querySelector('span');
+            
+            // Add loading state
+            submitButton.classList.add('btn-loading');
+            submitButton.disabled = true;
+            buttonText.textContent = 'Enviando...';
+            
+            // Show processing toast notification
+            showToastNotification('Enviando mensagem...', 'info');
+        });
+    }
+});
+
+// Toast notification function
+function showToastNotification(message, type = 'success') {
+    // Remove existing toast if any
+    const existingToast = document.querySelector('.notification-toast');
+    if (existingToast) {
+        existingToast.remove();
+    }
+    
+    const colors = {
+        success: {
+            bg: 'from-green-600/20 to-emerald-600/20',
+            border: 'border-green-400/30',
+            text: 'text-green-400',
+            icon: `
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
+                </svg>
+            `
+        },
+        info: {
+            bg: 'from-blue-600/20 to-cyan-600/20',
+            border: 'border-blue-400/30',
+            text: 'text-blue-400',
+            icon: `
+                <svg class="w-5 h-5 animate-spin" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd"/>
+                </svg>
+            `
+        },
+        error: {
+            bg: 'from-red-600/20 to-pink-600/20',
+            border: 'border-red-400/30',
+            text: 'text-red-400',
+            icon: `
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                </svg>
+            `
+        }
+    };
+    
+    const config = colors[type] || colors.success;
+    
+    const toast = document.createElement('div');
+    toast.className = `notification-toast bg-gradient-to-r ${config.bg} border ${config.border} ${config.text} px-6 py-4 rounded-xl backdrop-blur-sm shadow-lg animate-fade-in`;
+    
+    toast.innerHTML = `
+        <div class="flex items-center justify-between">
+            <div class="flex items-center">
+                <div class="w-8 h-8 bg-current bg-opacity-20 rounded-full flex items-center justify-center mr-3">
+                    ${config.icon}
+                </div>
+                <div class="font-medium">${message}</div>
+            </div>
+            <button onclick="this.parentElement.parentElement.remove()" class="ml-4 opacity-60 hover:opacity-100 transition-opacity">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                </svg>
+            </button>
+        </div>
+    `;
+    
+    document.body.appendChild(toast);
+    
+    // Auto remove after delay (except for info type)
+    if (type !== 'info') {
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.classList.add('animate-slide-out');
+                setTimeout(() => toast.remove(), 300);
+            }
+        }, 5000);
+    }
+}
+
+// Show notifications if form was submitted
+@if(session('success'))
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(() => {
+            showToastNotification('{{ session('success') }}', 'success');
+        }, 500);
+    });
+@endif
+
+@if(session('error'))
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(() => {
+            showToastNotification('{{ session('error') }}', 'error');
+        }, 500);
+    });
+@endif
 </script>
 @endsection 

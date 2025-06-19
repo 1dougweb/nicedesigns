@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Client;
 
 use App\Http\Controllers\Controller;
 use App\Models\Notification;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
@@ -18,7 +17,7 @@ class NotificationController extends Controller
      */
     public function index(Request $request): View
     {
-        $query = Notification::forAdmins()
+        $query = Notification::forUser(Auth::id())
             ->notExpired()
             ->orderBy('created_at', 'desc');
 
@@ -40,18 +39,15 @@ class NotificationController extends Controller
 
         // Estatísticas
         $stats = [
-            'total' => Notification::forAdmins()->notExpired()->count(),
-            'unread' => Notification::forAdmins()->unread()->notExpired()->count(),
-            'today' => Notification::forAdmins()->notExpired()->whereDate('created_at', today())->count(),
+            'total' => Notification::forUser(Auth::id())->notExpired()->count(),
+            'unread' => Notification::forUser(Auth::id())->unread()->notExpired()->count(),
+            'today' => Notification::forUser(Auth::id())->notExpired()->whereDate('created_at', today())->count(),
         ];
 
         // Opções de tipos para filtro
         $typeOptions = [
             'all' => 'Todos',
-            Notification::TYPE_NEW_CONTACT => 'Novos Contatos',
             Notification::TYPE_NEW_PROJECT => 'Novos Projetos',
-            Notification::TYPE_PROJECT_APPROVED => 'Projetos Aprovados',
-            Notification::TYPE_PROJECT_REJECTED => 'Projetos Rejeitados',
             Notification::TYPE_INVOICE_PAID => 'Faturas',
             Notification::TYPE_SUPPORT_TICKET => 'Suporte',
             Notification::TYPE_INFO => 'Informações',
@@ -59,7 +55,7 @@ class NotificationController extends Controller
             Notification::TYPE_WARNING => 'Avisos',
         ];
 
-        return view('admin.notifications.index', compact(
+        return view('client.notifications.index', compact(
             'notifications',
             'stats',
             'typeOptions'
@@ -71,41 +67,30 @@ class NotificationController extends Controller
      */
     public function getUnread(): JsonResponse
     {
-        $notifications = Notification::forAdmins()
+        $notifications = Notification::forUser(Auth::id())
             ->unread()
             ->notExpired()
             ->orderBy('created_at', 'desc')
             ->limit(10)
             ->get();
 
-        $unreadCount = Notification::forAdmins()
-            ->unread()
-            ->notExpired()
-            ->count();
-
         return response()->json([
             'notifications' => $notifications,
-            'unread_count' => $unreadCount,
+            'count' => $notifications->count(),
         ]);
     }
 
     /**
      * Check for new notifications (AJAX)
      */
-    public function checkNew(Request $request): JsonResponse
+    public function checkNew(): JsonResponse
     {
-        $lastCheck = $request->get('last_check', now()->subHour());
-        
-        $unreadCount = Notification::forAdmins()
+        $count = Notification::forUser(Auth::id())
             ->unread()
             ->notExpired()
             ->count();
 
-        $hasNew = Notification::forAdmins()
-            ->where('created_at', '>', $lastCheck)
-            ->exists();
-
-        $latestNotifications = Notification::forAdmins()
+        $latestNotifications = Notification::forUser(Auth::id())
             ->unread()
             ->notExpired()
             ->orderBy('created_at', 'desc')
@@ -113,10 +98,9 @@ class NotificationController extends Controller
             ->get();
 
         return response()->json([
-            'unread_count' => $unreadCount,
-            'has_new' => $hasNew,
+            'count' => $count,
             'notifications' => $latestNotifications,
-            'last_check' => now()->toISOString(),
+            'hasNew' => $count > 0,
         ]);
     }
 
@@ -125,8 +109,8 @@ class NotificationController extends Controller
      */
     public function markAsRead(Notification $notification): JsonResponse
     {
-        // Verificar se a notificação é para admins
-        if ($notification->user_id !== null && !$notification->user->isAdmin()) {
+        // Verificar se a notificação pertence ao usuário
+        if ($notification->user_id !== Auth::id()) {
             return response()->json(['error' => 'Acesso negado'], 403);
         }
 
@@ -143,7 +127,7 @@ class NotificationController extends Controller
      */
     public function markAllAsRead(): JsonResponse
     {
-        $updated = Notification::forAdmins()
+        $updated = Notification::forUser(Auth::id())
             ->unread()
             ->notExpired()
             ->update(['read_at' => now()]);
@@ -160,8 +144,8 @@ class NotificationController extends Controller
      */
     public function destroy(Notification $notification): JsonResponse
     {
-        // Verificar se a notificação é para admins
-        if ($notification->user_id !== null && !$notification->user->isAdmin()) {
+        // Verificar se a notificação pertence ao usuário
+        if ($notification->user_id !== Auth::id()) {
             return response()->json(['error' => 'Acesso negado'], 403);
         }
 
@@ -178,8 +162,8 @@ class NotificationController extends Controller
      */
     public function redirect(Notification $notification): RedirectResponse
     {
-        // Verificar se a notificação é para admins
-        if ($notification->user_id !== null && !$notification->user->isAdmin()) {
+        // Verificar se a notificação pertence ao usuário
+        if ($notification->user_id !== Auth::id()) {
             abort(403, 'Acesso negado');
         }
 
@@ -189,7 +173,7 @@ class NotificationController extends Controller
         }
 
         // Redirecionar para a URL da notificação ou dashboard se não houver URL
-        $redirectUrl = $notification->url ?: route('admin.dashboard');
+        $redirectUrl = $notification->url ?: route('client.dashboard');
 
         return redirect($redirectUrl);
     }
