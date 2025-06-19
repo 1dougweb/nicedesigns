@@ -68,6 +68,7 @@ class SettingsHelper
             'settings_group_seo',
             'settings_group_email',
             'settings_group_appearance',
+            'settings_group_footer',
         ];
 
         foreach ($keys as $key) {
@@ -178,11 +179,34 @@ class SettingsHelper
         return [
             'name' => self::get('site_name', config('app.name')),
             'description' => self::get('site_description'),
+            'keywords' => self::get('site_keywords'),
             'logo' => self::get('site_logo'),
             'favicon' => self::get('site_favicon'),
+            'use_logo' => (bool) self::get('use_logo', false),
             'timezone' => self::get('timezone', 'America/Sao_Paulo'),
             'date_format' => self::get('date_format', 'd/m/Y'),
             'currency' => self::get('currency', 'BRL'),
+            'posts_per_page' => (int) self::get('posts_per_page', 12),
+            'projects_per_page' => (int) self::get('projects_per_page', 9),
+            'allow_registration' => (bool) self::get('allow_registration', false),
+            'maintenance_mode' => (bool) self::get('maintenance_mode', false),
+        ];
+    }
+
+    /**
+     * Get footer information
+     */
+    public static function getFooterInfo(): array
+    {
+        return [
+            'company_name' => self::get('company_name', config('app.name')),
+            'company_description' => self::get('company_description'),
+            'copyright_text' => self::get('copyright_text', 'Todos os direitos reservados.'),
+            'footer_text' => self::get('footer_text'),
+            'social_twitter' => self::get('social_twitter'),
+            'social_linkedin' => self::get('social_linkedin'),
+            'social_instagram' => self::get('social_instagram'),
+            'social_facebook' => self::get('social_facebook'),
         ];
     }
 } 

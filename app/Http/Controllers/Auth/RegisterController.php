@@ -42,6 +42,33 @@ class RegisterController extends Controller
     }
 
     /**
+     * Show the application registration form.
+     */
+    public function showRegistrationForm()
+    {
+        // Verificar se o registro está habilitado
+        if (!site_setting('allow_registration')) {
+            abort(403, 'O registro de novos usuários está desabilitado no momento.');
+        }
+
+        return view('auth.register');
+    }
+
+    /**
+     * Handle a registration request for the application.
+     */
+    public function register(\Illuminate\Http\Request $request)
+    {
+        // Verificar se o registro está habilitado
+        if (!site_setting('allow_registration')) {
+            return redirect()->route('login')
+                ->with('error', 'O registro de novos usuários está desabilitado no momento.');
+        }
+
+        return parent::register($request);
+    }
+
+    /**
      * Get a validator for an incoming registration request.
      *
      * @param  array  $data

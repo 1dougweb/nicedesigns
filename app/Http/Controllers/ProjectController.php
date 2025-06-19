@@ -16,7 +16,7 @@ class ProjectController extends Controller
         $projects = Project::published()
             ->latest()
             ->with(['category'])
-            ->paginate(12);
+            ->paginate(site_setting('projects_per_page') ?? 12);
 
         // Get all active categories with project count
         $categories = Category::where('is_active', true)

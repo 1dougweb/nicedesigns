@@ -107,6 +107,14 @@
             </button>
             
             <button 
+                data-tab="footer-tab"
+                class="tab-button flex items-center space-x-2 py-2 px-3 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-300 text-gray-400"
+            >
+                <i class="fi fi-rr-layout-fluid text-xl mt-2"></i>
+                <span>Footer</span>
+            </button>
+            
+            <button 
                 data-tab="abacatepay-tab"
                 class="tab-button flex items-center space-x-2 py-2 px-3 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-300 text-gray-400"
             >
@@ -126,7 +134,7 @@
 </div>
 
 <!-- Form Container -->
-<form id="settings-form" method="POST" action="{{ route('admin.settings.update') }}" class="space-y-8">
+    <form id="settings-form" method="POST" action="{{ route('admin.settings.update') }}" enctype="multipart/form-data" class="space-y-8">
     @csrf
     @method('PUT')
     
@@ -170,18 +178,84 @@
                            placeholder="palavra1, palavra2, palavra3">
                 </div>
                 
-                <div>
-                    <label for="site_logo" class="block text-sm font-medium text-gray-300 mb-2">URL do Logo</label>
-                    <input type="url" id="site_logo" name="site_logo" 
-                           value="{{ $settings['general']->where('key', 'site_logo')->first()->value ?? '' }}"
-                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
-                </div>
-                
-                <div>
-                    <label for="site_favicon" class="block text-sm font-medium text-gray-300 mb-2">URL do Favicon</label>
-                    <input type="url" id="site_favicon" name="site_favicon" 
-                           value="{{ $settings['general']->where('key', 'site_favicon')->first()->value ?? '' }}"
-                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300">
+                <!-- Logo Section -->
+                <div class="md:col-span-2 border-t border-gray-700 pt-6">
+                    <h4 class="text-lg font-semibold text-white mb-4 flex items-center">
+                        <i class="fi fi-rr-picture text-blue-400 text-xl mr-2 mt-2"></i>
+                        Identidade Visual
+                    </h4>
+                    
+                    <!-- Logo Type Switcher -->
+                    <div class="mb-6">
+                        <label class="block text-sm font-medium text-gray-300 mb-3">Tipo de Logo no Header</label>
+                        <div class="flex items-center space-x-6">
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="use_logo" value="0" 
+                                       {{ !($settings['general']->where('key', 'use_logo')->first()->value ?? false) ? 'checked' : '' }}
+                                       class="sr-only peer" id="use_text">
+                                <div class="w-4 h-4 border-2 border-gray-500 rounded-full peer-checked:border-blue-500 peer-checked:bg-blue-500 relative">
+                                    <div class="w-2 h-2 bg-white rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100"></div>
+                                </div>
+                                <span class="ml-2 text-gray-300">Texto</span>
+                            </label>
+                            
+                            <label class="flex items-center cursor-pointer">
+                                <input type="radio" name="use_logo" value="1" 
+                                       {{ ($settings['general']->where('key', 'use_logo')->first()->value ?? false) ? 'checked' : '' }}
+                                       class="sr-only peer" id="use_image">
+                                <div class="w-4 h-4 border-2 border-gray-500 rounded-full peer-checked:border-blue-500 peer-checked:bg-blue-500 relative">
+                                    <div class="w-2 h-2 bg-white rounded-full absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-0 peer-checked:opacity-100"></div>
+                                </div>
+                                <span class="ml-2 text-gray-300">Imagem</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Logo Upload -->
+                        <div>
+                            <label for="site_logo_file" class="block text-sm font-medium text-gray-300 mb-2">Upload do Logo</label>
+                            <div class="relative">
+                                <input type="file" id="site_logo_file" name="site_logo_file" 
+                                       accept="image/png,image/jpg,image/jpeg,image/svg+xml,image/webp"
+                                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 flex items-center justify-center hover:bg-gray-600/50 transition-all duration-300">
+                                    <i class="fi fi-rr-cloud-upload text-xl mr-2 mt-2"></i>
+                                    <span>Escolher arquivo</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">PNG, JPG, SVG ou WebP - Max 2MB</p>
+                            @if($settings['general']->where('key', 'site_logo')->first()->value ?? false)
+                                <div class="mt-2 p-2 bg-gray-700/30 rounded-lg">
+                                    <img src="{{ $settings['general']->where('key', 'site_logo')->first()->value }}" 
+                                         alt="Logo atual" class="h-12 object-contain">
+                                    <p class="text-xs text-gray-400 mt-1">Logo atual</p>
+                                </div>
+                            @endif
+                        </div>
+                        
+                        <!-- Favicon Upload -->
+                        <div>
+                            <label for="site_favicon_file" class="block text-sm font-medium text-gray-300 mb-2">Upload do Favicon</label>
+                            <div class="relative">
+                                <input type="file" id="site_favicon_file" name="site_favicon_file" 
+                                       accept="image/png,image/jpg,image/jpeg,image/ico,image/svg+xml"
+                                       class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10">
+                                <div class="bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 flex items-center justify-center hover:bg-gray-600/50 transition-all duration-300">
+                                    <i class="fi fi-rr-cloud-upload text-xl mr-2 mt-2"></i>
+                                    <span>Escolher arquivo</span>
+                                </div>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-1">ICO, PNG, JPG ou SVG - 32x32px recomendado</p>
+                            @if($settings['general']->where('key', 'site_favicon')->first()->value ?? false)
+                                <div class="mt-2 p-2 bg-gray-700/30 rounded-lg">
+                                    <img src="{{ $settings['general']->where('key', 'site_favicon')->first()->value }}" 
+                                         alt="Favicon atual" class="h-8 w-8 object-contain">
+                                    <p class="text-xs text-gray-400 mt-1">Favicon atual</p>
+                                </div>
+                            @endif
+                        </div>
+                    </div>
                 </div>
                 
                 <div>
@@ -582,6 +656,92 @@
         </div>
     </div>
 
+    <!-- Footer Settings Tab -->
+    <div id="footer-tab" class="tab-content hidden">
+        <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
+            <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                <i class="fi fi-rr-layout-fluid text-purple-400 text-2xl mr-3 mt-2"></i>
+                Configurações do Footer
+            </h3>
+            
+            <div class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="company_name" class="block text-sm font-medium text-gray-300 mb-2">Nome da Empresa</label>
+                        <input type="text" id="company_name" name="company_name" 
+                               value="{{ $settings['footer']->where('key', 'company_name')->first()->value ?? '' }}"
+                               class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                               placeholder="Nice Designs">
+                    </div>
+                    
+                    <div>
+                        <label for="copyright_text" class="block text-sm font-medium text-gray-300 mb-2">Texto de Copyright</label>
+                        <input type="text" id="copyright_text" name="copyright_text" 
+                               value="{{ $settings['footer']->where('key', 'copyright_text')->first()->value ?? '' }}"
+                               class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                               placeholder="Todos os direitos reservados.">
+                    </div>
+                </div>
+                
+                <div>
+                    <label for="company_description" class="block text-sm font-medium text-gray-300 mb-2">Descrição da Empresa</label>
+                    <textarea id="company_description" name="company_description" rows="3"
+                              class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                              placeholder="Agência especializada em web design moderno...">{{ $settings['footer']->where('key', 'company_description')->first()->value ?? '' }}</textarea>
+                </div>
+                
+                <div>
+                    <label for="footer_text" class="block text-sm font-medium text-gray-300 mb-2">Texto Adicional do Footer</label>
+                    <input type="text" id="footer_text" name="footer_text" 
+                           value="{{ $settings['footer']->where('key', 'footer_text')->first()->value ?? '' }}"
+                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                           placeholder="Transformando ideias em experiências digitais incríveis ✨">
+                </div>
+                
+                <div class="border-t border-gray-700 pt-6">
+                    <h4 class="text-lg font-semibold text-white mb-4 flex items-center">
+                        <i class="fi fi-rr-share text-blue-400 text-xl mr-2 mt-2"></i>
+                        Redes Sociais do Footer
+                    </h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="social_twitter" class="block text-sm font-medium text-gray-300 mb-2">URL do Twitter</label>
+                            <input type="url" id="social_twitter" name="social_twitter" 
+                                   value="{{ $settings['footer']->where('key', 'social_twitter')->first()->value ?? '' }}"
+                                   class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                                   placeholder="https://twitter.com/empresa">
+                        </div>
+                        
+                        <div>
+                            <label for="social_linkedin" class="block text-sm font-medium text-gray-300 mb-2">URL do LinkedIn</label>
+                            <input type="url" id="social_linkedin" name="social_linkedin" 
+                                   value="{{ $settings['footer']->where('key', 'social_linkedin')->first()->value ?? '' }}"
+                                   class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                                   placeholder="https://linkedin.com/company/empresa">
+                        </div>
+                        
+                        <div>
+                            <label for="social_instagram" class="block text-sm font-medium text-gray-300 mb-2">URL do Instagram</label>
+                            <input type="url" id="social_instagram" name="social_instagram" 
+                                   value="{{ $settings['footer']->where('key', 'social_instagram')->first()->value ?? '' }}"
+                                   class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                                   placeholder="https://instagram.com/empresa">
+                        </div>
+                        
+                        <div>
+                            <label for="social_facebook" class="block text-sm font-medium text-gray-300 mb-2">URL do Facebook</label>
+                            <input type="url" id="social_facebook" name="social_facebook" 
+                                   value="{{ $settings['footer']->where('key', 'social_facebook')->first()->value ?? '' }}"
+                                   class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                                   placeholder="https://facebook.com/empresa">
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- AbacatePay Settings Tab -->
     <div id="abacatepay-tab" class="tab-content hidden">
         <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
@@ -961,29 +1121,117 @@ function copyToClipboard(text) {
     alert('URL copiada para o clipboard!');
 }
 
-// Adicionar feedback visual ao formulário
-document.addEventListener('DOMContentLoaded', function() {
-    const form = document.getElementById('settings-form');
-    const saveButton = document.getElementById('save-button');
-    
-    if (form && saveButton) {
-        form.addEventListener('submit', function(e) {
-            const originalText = saveButton.innerHTML;
-            saveButton.innerHTML = '<i class="fi fi-rr-spinner animate-spin mr-2"></i>Salvando...';
-            saveButton.disabled = true;
-            
-            // Timeout para reabilitar o botão em caso de erro
-            setTimeout(() => {
-                if (saveButton.disabled) {
-                    saveButton.innerHTML = originalText;
-                    saveButton.disabled = false;
-                }
-            }, 30000); // 30 segundos
-        });
-    }
-    
+    // Adicionar feedback visual ao formulário
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('settings-form');
+        const saveButton = document.getElementById('save-button');
+        
+        if (form && saveButton) {
+            form.addEventListener('submit', function(e) {
+                const originalText = saveButton.innerHTML;
+                saveButton.innerHTML = '<i class="fi fi-rr-spinner animate-spin mr-2"></i>Salvando...';
+                saveButton.disabled = true;
+                
+                // Timeout para reabilitar o botão em caso de erro
+                setTimeout(() => {
+                    if (saveButton.disabled) {
+                        saveButton.innerHTML = originalText;
+                        saveButton.disabled = false;
+                    }
+                }, 30000); // 30 segundos
+            });
+        }
+        
+        // Setup image previews
+        setupImagePreviews();
+    });
 
-});
+    function setupImagePreviews() {
+        // Logo preview
+        const logoInput = document.getElementById('site_logo_file');
+        if (logoInput) {
+            logoInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        showImagePreview('logo', e.target.result, file.name);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Update button text
+            logoInput.addEventListener('change', function(e) {
+                const button = e.target.nextElementSibling;
+                if (e.target.files.length > 0) {
+                    button.innerHTML = '<i class="fi fi-rr-check text-green-400 text-xl mr-2 mt-2"></i><span>' + e.target.files[0].name + '</span>';
+                    button.classList.add('bg-green-600/20', 'border-green-500/50');
+                    button.classList.remove('bg-gray-700/50', 'border-gray-600/50');
+                } else {
+                    button.innerHTML = '<i class="fi fi-rr-cloud-upload text-xl mr-2 mt-2"></i><span>Escolher arquivo</span>';
+                    button.classList.remove('bg-green-600/20', 'border-green-500/50');
+                    button.classList.add('bg-gray-700/50', 'border-gray-600/50');
+                }
+            });
+        }
+
+        // Favicon preview
+        const faviconInput = document.getElementById('site_favicon_file');
+        if (faviconInput) {
+            faviconInput.addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        showImagePreview('favicon', e.target.result, file.name);
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
+            
+            // Update button text
+            faviconInput.addEventListener('change', function(e) {
+                const button = e.target.nextElementSibling;
+                if (e.target.files.length > 0) {
+                    button.innerHTML = '<i class="fi fi-rr-check text-green-400 text-xl mr-2 mt-2"></i><span>' + e.target.files[0].name + '</span>';
+                    button.classList.add('bg-green-600/20', 'border-green-500/50');
+                    button.classList.remove('bg-gray-700/50', 'border-gray-600/50');
+                } else {
+                    button.innerHTML = '<i class="fi fi-rr-cloud-upload text-xl mr-2 mt-2"></i><span>Escolher arquivo</span>';
+                    button.classList.remove('bg-green-600/20', 'border-green-500/50');
+                    button.classList.add('bg-gray-700/50', 'border-gray-600/50');
+                }
+            });
+        }
+    }
+
+    function showImagePreview(type, src, filename) {
+        const container = document.getElementById('site_' + type + '_file').closest('div').parentElement;
+        
+        // Remove preview anterior
+        const existingPreview = container.querySelector('.image-preview');
+        if (existingPreview) {
+            existingPreview.remove();
+        }
+        
+        // Criar novo preview
+        const preview = document.createElement('div');
+        preview.className = 'image-preview mt-3 p-3 bg-gray-700/30 rounded-lg border border-gray-600/50';
+        
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Preview';
+        img.className = type === 'favicon' ? 'h-8 w-8 object-contain' : 'h-16 object-contain';
+        
+        const filename_el = document.createElement('p');
+        filename_el.className = 'text-xs text-gray-400 mt-2';
+        filename_el.textContent = 'Novo arquivo: ' + filename;
+        
+        preview.appendChild(img);
+        preview.appendChild(filename_el);
+        container.appendChild(preview);
+    }
 </script>
 @endsection 
 

@@ -32,6 +32,7 @@ class SettingController extends Controller
             'seo' => \App\Models\Setting::where('group', 'seo')->get(),
             'email' => \App\Models\Setting::where('group', 'email')->get(),
             'appearance' => \App\Models\Setting::where('group', 'appearance')->get(),
+            'footer' => \App\Models\Setting::where('group', 'footer')->get(),
             'abacatepay' => [
                 'token' => Config::get('services.abacatepay.token'),
                 'environment' => Config::get('services.abacatepay.environment'),
@@ -48,6 +49,12 @@ class SettingController extends Controller
     public function update(Request $request)
     {
         try {
+            // Processar uploads de arquivos primeiro
+            $uploadedFiles = $this->handleFileUploads($request);
+            
+            // Mesclar os caminhos dos arquivos enviados na requisição
+            $request->merge($uploadedFiles);
+            
             // Validação flexível - todos os campos são opcionais mas com tipos específicos
             $validated = $request->validate([
                 // Campos gerais
@@ -56,6 +63,11 @@ class SettingController extends Controller
                 'site_keywords' => 'nullable|string|max:500',
                 'site_logo' => 'nullable|string|max:500',
                 'site_favicon' => 'nullable|string|max:500',
+                'use_logo' => 'nullable|boolean',
+                
+                // Campos de upload
+                'site_logo_file' => 'nullable|image|mimes:jpeg,png,jpg,svg,webp|max:2048',
+                'site_favicon_file' => 'nullable|image|mimes:jpeg,png,jpg,ico,svg|max:1024',
                 'posts_per_page' => 'nullable|integer|min:1|max:50',
                 'projects_per_page' => 'nullable|integer|min:1|max:50',
                 'timezone' => 'nullable|string|max:100',
@@ -108,6 +120,16 @@ class SettingController extends Controller
                 'custom_css' => 'nullable|string',
                 'custom_js' => 'nullable|string',
                 
+                // Campos do footer
+                'company_name' => 'nullable|string|max:255',
+                'company_description' => 'nullable|string|max:500',
+                'copyright_text' => 'nullable|string|max:255',
+                'footer_text' => 'nullable|string|max:255',
+                'social_twitter' => 'nullable|url|max:255',
+                'social_linkedin' => 'nullable|url|max:255',
+                'social_instagram' => 'nullable|url|max:255',
+                'social_facebook' => 'nullable|url|max:255',
+                
                 // AbacatePay
                 'abacatepay.token' => 'nullable|string',
                 'abacatepay.environment' => 'nullable|in:sandbox,production',
@@ -117,7 +139,7 @@ class SettingController extends Controller
             // Salvar configurações por grupo
             $this->saveSettingsGroup($request, 'general', [
                 'site_name', 'site_description', 'site_keywords', 'site_logo', 
-                'site_favicon', 'maintenance_mode', 'allow_registration', 
+                'site_favicon', 'use_logo', 'maintenance_mode', 'allow_registration', 
                 'posts_per_page', 'projects_per_page', 'timezone', 'date_format', 
                 'currency'
             ]);
@@ -145,6 +167,12 @@ class SettingController extends Controller
             $this->saveSettingsGroup($request, 'appearance', [
                 'primary_color', 'secondary_color', 'accent_color', 
                 'custom_css', 'custom_js'
+            ]);
+
+            $this->saveSettingsGroup($request, 'footer', [
+                'company_name', 'company_description', 'copyright_text', 
+                'footer_text', 'social_twitter', 'social_linkedin', 
+                'social_instagram', 'social_facebook'
             ]);
 
             // Salvar configurações do AbacatePay se estiverem presentes
@@ -240,7 +268,7 @@ class SettingController extends Controller
     private function getSettingType(string $key, mixed $value): string
     {
         // Boolean settings
-        if (in_array($key, ['maintenance_mode', 'allow_registration'])) {
+        if (in_array($key, ['maintenance_mode', 'allow_registration', 'use_logo'])) {
             return 'boolean';
         }
         
@@ -612,5 +640,29 @@ class SettingController extends Controller
         file_put_contents($envFile, $envContent);
     }
 
+    /**
+     * Handle file uploads for logo and favicon
+     */
+    private function handleFileUploads(Request $request): array
+    {
+        $uploadedFiles = [];
 
+        // Handle logo upload
+        if ($request->hasFile('site_logo_file')) {
+            $logoFile = $request->file('site_logo_file');
+            $logoName = 'logo.' . $logoFile->getClientOriginalExtension();
+            $logoPath = $logoFile->storeAs('site', $logoName, 'public');
+            $uploadedFiles['site_logo'] = '/storage/' . $logoPath;
+        }
+
+        // Handle favicon upload
+        if ($request->hasFile('site_favicon_file')) {
+            $faviconFile = $request->file('site_favicon_file');
+            $faviconName = 'favicon.' . $faviconFile->getClientOriginalExtension();
+            $faviconPath = $faviconFile->storeAs('site', $faviconName, 'public');
+            $uploadedFiles['site_favicon'] = '/storage/' . $faviconPath;
+        }
+
+        return $uploadedFiles;
+    }
 }

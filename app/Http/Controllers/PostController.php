@@ -40,7 +40,7 @@ class PostController extends Controller
             }
         }
 
-        $posts = $query->paginate(12);
+        $posts = $query->paginate(site_setting('posts_per_page') ?? 12);
 
         // Get categories with post count for the sidebar
         $categories = Category::where('is_active', true)
@@ -89,7 +89,7 @@ class PostController extends Controller
             ->where('category_id', $category->id)
             ->latest('published_at')
             ->with(['category', 'author'])
-            ->paginate(12);
+            ->paginate(site_setting('posts_per_page') ?? 12);
 
         // Get all categories for the sidebar
         $categories = Category::where('is_active', true)

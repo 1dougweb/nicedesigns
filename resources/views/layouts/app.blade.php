@@ -5,15 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
-    <title>{{ config('app.name', 'Nice Designs') }} @yield('title')</title>
+    <title>{{ site_setting('name') ?? config('app.name', 'Nice Designs') }} @yield('title')</title>
+
+    <!-- Favicon -->
+    @if(site_setting('favicon'))
+        <link rel="icon" type="image/x-icon" href="{{ site_setting('favicon') }}">
+    @endif
 
     <!-- Meta Tags SEO -->
-    <meta name="description" content="@yield('meta_description', 'Agência de Web Design Moderna')">
-    <meta name="keywords" content="@yield('meta_keywords', 'web design, desenvolvimento, agência')">
+    <meta name="description" content="@yield('meta_description', site_setting('description') ?? 'Agência de Web Design Moderna')">
+    <meta name="keywords" content="@yield('meta_keywords', site_setting('keywords') ?? 'web design, desenvolvimento, agência')">
 
     <!-- Open Graph -->
-    <meta property="og:title" content="@yield('og_title', config('app.name'))">
-    <meta property="og:description" content="@yield('og_description', 'Agência de Web Design Moderna')">
+    <meta property="og:title" content="@yield('og_title', site_setting('name') ?? config('app.name'))">
+    <meta property="og:description" content="@yield('og_description', site_setting('description') ?? 'Agência de Web Design Moderna')">
     <meta property="og:image" content="@yield('og_image', asset('images/og-image.jpg'))">
     <meta property="og:url" content="{{ url()->current() }}">
 
@@ -55,7 +60,13 @@
                     <div class="flex items-center">
                         <!-- Logo -->
                         <a href="{{ route('home') }}" class="flex-shrink-0">
-                            <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">Nice Designs</h1>
+                            @if(site_setting('use_logo') && site_setting('logo'))
+                                <img src="{{ site_setting('logo') }}" alt="{{ site_setting('name') ?? 'Nice Designs' }}" class="h-8">
+                            @else
+                                <h1 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400">
+                                    {{ site_setting('name') ?? 'Nice Designs' }}
+                                </h1>
+                            @endif
                         </a>
                     </div>
 
@@ -144,27 +155,45 @@
             <div class="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                     <div class="col-span-1 md:col-span-2">
-                        <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 mb-4">Nice Designs</h3>
+                        <h3 class="text-2xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-400 mb-4">
+                            {{ footer_info('company_name') ?? 'Nice Designs' }}
+                        </h3>
                         <p class="text-gray-400 mb-6 leading-relaxed">
-                            Agência especializada em web design moderno e desenvolvimento de sites responsivos. 
-                            Transformamos ideias em experiências digitais incríveis.
+                            {{ footer_info('company_description') ?? 'Agência especializada em web design moderno e desenvolvimento de sites responsivos. Transformamos ideias em experiências digitais incríveis.' }}
                         </p>
                         <div class="flex space-x-4">
-                            <a href="#" 
-                               class="text-gray-400 hover:text-blue-400 transition duration-300 p-2 rounded-lg hover:bg-gray-800"
-                               aria-label="Siga-nos no Twitter">
-                                <i class="fi fi-br-twitter h-6 w-6" aria-hidden="true"></i>
-                            </a>
-                            <a href="#" 
-                               class="text-gray-400 hover:text-blue-400 transition duration-300 p-2 rounded-lg hover:bg-gray-800"
-                               aria-label="Siga-nos no Twitter">
-                                <i class="fi fi-br-twitter h-6 w-6" aria-hidden="true"></i>
-                            </a>
-                            <a href="#" 
-                               class="text-gray-400 hover:text-blue-400 transition duration-300 p-2 rounded-lg hover:bg-gray-800"
-                               aria-label="Conecte-se conosco no LinkedIn">
-                                <i class="fi fi-br-linkedin h-6 w-6" aria-hidden="true"></i>
-                            </a>
+                            @if(footer_info('social_twitter'))
+                                <a href="{{ footer_info('social_twitter') }}" 
+                                   class="text-gray-400 hover:text-blue-400 transition duration-300 p-2 rounded-lg hover:bg-gray-800"
+                                   aria-label="Siga-nos no Twitter"
+                                   target="_blank">
+                                    <i class="fi fi-br-twitter h-6 w-6" aria-hidden="true"></i>
+                                </a>
+                            @endif
+                            @if(footer_info('social_linkedin'))
+                                <a href="{{ footer_info('social_linkedin') }}" 
+                                   class="text-gray-400 hover:text-blue-400 transition duration-300 p-2 rounded-lg hover:bg-gray-800"
+                                   aria-label="Conecte-se conosco no LinkedIn"
+                                   target="_blank">
+                                    <i class="fi fi-br-linkedin h-6 w-6" aria-hidden="true"></i>
+                                </a>
+                            @endif
+                            @if(footer_info('social_instagram'))
+                                <a href="{{ footer_info('social_instagram') }}" 
+                                   class="text-gray-400 hover:text-blue-400 transition duration-300 p-2 rounded-lg hover:bg-gray-800"
+                                   aria-label="Siga-nos no Instagram"
+                                   target="_blank">
+                                    <i class="fi fi-br-instagram h-6 w-6" aria-hidden="true"></i>
+                                </a>
+                            @endif
+                            @if(footer_info('social_facebook'))
+                                <a href="{{ footer_info('social_facebook') }}" 
+                                   class="text-gray-400 hover:text-blue-400 transition duration-300 p-2 rounded-lg hover:bg-gray-800"
+                                   aria-label="Siga-nos no Facebook"
+                                   target="_blank">
+                                    <i class="fi fi-br-facebook h-6 w-6" aria-hidden="true"></i>
+                                </a>
+                            @endif
                         </div>
                     </div>
 
@@ -192,25 +221,36 @@
                     <div>
                         <h4 class="text-lg font-semibold mb-6 text-white">Contato</h4>
                         <ul class="space-y-3 text-gray-400">
-                            <li class="flex items-center">
-                                <i class="fi fi-rr-envelope w-5 h-5 mr-3 text-blue-400" aria-hidden="true"></i>
-                                contato@nicedesigns.com.br
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fi fi-rr-phone-call w-5 h-5 mr-3 text-blue-400" aria-hidden="true"></i>
-                                (11) 99999-9999
-                            </li>
-                            <li class="flex items-center">
-                                <i class="fi fi-rr-marker w-5 h-5 mr-3 text-blue-400" aria-hidden="true"></i>
-                                São Paulo, SP
-                            </li>
+                            @if(contact_info('email'))
+                                <li class="flex items-center">
+                                    <i class="fi fi-rr-envelope w-5 h-5 mr-3 text-blue-400" aria-hidden="true"></i>
+                                    {{ contact_info('email') }}
+                                </li>
+                            @endif
+                            @if(contact_info('phone'))
+                                <li class="flex items-center">
+                                    <i class="fi fi-rr-phone-call w-5 h-5 mr-3 text-blue-400" aria-hidden="true"></i>
+                                    {{ contact_info('phone') }}
+                                </li>
+                            @endif
+                            @if(contact_info('city') && contact_info('state'))
+                                <li class="flex items-center">
+                                    <i class="fi fi-rr-marker w-5 h-5 mr-3 text-blue-400" aria-hidden="true"></i>
+                                    {{ contact_info('city') }}, {{ contact_info('state') }}
+                                </li>
+                            @endif
                         </ul>
                     </div>
                 </div>
 
                 <div class="mt-12 pt-8 border-t border-gray-800 text-center">
-                    <p class="text-gray-400">&copy; {{ date('Y') }} Nice Designs. Todos os direitos reservados.</p>
-                    <p class="text-gray-500 text-sm mt-2">Transformando ideias em experiências digitais incríveis ✨</p>
+                    <p class="text-gray-400">
+                        &copy; {{ date('Y') }} {{ footer_info('company_name') ?? 'Nice Designs' }}. 
+                        {{ footer_info('copyright_text') ?? 'Todos os direitos reservados.' }}
+                    </p>
+                    @if(footer_info('footer_text'))
+                        <p class="text-gray-500 text-sm mt-2">{{ footer_info('footer_text') }}</p>
+                    @endif
                 </div>
             </div>
         </footer>

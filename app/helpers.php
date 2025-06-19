@@ -90,4 +90,90 @@ if (! function_exists('appearance')) {
         
         return $appearance[$key] ?? null;
     }
+}
+
+if (! function_exists('footer_info')) {
+    /**
+     * Get footer information
+     */
+    function footer_info(?string $key = null): mixed
+    {
+        $footerInfo = SettingsHelper::getFooterInfo();
+        
+        if ($key === null) {
+            return $footerInfo;
+        }
+        
+        return $footerInfo[$key] ?? null;
+    }
+}
+
+if (! function_exists('format_date')) {
+    /**
+     * Format date using system configuration
+     */
+    function format_date($date, ?string $format = null): string
+    {
+        if (!$date) {
+            return '';
+        }
+        
+        // Convert to Carbon instance if needed
+        if (!$date instanceof \Carbon\Carbon) {
+            $date = \Carbon\Carbon::parse($date);
+        }
+        
+        // Use custom format or system default
+        $format = $format ?? site_setting('date_format') ?? 'd/m/Y';
+        
+        return $date->format($format);
+    }
+}
+
+if (! function_exists('format_datetime')) {
+    /**
+     * Format datetime using system configuration
+     */
+    function format_datetime($date, ?string $format = null): string
+    {
+        if (!$date) {
+            return '';
+        }
+        
+        // Convert to Carbon instance if needed
+        if (!$date instanceof \Carbon\Carbon) {
+            $date = \Carbon\Carbon::parse($date);
+        }
+        
+        // Use custom format or system default with time
+        $dateFormat = site_setting('date_format') ?? 'd/m/Y';
+        $format = $format ?? "$dateFormat H:i";
+        
+        return $date->format($format);
+    }
+}
+
+if (! function_exists('format_currency')) {
+    /**
+     * Format currency using system configuration
+     */
+    function format_currency($value, ?string $currency = null): string
+    {
+        if (!is_numeric($value)) {
+            return '';
+        }
+        
+        $currency = $currency ?? site_setting('currency') ?? 'BRL';
+        
+        switch ($currency) {
+            case 'BRL':
+                return 'R$ ' . number_format($value, 2, ',', '.');
+            case 'USD':
+                return '$' . number_format($value, 2, '.', ',');
+            case 'EUR':
+                return '€' . number_format($value, 2, ',', '.');
+            default:
+                return $currency . ' ' . number_format($value, 2, '.', ',');
+        }
+    }
 } 
