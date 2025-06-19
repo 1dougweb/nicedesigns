@@ -23,7 +23,7 @@
         }
         
         .header {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            background: linear-gradient(135deg,rgb(26, 55, 182) 0%,rgb(101, 19, 155) 100%);
             color: white;
             padding: 30px;
             text-align: center;
@@ -58,8 +58,8 @@
             text-decoration: none;
             border-radius: 8px;
             transition: all 0.3s ease;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
-            color: white;
+            background: linear-gradient(135deg,rgb(26, 55, 182) 0%,rgb(101, 19, 155) 100%);
+            color: white!important;
         }
         
         .btn:hover {
