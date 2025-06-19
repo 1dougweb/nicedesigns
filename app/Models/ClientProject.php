@@ -12,6 +12,7 @@ class ClientProject extends Model
 
     protected $fillable = [
         'user_id',
+        'quote_id',
         'project_id',
         'name',
         'description',
@@ -328,6 +329,11 @@ class ClientProject extends Model
     public function project()
     {
         return $this->belongsTo(Project::class);
+    }
+
+    public function quote()
+    {
+        return $this->belongsTo(Quote::class);
     }
 
     public function invoices()

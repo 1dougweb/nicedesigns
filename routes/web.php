@@ -64,6 +64,13 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::resource('client-projects', \App\Http\Controllers\Admin\ClientProjectController::class);
     Route::put('client-projects/{clientProject}/progress', [\App\Http\Controllers\Admin\ClientProjectController::class, 'updateProgress'])->name('client-projects.update-progress');
     
+    // Quotes Management
+    Route::resource('quotes', \App\Http\Controllers\Admin\QuoteController::class);
+    Route::patch('quotes/{quote}/cancel', [\App\Http\Controllers\Admin\QuoteController::class, 'cancel'])->name('quotes.cancel');
+    Route::post('quotes/{quote}/duplicate', [\App\Http\Controllers\Admin\QuoteController::class, 'duplicate'])->name('quotes.duplicate');
+    Route::get('quotes/{quote}/pdf/download', [\App\Http\Controllers\Admin\QuoteController::class, 'downloadPdf'])->name('quotes.pdf.download');
+    Route::get('quotes/{quote}/pdf/view', [\App\Http\Controllers\Admin\QuoteController::class, 'viewPdf'])->name('quotes.pdf.view');
+    
     // Invoices Management
     Route::resource('invoices', \App\Http\Controllers\Admin\InvoiceController::class);
     Route::post('invoices/{invoice}/mark-as-paid', [\App\Http\Controllers\Admin\InvoiceController::class, 'markAsPaid'])->name('invoices.mark-as-paid');
@@ -129,11 +136,22 @@ Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(
     // Dashboard
     Route::get('/', [ClientDashboardController::class, 'index'])->name('dashboard');
     
-    // Projects
-    Route::get('/projects', [\App\Http\Controllers\Client\ProjectController::class, 'index'])->name('projects.index');
-    Route::get('/projects/{project}', [\App\Http\Controllers\Client\ProjectController::class, 'show'])->name('projects.show');
-    Route::post('/projects/{project}/approve', [\App\Http\Controllers\Client\ProjectController::class, 'approve'])->name('projects.approve');
-    Route::post('/projects/{project}/reject', [\App\Http\Controllers\Client\ProjectController::class, 'reject'])->name('projects.reject');
+    // Quotes
+    Route::get('/quotes', [\App\Http\Controllers\Client\QuoteController::class, 'index'])->name('quotes.index');
+    Route::get('/quotes/{quote}', [\App\Http\Controllers\Client\QuoteController::class, 'show'])->name('quotes.show');
+    Route::post('/quotes/{quote}/accept', [\App\Http\Controllers\Client\QuoteController::class, 'accept'])->name('quotes.accept');
+    Route::post('/quotes/{quote}/reject', [\App\Http\Controllers\Client\QuoteController::class, 'reject'])->name('quotes.reject');
+    Route::post('/quotes/{quote}/notes', [\App\Http\Controllers\Client\QuoteController::class, 'addNotes'])->name('quotes.notes');
+    Route::get('/quotes/{quote}/pdf/download', [\App\Http\Controllers\Client\QuoteController::class, 'downloadPdf'])->name('quotes.pdf.download');
+    Route::get('/quotes/{quote}/pdf/view', [\App\Http\Controllers\Client\QuoteController::class, 'viewPdf'])->name('quotes.pdf.view');
+    
+    // Projects (requires accepted quote)
+    Route::middleware('accepted.quote')->group(function () {
+        Route::get('/projects', [\App\Http\Controllers\Client\ProjectController::class, 'index'])->name('projects.index');
+        Route::get('/projects/{project}', [\App\Http\Controllers\Client\ProjectController::class, 'show'])->name('projects.show');
+        Route::post('/projects/{project}/approve', [\App\Http\Controllers\Client\ProjectController::class, 'approve'])->name('projects.approve');
+        Route::post('/projects/{project}/reject', [\App\Http\Controllers\Client\ProjectController::class, 'reject'])->name('projects.reject');
+    });
     
     // Invoices
     Route::get('/invoices', [\App\Http\Controllers\Client\InvoiceController::class, 'index'])->name('invoices.index');

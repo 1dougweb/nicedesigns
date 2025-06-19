@@ -14,6 +14,7 @@ use App\Models\ClientProject;
 use App\Models\Invoice;
 use App\Models\SupportTicket;
 use App\Models\User;
+use App\Models\Quote;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -69,6 +70,13 @@ class DashboardController extends Controller
                 'active' => User::clients()->whereHas('clientProjects', function($q) {
                     $q->active();
                 })->count(),
+            ],
+            'quotes' => [
+                'total' => Quote::count(),
+                'pending' => Quote::pending()->count(),
+                'accepted' => Quote::accepted()->count(),
+                'rejected' => Quote::rejected()->count(),
+                'expired' => Quote::where('status', 'expirado')->count(),
             ],
         ];
 

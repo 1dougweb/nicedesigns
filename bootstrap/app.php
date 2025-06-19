@@ -15,6 +15,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             'admin' => \App\Http\Middleware\CheckAdminRole::class,
             'client' => \App\Http\Middleware\CheckClientRole::class,
+            'accepted.quote' => \App\Http\Middleware\CheckAcceptedQuote::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {

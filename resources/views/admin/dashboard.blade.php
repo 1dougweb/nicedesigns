@@ -205,25 +205,27 @@
         </div>
     </div>
 
-    <!-- Financial Summary -->
-    <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-green-500/50 transition-all duration-300 group">
+    <!-- Quotes Stats -->
+    <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-amber-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-green-500 to-green-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <i class="fi fi-rr-dollar text-white text-3xl mt-2"></i>
+            <div class="w-12 h-12 sm:w-14 sm:h-14 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl sm:rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                <i class="fi fi-rr-document text-white text-3xl mt-2"></i>
             </div>
             <div class="text-right">
-                <p class="text-2xl font-bold text-white">R$ {{ number_format($stats['invoices']['total_amount'], 0, ',', '.') }}</p>
-                <p class="text-sm text-gray-400">Faturado</p>
+                <p class="text-3xl font-bold text-white">{{ $stats['quotes']['total'] }}</p>
+                <p class="text-sm text-gray-400">Orçamentos</p>
             </div>
         </div>
-        <div class="text-sm">
-            <span class="flex items-center text-yellow-400 mb-1">
-                A receber: R$ {{ number_format($stats['invoices']['pending_amount'], 0, ',', '.') }}
+        <div class="flex items-center justify-between text-sm">
+            <span class="flex items-center text-yellow-400">
+                <span class="w-2 h-2 bg-yellow-400 rounded-full mr-2 animate-pulse"></span>
+                {{ $stats['quotes']['pending'] }} pendentes
             </span>
+            <span class="text-green-400">{{ $stats['quotes']['accepted'] }} aceitos</span>
         </div>
         <div class="mt-4">
-            <a href="{{ route('admin.invoices.index') }}" class="text-green-400 hover:text-green-300 text-sm font-medium transition-colors">
-                Ver Financeiro →
+            <a href="{{ route('admin.quotes.index') }}" class="text-amber-400 hover:text-amber-300 text-sm font-medium transition-colors">
+                Gerenciar Orçamentos →
             </a>
         </div>
     </div>
@@ -316,11 +318,11 @@
                 <span class="text-xs sm:text-sm font-medium text-white text-center">Projeto Cliente</span>
             </a>
 
-            <a href="{{ route('admin.invoices.create') }}" class="flex flex-col items-center p-3 sm:p-4 bg-emerald-600/20 rounded-xl sm:rounded-2xl hover:bg-emerald-600/30 transition-all duration-300 group border border-emerald-500/30">
-                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-emerald-600 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-2 sm:mb-3">
+            <a href="{{ route('admin.quotes.create') }}" class="flex flex-col items-center p-3 sm:p-4 bg-amber-600/20 rounded-xl sm:rounded-2xl hover:bg-amber-600/30 transition-all duration-300 group border border-amber-500/30">
+                <div class="w-10 h-10 sm:w-12 sm:h-12 bg-amber-600 rounded-lg sm:rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 mb-2 sm:mb-3">
                     <i class="fi fi-rr-plus text-white text-2xl mt-2"></i>
                 </div>
-                <span class="text-xs sm:text-sm font-medium text-white text-center">Nova Fatura</span>
+                <span class="text-xs sm:text-sm font-medium text-white text-center">Novo Orçamento</span>
             </a>
         </div>
     </div>

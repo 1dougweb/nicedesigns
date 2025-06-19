@@ -404,6 +404,32 @@ class User extends Authenticatable
         return $this->hasMany(SupportTicket::class, 'assigned_to');
     }
 
+    public function quotes()
+    {
+        return $this->hasMany(Quote::class);
+    }
+
+    public function createdQuotes()
+    {
+        return $this->hasMany(Quote::class, 'created_by');
+    }
+
+    /**
+     * Check if user has an accepted quote
+     */
+    public function hasAcceptedQuote(): bool
+    {
+        return $this->quotes()->where('status', 'aceito')->exists();
+    }
+
+    /**
+     * Get latest accepted quote
+     */
+    public function getLatestAcceptedQuote(): ?Quote
+    {
+        return $this->quotes()->where('status', 'aceito')->latest()->first();
+    }
+
     /**
      * Get user posts
      */

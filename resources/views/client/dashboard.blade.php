@@ -50,9 +50,18 @@
             <span class="text-gray-500">{{ $stats['completed_projects'] ?? 1 }} concluído</span>
         </div>
         <div class="mt-4">
-            <a href="{{ route('client.projects.index') }}" class="text-green-400 hover:text-green-300 text-sm font-medium transition-colors">
-                Ver Projetos →
-            </a>
+            @if(auth()->user()->hasAcceptedQuote())
+                <a href="{{ route('client.projects.index') }}" class="text-green-400 hover:text-green-300 text-sm font-medium transition-colors">
+                    Ver Projetos →
+                </a>
+            @else
+                <div class="flex items-center text-gray-400 text-sm">
+                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    <span>Aceite um orçamento para acessar</span>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -110,26 +119,29 @@
         </div>
     </div>
 
-    <!-- Próximo Pagamento -->
-    <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-yellow-500/50 transition-all duration-300 group">
+    <!-- Orçamentos -->
+    <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-6 hover:border-orange-500/50 transition-all duration-300 group">
         <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+            <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1"/>
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
             </div>
             <div class="text-right">
-                <p class="text-3xl font-bold text-white">R$ {{ number_format($stats['total_amount_due'] ?? 2500, 2, ',', '.') }}</p>
-                <p class="text-sm text-gray-400">Em Aberto</p>
+                <p class="text-3xl font-bold text-white">{{ auth()->user()->quotes()->count() }}</p>
+                <p class="text-sm text-gray-400">Orçamentos</p>
             </div>
         </div>
         <div class="flex items-center justify-between text-sm">
-            <span class="text-gray-300">{{ $stats['overdue_invoices'] ?? 0 }} vencidas</span>
-            <span class="text-yellow-400">{{ $stats['pending_invoices'] ?? 1 }} pendente</span>
+            <span class="flex items-center text-yellow-400">
+                <span class="w-2 h-2 bg-yellow-400 rounded-full mr-2"></span>
+                {{ auth()->user()->quotes()->pending()->count() }} pendente
+            </span>
+            <span class="text-green-400">{{ auth()->user()->quotes()->accepted()->count() }} aceito</span>
         </div>
         <div class="mt-4">
-            <a href="{{ route('client.invoices.index') }}" class="text-yellow-400 hover:text-yellow-300 text-sm font-medium transition-colors">
-                Ver Detalhes →
+            <a href="{{ route('client.quotes.index') }}" class="text-orange-400 hover:text-orange-300 text-sm font-medium transition-colors">
+                Ver Orçamentos →
             </a>
         </div>
     </div>
