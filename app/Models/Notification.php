@@ -164,7 +164,11 @@ class Notification extends Model
      */
     public function getIconAttribute($value): string
     {
-        return $value ?: $this->getDefaultIcon();
+        if ($value) {
+            return $value;
+        }
+        
+        return $this->getDefaultIcon();
     }
 
     /**
@@ -172,26 +176,51 @@ class Notification extends Model
      */
     public function getColorAttribute($value): string
     {
-        return $value ?: $this->getDefaultColor();
+        if ($value) {
+            return $value;
+        }
+        
+        return $this->getDefaultColor();
+    }
+
+
+
+    /**
+     * Obter ícone para um tipo específico (método estático)
+     */
+    public static function getIconForType(string $type): string
+    {
+        return match ($type) {
+            self::TYPE_SUCCESS => 'fi-rr-check-circle',
+            self::TYPE_WARNING => 'fi-rr-exclamation-triangle',
+            self::TYPE_ERROR => 'fi-rr-cross-circle',
+            self::TYPE_NEW_CONTACT => 'fi-rr-envelope',
+            self::TYPE_NEW_PROJECT => 'fi-rr-briefcase',
+            self::TYPE_PROJECT_APPROVED => 'fi-rr-check-circle',
+            self::TYPE_PROJECT_REJECTED => 'fi-rr-cross-circle',
+            self::TYPE_INVOICE_PAID => 'fi-rr-money',
+            self::TYPE_SUPPORT_TICKET => 'fi-rr-headset',
+            default => 'fi-rr-info',
+        };
     }
 
     /**
-     * Criar notificação estática
+     * Obter cor para um tipo específico (método estático)
      */
-    public static function create(array $attributes = []): static
+    public static function getColorForType(string $type): string
     {
-        // Auto-definir ícone e cor se não fornecidos
-        if (!isset($attributes['icon']) && isset($attributes['type'])) {
-            $temp = new static(['type' => $attributes['type']]);
-            $attributes['icon'] = $temp->getDefaultIcon();
-        }
-
-        if (!isset($attributes['color']) && isset($attributes['type'])) {
-            $temp = new static(['type' => $attributes['type']]);
-            $attributes['color'] = $temp->getDefaultColor();
-        }
-
-        return parent::create($attributes);
+        return match ($type) {
+            self::TYPE_SUCCESS => 'green',
+            self::TYPE_WARNING => 'yellow',
+            self::TYPE_ERROR => 'red',
+            self::TYPE_NEW_CONTACT => 'blue',
+            self::TYPE_NEW_PROJECT => 'purple',
+            self::TYPE_PROJECT_APPROVED => 'green',
+            self::TYPE_PROJECT_REJECTED => 'red',
+            self::TYPE_INVOICE_PAID => 'emerald',
+            self::TYPE_SUPPORT_TICKET => 'orange',
+            default => 'gray',
+        };
     }
 
     /**
@@ -200,6 +229,15 @@ class Notification extends Model
     public static function createForAdmins(array $data): void
     {
         $admins = User::where('role', 'admin')->get();
+
+        // Auto-definir ícone e cor se não fornecidos
+        if (!isset($data['icon']) && isset($data['type'])) {
+            $data['icon'] = static::getIconForType($data['type']);
+        }
+
+        if (!isset($data['color']) && isset($data['type'])) {
+            $data['color'] = static::getColorForType($data['type']);
+        }
 
         foreach ($admins as $admin) {
             static::create(array_merge($data, ['user_id' => $admin->id]));

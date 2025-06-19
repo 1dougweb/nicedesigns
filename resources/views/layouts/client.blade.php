@@ -432,12 +432,17 @@
             }
         });
 
-        // Check for new notifications periodically
-        setInterval(updateNotificationCount, 30000); // Every 30 seconds
+        // Check for new notifications periodically (only if authenticated)
+        @auth
+            setInterval(updateNotificationCount, 30000); // Every 30 seconds
+        @endauth
 
         // Initial load
         document.addEventListener('DOMContentLoaded', function() {
-            updateNotificationCount();
+            // Only update notification count if user is authenticated
+            @auth
+                updateNotificationCount();
+            @endauth
         });
     </script>
 

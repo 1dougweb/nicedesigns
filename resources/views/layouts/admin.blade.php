@@ -370,8 +370,12 @@
         // Initialize when DOM is loaded
         document.addEventListener('DOMContentLoaded', function() {
             initializeTopbar();
-            loadNotifications();
-            startNotificationPolling();
+            
+            // Only initialize notifications if user is authenticated
+            @auth
+                loadNotifications();
+                startNotificationPolling();
+            @endauth
         });
 
         // Initialize topbar dropdowns
