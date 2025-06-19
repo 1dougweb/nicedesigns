@@ -60,6 +60,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
 
 
     
+    // Clients Management
+    Route::resource('clients', \App\Http\Controllers\Admin\ClientController::class);
+    Route::post('clients/{client}/send-password-reset', [\App\Http\Controllers\Admin\ClientController::class, 'sendPasswordReset'])->name('clients.send-password-reset');
+    Route::post('clients/{client}/resend-credentials', [\App\Http\Controllers\Admin\ClientController::class, 'resendCredentials'])->name('clients.resend-credentials');
+    
     // Client Projects Management
     Route::resource('client-projects', \App\Http\Controllers\Admin\ClientProjectController::class);
     Route::put('client-projects/{clientProject}/progress', [\App\Http\Controllers\Admin\ClientProjectController::class, 'updateProgress'])->name('client-projects.update-progress');

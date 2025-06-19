@@ -67,6 +67,20 @@
                         <label for="avatar" class="block text-sm font-medium text-gray-300 mb-2">
                             Escolher nova foto de perfil
                         </label>
+                        
+                        <!-- Mobile Camera Buttons -->
+                        <div class="flex flex-col sm:flex-row gap-3 mb-4 md:hidden">
+                            <button type="button" 
+                                    id="camera-avatar-btn"
+                                    class="flex-1 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white px-4 py-3 rounded-xl font-medium transition-all duration-300 flex items-center justify-center">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                Tirar Selfie
+                            </button>
+                        </div>
+                        
                         <input type="file" 
                                name="avatar" 
                                id="avatar" 
@@ -75,7 +89,10 @@
                         @error('avatar')
                             <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                         @enderror
-                        <p class="text-gray-400 text-sm mt-2">Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 2MB</p>
+                        <p class="text-gray-400 text-sm mt-2">
+                            Formatos aceitos: JPG, PNG, GIF. Tamanho máximo: 2MB
+                            <span class="block md:hidden text-green-400 mt-1">💡 Use o botão "Tirar Selfie" para foto com a câmera</span>
+                        </p>
                     </div>
                     
                     <!-- Preview area -->
@@ -788,6 +805,361 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
+    }
+    
+    // ====== CAMERA FUNCTIONALITY ======
+    
+    // Camera modal and functionality
+    function createCameraModal() {
+        const modal = document.createElement('div');
+        modal.id = 'camera-modal';
+        modal.className = 'fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-90 hidden';
+        modal.innerHTML = `
+            <div class="relative w-full h-full max-w-md max-h-screen bg-gray-900 rounded-lg overflow-hidden">
+                <!-- Header -->
+                <div class="absolute top-0 left-0 right-0 z-10 bg-gradient-to-b from-black/80 to-transparent p-4">
+                    <div class="flex items-center justify-between text-white">
+                        <h3 id="camera-title" class="text-lg font-semibold">📱 Câmera</h3>
+                        <button id="close-camera" class="p-2 hover:bg-white/20 rounded-full transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Camera preview -->
+                <video id="camera-video" class="w-full h-full object-cover" autoplay playsinline></video>
+                <canvas id="camera-canvas" class="hidden"></canvas>
+                
+                <!-- Overlay for document (only shown when capturing document) -->
+                <div id="document-overlay" class="absolute inset-0 pointer-events-none hidden">
+                    <div class="absolute inset-4 border-2 border-white/50 rounded-lg">
+                        <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-center">
+                            <div class="bg-black/60 rounded-lg p-3">
+                                <p class="text-sm">📄 Posicione o documento dentro da moldura</p>
+                                <p class="text-xs mt-1 opacity-80">Certifique-se que está bem iluminado e legível</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Bottom controls -->
+                <div class="absolute bottom-0 left-0 right-0 z-10 bg-gradient-to-t from-black/80 to-transparent p-6">
+                    <div class="flex items-center justify-center space-x-8">
+                        <!-- Switch camera (front/back) -->
+                        <button id="switch-camera" class="p-3 bg-white/20 rounded-full text-white hover:bg-white/30 transition-colors">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                        </button>
+                        
+                        <!-- Capture button -->
+                        <button id="capture-photo" class="w-20 h-20 bg-white rounded-full border-4 border-gray-300 hover:border-gray-400 transition-colors relative overflow-hidden">
+                            <div class="absolute inset-2 bg-white rounded-full shadow-inner"></div>
+                        </button>
+                        
+                        <!-- Flashlight toggle -->
+                        <button id="toggle-flash" class="p-3 bg-white/20 rounded-full text-white hover:bg-white/30 transition-colors hidden">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <!-- Instructions -->
+                    <div class="mt-4 text-center">
+                        <p class="text-white text-sm opacity-80" id="camera-instructions">
+                            Toque no botão central para capturar
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Photo preview after capture -->
+                <div id="photo-preview" class="absolute inset-0 bg-black hidden">
+                    <img id="captured-image" class="w-full h-full object-contain">
+                    <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
+                        <div class="flex items-center justify-center space-x-4">
+                            <button id="retake-photo" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-medium transition-colors">
+                                🔄 Tirar Nova
+                            </button>
+                            <button id="use-photo" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium transition-colors">
+                                ✅ Usar Esta Foto
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Loading indicator -->
+                <div id="camera-loading" class="absolute inset-0 bg-black/60 flex items-center justify-center hidden">
+                    <div class="text-center text-white">
+                        <div class="w-12 h-12 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4"></div>
+                        <p>Processando...</p>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(modal);
+        return modal;
+    }
+    
+    // Camera variables
+    let cameraModal = null;
+    let currentStream = null;
+    let currentCameraType = 'user'; // 'user' for front, 'environment' for back
+    let currentCaptureMode = 'avatar'; // 'avatar' or 'document'
+    
+    // Camera functionality
+    async function openCamera(mode = 'avatar') {
+        currentCaptureMode = mode;
+        
+        // Create modal if it doesn't exist
+        if (!cameraModal) {
+            cameraModal = createCameraModal();
+            setupCameraEvents();
+        }
+        
+        // Update UI based on mode
+        const title = document.getElementById('camera-title');
+        const overlay = document.getElementById('document-overlay');
+        const instructions = document.getElementById('camera-instructions');
+        
+        if (mode === 'document') {
+            title.textContent = '📄 Fotografar Documento';
+            overlay.classList.remove('hidden');
+            instructions.textContent = 'Posicione o documento na moldura e toque para capturar';
+            currentCameraType = 'environment'; // Start with back camera for documents
+        } else {
+            title.textContent = '🤳 Tirar Selfie';
+            overlay.classList.add('hidden');
+            instructions.textContent = 'Posicione o rosto no centro e toque para capturar';
+            currentCameraType = 'user'; // Start with front camera for selfies
+        }
+        
+        // Show modal
+        cameraModal.classList.remove('hidden');
+        
+        // Start camera
+        await startCamera();
+    }
+    
+    async function startCamera() {
+        try {
+            // Stop current stream
+            if (currentStream) {
+                currentStream.getTracks().forEach(track => track.stop());
+            }
+            
+            const video = document.getElementById('camera-video');
+            const constraints = {
+                video: { 
+                    facingMode: currentCameraType,
+                    width: { ideal: 1280 },
+                    height: { ideal: 720 }
+                }
+            };
+            
+            currentStream = await navigator.mediaDevices.getUserMedia(constraints);
+            video.srcObject = currentStream;
+            
+            // Check if device has flashlight
+            const track = currentStream.getVideoTracks()[0];
+            const capabilities = track.getCapabilities();
+            const flashButton = document.getElementById('toggle-flash');
+            
+            if (capabilities.torch) {
+                flashButton.classList.remove('hidden');
+            } else {
+                flashButton.classList.add('hidden');
+            }
+            
+        } catch (error) {
+            console.error('Error accessing camera:', error);
+            alert('Não foi possível acessar a câmera. Verifique se você deu permissão para o site acessar a câmera.');
+            closeCamera();
+        }
+    }
+    
+    function setupCameraEvents() {
+        const modal = cameraModal;
+        const video = document.getElementById('camera-video');
+        const canvas = document.getElementById('camera-canvas');
+        const capturedImage = document.getElementById('captured-image');
+        const photoPreview = document.getElementById('photo-preview');
+        const loading = document.getElementById('camera-loading');
+        
+        // Close camera
+        document.getElementById('close-camera').addEventListener('click', closeCamera);
+        
+        // Switch camera
+        document.getElementById('switch-camera').addEventListener('click', async () => {
+            currentCameraType = currentCameraType === 'user' ? 'environment' : 'user';
+            await startCamera();
+        });
+        
+        // Capture photo
+        document.getElementById('capture-photo').addEventListener('click', () => {
+            capturePhoto();
+        });
+        
+        // Retake photo
+        document.getElementById('retake-photo').addEventListener('click', () => {
+            photoPreview.classList.add('hidden');
+            video.style.display = 'block';
+        });
+        
+        // Use photo
+        document.getElementById('use-photo').addEventListener('click', () => {
+            usePhoto();
+        });
+        
+        // Flash toggle
+        document.getElementById('toggle-flash').addEventListener('click', toggleFlash);
+        
+        // Close modal when clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                closeCamera();
+            }
+        });
+    }
+    
+    function capturePhoto() {
+        const video = document.getElementById('camera-video');
+        const canvas = document.getElementById('camera-canvas');
+        const capturedImage = document.getElementById('captured-image');
+        const photoPreview = document.getElementById('photo-preview');
+        
+        // Set canvas dimensions to match video
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+        
+        // Draw video frame to canvas
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0);
+        
+        // Get image data
+        const imageDataUrl = canvas.toDataURL('image/jpeg', 0.8);
+        
+        // Show preview
+        capturedImage.src = imageDataUrl;
+        video.style.display = 'none';
+        photoPreview.classList.remove('hidden');
+    }
+    
+    async function usePhoto() {
+        const canvas = document.getElementById('camera-canvas');
+        const loading = document.getElementById('camera-loading');
+        
+        loading.classList.remove('hidden');
+        
+        try {
+            // Convert canvas to blob
+            const blob = await new Promise(resolve => {
+                canvas.toBlob(resolve, 'image/jpeg', 0.8);
+            });
+            
+            if (currentCaptureMode === 'avatar') {
+                // Handle avatar upload
+                await uploadAvatar(blob);
+            } else if (currentCaptureMode === 'document') {
+                // Handle document processing
+                await processDocument(blob);
+            }
+            
+        } catch (error) {
+            console.error('Error processing photo:', error);
+            alert('Erro ao processar a foto. Tente novamente.');
+        } finally {
+            loading.classList.add('hidden');
+            closeCamera();
+        }
+    }
+    
+    async function uploadAvatar(blob) {
+        const formData = new FormData();
+        formData.append('avatar', blob, 'selfie.jpg');
+        formData.append('_token', document.querySelector('meta[name="csrf-token"]').getAttribute('content'));
+        
+        try {
+            const response = await fetch('{{ route("client.profile.upload-avatar") }}', {
+                method: 'POST',
+                body: formData
+            });
+            
+            if (response.ok) {
+                // Reload page to show new avatar
+                window.location.reload();
+            } else {
+                throw new Error('Upload failed');
+            }
+        } catch (error) {
+            console.error('Error uploading avatar:', error);
+            alert('Erro ao enviar a foto. Tente novamente.');
+        }
+    }
+    
+    async function processDocument(blob) {
+        // For now, just show a message that OCR processing would go here
+        // In a real implementation, you would send to an OCR service
+        alert('📄 Foto capturada! Em uma versão futura, o sistema irá extrair automaticamente os dados do documento. Por enquanto, digite manualmente os dados no formulário.');
+    }
+    
+    function toggleFlash() {
+        if (currentStream) {
+            const track = currentStream.getVideoTracks()[0];
+            const capabilities = track.getCapabilities();
+            
+            if (capabilities.torch) {
+                const settings = track.getSettings();
+                track.applyConstraints({
+                    advanced: [{ torch: !settings.torch }]
+                });
+                
+                const flashButton = document.getElementById('toggle-flash');
+                flashButton.classList.toggle('bg-yellow-500');
+            }
+        }
+    }
+    
+    function closeCamera() {
+        if (currentStream) {
+            currentStream.getTracks().forEach(track => track.stop());
+            currentStream = null;
+        }
+        
+        if (cameraModal) {
+            cameraModal.classList.add('hidden');
+            
+            // Reset UI
+            document.getElementById('photo-preview').classList.add('hidden');
+            document.getElementById('camera-video').style.display = 'block';
+        }
+    }
+    
+    // Setup camera buttons
+    const cameraAvatarBtn = document.getElementById('camera-avatar-btn');
+    const cameraDocumentBtn = document.getElementById('camera-document-btn');
+    
+    if (cameraAvatarBtn) {
+        cameraAvatarBtn.addEventListener('click', () => {
+            openCamera('avatar');
+        });
+    }
+    
+    if (cameraDocumentBtn) {
+        cameraDocumentBtn.addEventListener('click', () => {
+            openCamera('document');
+        });
+    }
+    
+    // Check if device supports camera
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        // Hide camera buttons if camera is not supported
+        const cameraButtons = document.querySelectorAll('#camera-avatar-btn, #camera-document-btn');
+        cameraButtons.forEach(btn => {
+            if (btn) btn.style.display = 'none';
+        });
     }
 });
 </script>

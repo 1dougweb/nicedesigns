@@ -97,6 +97,19 @@
                     Projetos Clientes
                 </a>
 
+                <!-- Clients -->
+                <a href="{{ route('admin.clients.index') }}" 
+                   class="flex items-center px-4 py-3 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-200 group {{ request()->routeIs('admin.clients.*') ? 'bg-blue-600/20 text-blue-400 border border-blue-500/30' : '' }}">
+                    <i class="fi fi-rr-users w-5 h-5 mr-3"></i>
+                    Clientes
+                    @php
+                        $newClientsCount = \App\Models\User::clients()->whereMonth('created_at', now()->month)->count();
+                    @endphp
+                    @if($newClientsCount > 0)
+                        <span class="ml-auto bg-green-500 text-white text-xs px-2 py-1 rounded-full">{{ $newClientsCount }}</span>
+                    @endif
+                </a>
+
                 <!-- Quotes -->
                 <a href="{{ route('admin.quotes.index') }}" 
                    class="flex items-center px-4 py-3 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-200 group {{ request()->routeIs('admin.quotes.*') ? 'bg-amber-600/20 text-amber-400 border border-amber-500/30' : '' }}">
