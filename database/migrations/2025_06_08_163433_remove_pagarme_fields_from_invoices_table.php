@@ -4,6 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Exception;
 
 return new class extends Migration
 {
@@ -13,25 +14,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('invoices', function (Blueprint $table) {
-            // Verificar e remover índices primeiro
-            $indexExists = $this->indexExists('invoices', 'invoices_pagarme_charge_id_index');
-            if ($indexExists) {
-                $table->dropIndex(['pagarme_charge_id']);
-            }
-            
-            $indexExists = $this->indexExists('invoices', 'invoices_pagarme_transaction_id_index');
-            if ($indexExists) {
-                $table->dropIndex(['pagarme_transaction_id']);
-            }
-            
-            $indexExists = $this->indexExists('invoices', 'invoices_pagarme_status_index');
-            if ($indexExists) {
-                $table->dropIndex(['pagarme_status']);
-            }
-            
             // Verificar quais colunas existem
             $columns = Schema::getColumnListing('invoices');
-            $columnsToRemove = [];
             
             $pagarmeColumns = [
                 'pagarme_charge_id',
@@ -46,30 +30,38 @@ return new class extends Migration
                 'webhook_received_at'
             ];
             
+            // Remover índices primeiro (usando try/catch para evitar erros)
+            $indicesToDrop = [
+                ['pagarme_charge_id'],
+                ['pagarme_transaction_id'],
+                ['pagarme_status']
+            ];
+            
+            foreach ($indicesToDrop as $indexColumns) {
+                try {
+                    if (in_array($indexColumns[0], $columns)) {
+                        $table->dropIndex($indexColumns);
+                    }
+                } catch (Exception $e) {
+                    // Índice pode não existir, continuar
+                }
+            }
+            
+            // Remover colunas que existem
+            $columnsToRemove = [];
             foreach ($pagarmeColumns as $column) {
                 if (in_array($column, $columns)) {
                     $columnsToRemove[] = $column;
                 }
             }
             
-            // Remover apenas as colunas que existem
             if (!empty($columnsToRemove)) {
                 $table->dropColumn($columnsToRemove);
             }
         });
     }
 
-    /**
-     * Verifica se um índice existe na tabela
-     */
-    private function indexExists($table, $index)
-    {
-        $conn = Schema::getConnection();
-        $dbSchemaManager = $conn->getDoctrineSchemaManager();
-        $doctrineTable = $dbSchemaManager->listTableDetails($table);
-        
-        return $doctrineTable->hasIndex($index);
-    }
+
 
     /**
      * Reverse the migrations.
@@ -123,17 +115,29 @@ return new class extends Migration
                 $table->timestamp('webhook_received_at')->nullable()->after('boleto_barcode')->comment('Última vez que recebeu webhook');
             }
             
-            // Índices - verificar se as colunas existem antes de criar os índices
-            if (in_array('pagarme_charge_id', $columns) && !$this->indexExists('invoices', 'invoices_pagarme_charge_id_index')) {
-                $table->index('pagarme_charge_id');
+            // Criar índices se as colunas existem
+            try {
+                if (in_array('pagarme_charge_id', $columns)) {
+                    $table->index('pagarme_charge_id');
+                }
+            } catch (Exception $e) {
+                // Índice pode já existir
             }
             
-            if (in_array('pagarme_transaction_id', $columns) && !$this->indexExists('invoices', 'invoices_pagarme_transaction_id_index')) {
-                $table->index('pagarme_transaction_id');
+            try {
+                if (in_array('pagarme_transaction_id', $columns)) {
+                    $table->index('pagarme_transaction_id');
+                }
+            } catch (Exception $e) {
+                // Índice pode já existir
             }
             
-            if (in_array('pagarme_status', $columns) && !$this->indexExists('invoices', 'invoices_pagarme_status_index')) {
-                $table->index('pagarme_status');
+            try {
+                if (in_array('pagarme_status', $columns)) {
+                    $table->index('pagarme_status');
+                }
+            } catch (Exception $e) {
+                // Índice pode já existir
             }
         });
     }
