@@ -11,6 +11,8 @@ use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
+use Intervention\Image\Facades\Image;
 
 class PostController extends Controller
 {
@@ -40,31 +42,50 @@ class PostController extends Controller
      */
     public function store(Request $request): RedirectResponse
     {
-        $validated = $request->validate([
+        $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'excerpt' => 'nullable|string|max:500',
-            'featured_image' => 'nullable|url',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string|max:255',
+            'excerpt' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
+            'featured_image' => 'nullable|url',
+            'featured_image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:500',
             'is_published' => 'boolean',
-            'published_at' => 'nullable|date',
         ]);
 
-        $validated['slug'] = Str::slug($validated['title']);
-        $validated['user_id'] = auth()->id();
-
-        // Se não especificar data de publicação e estiver publicado, usar agora
-        if ($validated['is_published'] && !$validated['published_at']) {
-            $validated['published_at'] = now();
+        $data = $request->all();
+        
+        // Handle featured image upload
+        if ($request->hasFile('featured_image_file')) {
+            $data['featured_image'] = $this->uploadFeaturedImage($request->file('featured_image_file'));
         }
 
-        Post::create($validated);
+        // Generate slug
+        $data['slug'] = Str::slug($data['title']);
+        $originalSlug = $data['slug'];
+        $counter = 1;
+        
+        while (Post::where('slug', $data['slug'])->exists()) {
+            $data['slug'] = $originalSlug . '-' . $counter;
+            $counter++;
+        }
 
-        return redirect()
-            ->route('admin.posts.index')
-            ->with('success', 'Post criado com sucesso!');
+        // Set published_at if publishing
+        if ($request->input('action') === 'publish' || $data['is_published']) {
+            $data['is_published'] = true;
+            $data['published_at'] = now();
+        } else {
+            $data['is_published'] = false;
+            $data['published_at'] = null;
+        }
+
+        $data['user_id'] = auth()->id();
+
+        Post::create($data);
+
+        return redirect()->route('admin.posts.index')
+                        ->with('success', 'Post criado com sucesso!');
     }
 
     /**
@@ -90,30 +111,56 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post): RedirectResponse
     {
-        $validated = $request->validate([
+        $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'excerpt' => 'nullable|string|max:500',
-            'featured_image' => 'nullable|url',
-            'meta_title' => 'nullable|string|max:255',
-            'meta_description' => 'nullable|string|max:255',
+            'excerpt' => 'nullable|string',
             'category_id' => 'required|exists:categories,id',
+            'featured_image' => 'nullable|url',
+            'featured_image_file' => 'nullable|image|mimes:jpeg,png,jpg,gif,webp|max:2048',
+            'meta_title' => 'nullable|string|max:255',
+            'meta_description' => 'nullable|string|max:500',
             'is_published' => 'boolean',
-            'published_at' => 'nullable|date',
         ]);
 
-        $validated['slug'] = Str::slug($validated['title']);
-
-        // Se mudou para publicado e não tinha data, definir agora
-        if ($validated['is_published'] && !$post->published_at && !$validated['published_at']) {
-            $validated['published_at'] = now();
+        $data = $request->all();
+        
+        // Handle featured image upload
+        if ($request->hasFile('featured_image_file')) {
+            // Delete old image if it exists and is local
+            if ($post->featured_image && $this->isLocalImage($post->featured_image)) {
+                $this->deleteOldImage($post->featured_image);
+            }
+            
+            $data['featured_image'] = $this->uploadFeaturedImage($request->file('featured_image_file'));
         }
 
-        $post->update($validated);
+        // Update slug if title changed
+        if ($data['title'] !== $post->title) {
+            $data['slug'] = Str::slug($data['title']);
+            $originalSlug = $data['slug'];
+            $counter = 1;
+            
+            while (Post::where('slug', $data['slug'])->where('id', '!=', $post->id)->exists()) {
+                $data['slug'] = $originalSlug . '-' . $counter;
+                $counter++;
+            }
+        }
 
-        return redirect()
-            ->route('admin.posts.index')
-            ->with('success', 'Post atualizado com sucesso!');
+        // Handle publication status
+        if ($request->input('action') === 'publish' || $data['is_published']) {
+            $data['is_published'] = true;
+            if (!$post->published_at) {
+                $data['published_at'] = now();
+            }
+        } elseif ($request->input('action') === 'draft') {
+            $data['is_published'] = false;
+        }
+
+        $post->update($data);
+
+        return redirect()->route('admin.posts.index')
+                        ->with('success', 'Post atualizado com sucesso!');
     }
 
     /**
@@ -121,10 +168,52 @@ class PostController extends Controller
      */
     public function destroy(Post $post): RedirectResponse
     {
+        // Delete featured image if it's local
+        if ($post->featured_image && $this->isLocalImage($post->featured_image)) {
+            $this->deleteOldImage($post->featured_image);
+        }
+
         $post->delete();
 
-        return redirect()
-            ->route('admin.posts.index')
-            ->with('success', 'Post excluído com sucesso!');
+        return redirect()->route('admin.posts.index')
+                        ->with('success', 'Post excluído com sucesso!');
+    }
+
+    /**
+     * Upload featured image and return the URL
+     */
+    private function uploadFeaturedImage($file)
+    {
+        $filename = Str::uuid() . '.' . $file->getClientOriginalExtension();
+        $path = 'blog/featured/' . $filename;
+        
+        // Create directory if it doesn't exist
+        if (!Storage::disk('public')->exists('blog/featured')) {
+            Storage::disk('public')->makeDirectory('blog/featured');
+        }
+        
+        // Store the original file
+        Storage::disk('public')->put($path, file_get_contents($file));
+        
+        return '/storage/' . $path;
+    }
+
+    /**
+     * Check if image is stored locally
+     */
+    private function isLocalImage($imageUrl)
+    {
+        return str_starts_with($imageUrl, '/storage/blog/featured/');
+    }
+
+    /**
+     * Delete old image file
+     */
+    private function deleteOldImage($imageUrl)
+    {
+        if ($this->isLocalImage($imageUrl)) {
+            $path = str_replace('/storage/', '', $imageUrl);
+            Storage::disk('public')->delete($path);
+        }
     }
 }

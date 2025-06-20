@@ -107,6 +107,14 @@
             </button>
             
             <button 
+                data-tab="editor-tab"
+                class="tab-button flex items-center space-x-2 py-2 px-3 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-300 text-gray-400"
+            >
+                <i class="fi fi-rr-edit text-xl mt-2"></i>
+                <span>Editor</span>
+            </button>
+            
+            <button 
                 data-tab="footer-tab"
                 class="tab-button flex items-center space-x-2 py-2 px-3 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-300 text-gray-400"
             >
@@ -651,6 +659,123 @@
                     <label for="custom_js" class="block text-sm font-medium text-gray-300 mb-2">JavaScript Personalizado</label>
                     <textarea id="custom_js" name="custom_js" rows="6"
                               class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 font-mono text-sm">{{ $settings['appearance']->where('key', 'custom_js')->first()->value ?? '' }}</textarea>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Editor Settings Tab -->
+    <div id="editor-tab" class="tab-content hidden">
+        <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700/50 p-8">
+            <h3 class="text-xl font-bold text-white mb-6 flex items-center">
+                <i class="fi fi-rr-edit text-emerald-400 text-2xl mr-3 mt-2"></i>
+                Configurações do Editor TinyMCE
+            </h3>
+            
+            <div class="space-y-6">
+                <!-- API Key -->
+                <div>
+                    <label for="tinymce_api_key" class="block text-sm font-medium text-gray-300 mb-2">
+                        API Key do TinyMCE
+                        <span class="text-red-400">*</span>
+                    </label>
+                    <input type="text" id="tinymce_api_key" name="tinymce_api_key" 
+                           value="{{ $settings['editor']->where('key', 'tinymce_api_key')->first()->value ?? '' }}"
+                           class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                           placeholder="sua-api-key-aqui">
+                    <p class="text-sm text-gray-400 mt-2">
+                        Obtenha sua API key gratuita em <a href="https://www.tiny.cloud/" target="_blank" class="text-blue-400 hover:text-blue-300">tiny.cloud</a>
+                    </p>
+                </div>
+
+                <!-- Configurações Básicas -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <label for="tinymce_height" class="block text-sm font-medium text-gray-300 mb-2">Altura do Editor (px)</label>
+                        <input type="number" id="tinymce_height" name="tinymce_height" min="200" max="1000" step="50"
+                               value="{{ $settings['editor']->where('key', 'tinymce_height')->first()->value ?? '400' }}"
+                               class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                               placeholder="400">
+                    </div>
+
+                    <div>
+                        <label for="tinymce_enable_upload" class="flex items-center space-x-3">
+                            <input type="checkbox" id="tinymce_enable_upload" name="tinymce_enable_upload" value="1"
+                                   {{ ($settings['editor']->where('key', 'tinymce_enable_upload')->first()->value ?? '0') == '1' ? 'checked' : '' }}
+                                   class="w-5 h-5 text-blue-600 bg-gray-700 border-gray-600 rounded focus:ring-blue-500 focus:ring-2">
+                            <span class="text-sm font-medium text-gray-300">Permitir Upload de Imagens</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Plugins -->
+                <div>
+                    <label for="tinymce_plugins" class="block text-sm font-medium text-gray-300 mb-2">Plugins Ativos</label>
+                    <textarea id="tinymce_plugins" name="tinymce_plugins" rows="3"
+                              class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 font-mono text-sm"
+                              placeholder="advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount">{{ $settings['editor']->where('key', 'tinymce_plugins')->first()->value ?? 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table code help wordcount' }}</textarea>
+                    <p class="text-sm text-gray-400 mt-2">
+                        Lista de plugins separados por espaço. <a href="https://www.tiny.cloud/docs/plugins/" target="_blank" class="text-blue-400 hover:text-blue-300">Ver todos os plugins</a>
+                    </p>
+                </div>
+
+                <!-- Toolbar -->
+                <div>
+                    <label for="tinymce_toolbar" class="block text-sm font-medium text-gray-300 mb-2">Barra de Ferramentas</label>
+                    <textarea id="tinymce_toolbar" name="tinymce_toolbar" rows="3"
+                              class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 font-mono text-sm"
+                              placeholder="undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help">{{ $settings['editor']->where('key', 'tinymce_toolbar')->first()->value ?? 'undo redo | blocks | bold italic forecolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help' }}</textarea>
+                </div>
+
+                <!-- Upload Settings -->
+                <div class="border-t border-gray-700 pt-6">
+                    <h4 class="text-lg font-semibold text-white mb-4 flex items-center">
+                        <i class="fi fi-rr-cloud-upload text-blue-400 text-xl mr-2 mt-2"></i>
+                        Configurações de Upload
+                    </h4>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <label for="tinymce_upload_path" class="block text-sm font-medium text-gray-300 mb-2">Diretório de Upload</label>
+                            <input type="text" id="tinymce_upload_path" name="tinymce_upload_path" 
+                                   value="{{ $settings['editor']->where('key', 'tinymce_upload_path')->first()->value ?? 'uploads/editor' }}"
+                                   class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                                   placeholder="uploads/editor">
+                        </div>
+
+                        <div>
+                            <label for="tinymce_max_file_size" class="block text-sm font-medium text-gray-300 mb-2">Tamanho Máximo (MB)</label>
+                            <input type="number" id="tinymce_max_file_size" name="tinymce_max_file_size" min="1" max="10" step="1"
+                                   value="{{ $settings['editor']->where('key', 'tinymce_max_file_size')->first()->value ?? '5' }}"
+                                   class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                                   placeholder="5">
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label for="tinymce_allowed_extensions" class="block text-sm font-medium text-gray-300 mb-2">Extensões Permitidas</label>
+                        <input type="text" id="tinymce_allowed_extensions" name="tinymce_allowed_extensions" 
+                               value="{{ $settings['editor']->where('key', 'tinymce_allowed_extensions')->first()->value ?? 'jpg,jpeg,png,gif,webp' }}"
+                               class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300"
+                               placeholder="jpg,jpeg,png,gif,webp">
+                        <p class="text-sm text-gray-400 mt-2">Extensões separadas por vírgula</p>
+                    </div>
+                </div>
+
+                <!-- CSS Personalizado -->
+                <div class="border-t border-gray-700 pt-6">
+                    <h4 class="text-lg font-semibold text-white mb-4 flex items-center">
+                        <i class="fi fi-rr-palette text-purple-400 text-xl mr-2 mt-2"></i>
+                        Estilização
+                    </h4>
+                    
+                    <div>
+                        <label for="tinymce_content_css" class="block text-sm font-medium text-gray-300 mb-2">CSS do Conteúdo</label>
+                        <textarea id="tinymce_content_css" name="tinymce_content_css" rows="4"
+                                  class="w-full bg-gray-700/50 border border-gray-600/50 text-white rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-300 font-mono text-sm"
+                                  placeholder="body { font-family: Arial, sans-serif; }">{{ $settings['editor']->where('key', 'tinymce_content_css')->first()->value ?? '' }}</textarea>
+                        <p class="text-sm text-gray-400 mt-2">CSS personalizado para o conteúdo do editor</p>
+                    </div>
                 </div>
             </div>
         </div>

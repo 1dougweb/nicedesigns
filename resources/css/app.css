@@ -1,3 +1,97 @@
 @tailwind base;
 @tailwind components;
-@tailwind utilities; 
+@tailwind utilities;
+
+/* Estilos para código inline no conteúdo dos posts */
+@layer components {
+    .prose code:not(pre code) {
+        @apply bg-gray-800 text-yellow-400 px-2 py-1 rounded-md text-sm font-mono border border-gray-700;
+        font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+        font-weight: 500;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        position: relative;
+    }
+    
+    .prose code:not(pre code):before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background: linear-gradient(90deg, transparent, rgba(251, 191, 36, 0.3), transparent);
+    }
+    
+    /* Estilos para blocos de código */
+    .prose pre {
+        @apply bg-gray-900 border border-gray-700 rounded-xl p-6 overflow-x-auto relative;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+    }
+    
+    .prose pre:before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: linear-gradient(90deg, #3b82f6, #8b5cf6, #06b6d4);
+        border-radius: 0.75rem 0.75rem 0 0;
+    }
+    
+    .prose pre code {
+        @apply text-gray-300 bg-transparent p-0 border-0 text-sm;
+        font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', 'Monaco', monospace;
+        font-weight: 400;
+        box-shadow: none;
+        line-height: 1.6;
+    }
+    
+    /* Destaque para tags code no modo escuro */
+    .prose-invert code:not(pre code) {
+        @apply bg-gray-800 text-yellow-300 border-gray-600;
+        background: linear-gradient(135deg, #374151 0%, #1f2937 100%);
+        transition: all 0.2s ease;
+    }
+    
+    .prose-invert code:not(pre code):hover {
+        @apply text-yellow-200 border-yellow-500/50;
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+    }
+    
+    .prose-invert pre {
+        @apply bg-gray-900 border-gray-600;
+        background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+    }
+    
+    .prose-invert pre code {
+        @apply text-gray-200;
+    }
+    
+    /* Syntax highlighting básico para palavras-chave comuns */
+    .prose code:not(pre code) {
+        /* Destacar algumas palavras-chave comuns */
+    }
+    
+    .prose pre code .keyword {
+        @apply text-purple-400 font-semibold;
+    }
+    
+    .prose pre code .string {
+        @apply text-green-400;
+    }
+    
+    .prose pre code .comment {
+        @apply text-gray-500 italic;
+    }
+    
+    .prose pre code .number {
+        @apply text-orange-400;
+    }
+    
+    .prose pre code .function {
+        @apply text-blue-400;
+    }
+} 

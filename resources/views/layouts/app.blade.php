@@ -21,6 +21,22 @@
     <meta property="og:description" content="@yield('og_description', site_setting('description') ?? 'Agência de Web Design Moderna')">
     <meta property="og:image" content="@yield('og_image', asset('images/og-image.jpg'))">
     <meta property="og:url" content="{{ url()->current() }}">
+    <meta property="og:type" content="@yield('og_type', 'website')">
+    <meta property="og:site_name" content="{{ site_setting('name') ?? config('app.name') }}">
+
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="@yield('twitter_card', 'summary_large_image')">
+    <meta name="twitter:title" content="@yield('twitter_title', site_setting('name') ?? config('app.name'))">
+    <meta name="twitter:description" content="@yield('twitter_description', site_setting('description') ?? 'Agência de Web Design Moderna')">
+    <meta name="twitter:image" content="@yield('twitter_image', asset('images/og-image.jpg'))">
+    @if(site_setting('twitter_handle'))
+        <meta name="twitter:site" content="{{ site_setting('twitter_handle') }}">
+    @endif
+
+    <!-- Additional SEO -->
+    <meta name="robots" content="@yield('robots', 'index, follow')">
+    <link rel="canonical" href="{{ url()->current() }}">
+    @yield('structured_data')
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">

@@ -1,7 +1,47 @@
 @extends('layouts.app')
 
 @section('title', "- {$post->title}")
-@section('meta_description', $post->meta_description ?: Str::limit($post->excerpt, 160))
+@section('meta_description', $post->meta_description ?: Str::limit(strip_tags($post->excerpt ?: $post->content), 160))
+@section('meta_keywords', $post->category ? $post->category->name . ', blog, ' . (site_setting('keywords') ?? 'web design') : (site_setting('keywords') ?? 'web design, blog'))
+
+@section('og_title', $post->meta_title ?: $post->title . ' - ' . (site_setting('name') ?? config('app.name')))
+@section('og_description', $post->meta_description ?: Str::limit(strip_tags($post->excerpt ?: $post->content), 160))
+@section('og_image', $post->featured_image ? (str_starts_with($post->featured_image, 'http') ? $post->featured_image : asset('storage' . ltrim($post->featured_image, '/storage'))) : asset('images/og-image.jpg'))
+@section('og_type', 'article')
+
+@section('twitter_title', $post->meta_title ?: $post->title)
+@section('twitter_description', $post->meta_description ?: Str::limit(strip_tags($post->excerpt ?: $post->content), 160))
+@section('twitter_image', $post->featured_image ? (str_starts_with($post->featured_image, 'http') ? $post->featured_image : asset('storage' . ltrim($post->featured_image, '/storage'))) : asset('images/og-image.jpg'))
+
+@section('structured_data')
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "{{ $post->title }}",
+  "description": "{{ $post->meta_description ?: Str::limit(strip_tags($post->excerpt ?: $post->content), 160) }}",
+  "image": "{{ $post->featured_image ? (str_starts_with($post->featured_image, 'http') ? $post->featured_image : asset('storage' . ltrim($post->featured_image, '/storage'))) : asset('images/og-image.jpg') }}",
+  "author": {
+    "@type": "Person",
+    "name": "{{ $post->author->name ?? 'Admin' }}"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "{{ site_setting('name') ?? config('app.name') }}",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "{{ site_setting('logo') ?? asset('images/logo.png') }}"
+    }
+  },
+  "datePublished": "{{ $post->published_at->toISOString() }}",
+  "dateModified": "{{ $post->updated_at->toISOString() }}",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "{{ url()->current() }}"
+  }
+}
+</script>
+@endsection
 
 @section('content')
 <!-- Header -->
@@ -56,7 +96,7 @@
         <!-- Featured Image -->
         @if($post->featured_image)
         <div class="mb-12">
-            <img src="{{ Storage::url($post->featured_image) }}" 
+            <img src="{{ str_starts_with($post->featured_image, 'http') ? $post->featured_image : asset('storage' . ltrim($post->featured_image, '/storage')) }}" 
                  alt="{{ $post->title }}" 
                  class="w-full h-96 object-cover rounded-3xl shadow-2xl">
         </div>
@@ -65,7 +105,7 @@
         <!-- Post Content -->
         <div class="bg-gray-800/50 backdrop-blur-md rounded-3xl border border-gray-700 p-8 mb-12 shadow-2xl">
             <div class="prose prose-lg prose-invert max-w-none text-gray-300 leading-relaxed">
-                {!! nl2br(e($post->content)) !!}
+                {!! $post->content !!}
             </div>
         </div>
 
@@ -140,7 +180,7 @@
             <article class="group bg-gray-700/50 backdrop-blur-md rounded-3xl overflow-hidden border border-gray-600 hover:border-blue-500/50 transition-all duration-500 transform hover:-translate-y-4 shadow-2xl hover:shadow-blue-500/25">
                 <div class="relative overflow-hidden h-48">
                     @if($relatedPost->featured_image)
-                        <img src="{{ Storage::url($relatedPost->featured_image) }}" 
+                        <img src="{{ str_starts_with($relatedPost->featured_image, 'http') ? $relatedPost->featured_image : asset('storage' . ltrim($relatedPost->featured_image, '/storage')) }}" 
                              alt="{{ $relatedPost->title }}" 
                              class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                     @else

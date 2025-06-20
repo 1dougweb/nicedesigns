@@ -134,6 +134,11 @@ Route::middleware(['auth', 'admin'])->prefix('admin')->name('admin.')->group(fun
     Route::get('/settings/abacatepay', [AdminSettingController::class, 'abacatePay'])->name('settings.abacatepay');
     Route::post('/settings/abacatepay', [AdminSettingController::class, 'storeAbacatePay'])->name('settings.abacatepay.store');
     Route::get('/settings/abacatepay/test', [AdminSettingController::class, 'testAbacatePayConnection'])->name('settings.abacatepay.test');
+
+    // TinyMCE routes
+    Route::post('/tinymce/upload', [\App\Http\Controllers\Admin\TinyMCEController::class, 'upload'])->name('tinymce.upload');
+    Route::delete('/tinymce/delete', [\App\Http\Controllers\Admin\TinyMCEController::class, 'delete'])->name('tinymce.delete');
+    Route::get('/tinymce/images', [\App\Http\Controllers\Admin\TinyMCEController::class, 'list'])->name('tinymce.images');
 });
 
 // Client Routes (Only for users with client role)
@@ -152,10 +157,10 @@ Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(
     
     // Projects (requires accepted quote)
     Route::middleware('accepted.quote')->group(function () {
-        Route::get('/projects', [\App\Http\Controllers\Client\ProjectController::class, 'index'])->name('projects.index');
-        Route::get('/projects/{project}', [\App\Http\Controllers\Client\ProjectController::class, 'show'])->name('projects.show');
-        Route::post('/projects/{project}/approve', [\App\Http\Controllers\Client\ProjectController::class, 'approve'])->name('projects.approve');
-        Route::post('/projects/{project}/reject', [\App\Http\Controllers\Client\ProjectController::class, 'reject'])->name('projects.reject');
+    Route::get('/projects', [\App\Http\Controllers\Client\ProjectController::class, 'index'])->name('projects.index');
+    Route::get('/projects/{project}', [\App\Http\Controllers\Client\ProjectController::class, 'show'])->name('projects.show');
+    Route::post('/projects/{project}/approve', [\App\Http\Controllers\Client\ProjectController::class, 'approve'])->name('projects.approve');
+    Route::post('/projects/{project}/reject', [\App\Http\Controllers\Client\ProjectController::class, 'reject'])->name('projects.reject');
     });
     
     // Invoices

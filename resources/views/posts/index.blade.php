@@ -97,7 +97,7 @@
                         <!-- Post Image -->
                         <div class="relative overflow-hidden h-64">
                             @if($post->featured_image)
-                                <img src="{{ Storage::url($post->featured_image) }}" 
+                                <img src="{{ str_starts_with($post->featured_image, 'http') ? $post->featured_image : asset('storage' . ltrim($post->featured_image, '/storage')) }}" 
                                      alt="{{ $post->title }}" 
                                      class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             @else

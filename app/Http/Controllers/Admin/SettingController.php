@@ -33,6 +33,7 @@ class SettingController extends Controller
             'email' => \App\Models\Setting::where('group', 'email')->get(),
             'appearance' => \App\Models\Setting::where('group', 'appearance')->get(),
             'footer' => \App\Models\Setting::where('group', 'footer')->get(),
+            'editor' => \App\Models\Setting::where('group', 'editor')->get(),
             'abacatepay' => [
                 'token' => Config::get('services.abacatepay.token'),
                 'environment' => Config::get('services.abacatepay.environment'),
@@ -120,6 +121,17 @@ class SettingController extends Controller
                 'custom_css' => 'nullable|string',
                 'custom_js' => 'nullable|string',
                 
+                // Campos do editor TinyMCE
+                'tinymce_api_key' => 'nullable|string|max:255',
+                'tinymce_plugins' => 'nullable|string',
+                'tinymce_toolbar' => 'nullable|string',
+                'tinymce_height' => 'nullable|integer|min:200|max:1000',
+                'tinymce_content_css' => 'nullable|string',
+                'tinymce_enable_upload' => 'nullable|boolean',
+                'tinymce_upload_path' => 'nullable|string|max:255',
+                'tinymce_max_file_size' => 'nullable|integer|min:1|max:10',
+                'tinymce_allowed_extensions' => 'nullable|string',
+                
                 // Campos do footer
                 'company_name' => 'nullable|string|max:255',
                 'company_description' => 'nullable|string|max:500',
@@ -173,6 +185,12 @@ class SettingController extends Controller
                 'company_name', 'company_description', 'copyright_text', 
                 'footer_text', 'social_twitter', 'social_linkedin', 
                 'social_instagram', 'social_facebook'
+            ]);
+
+            $this->saveSettingsGroup($request, 'editor', [
+                'tinymce_api_key', 'tinymce_plugins', 'tinymce_toolbar', 
+                'tinymce_height', 'tinymce_content_css', 'tinymce_enable_upload',
+                'tinymce_upload_path', 'tinymce_max_file_size', 'tinymce_allowed_extensions'
             ]);
 
             // Salvar configurações do AbacatePay se estiverem presentes
@@ -268,12 +286,12 @@ class SettingController extends Controller
     private function getSettingType(string $key, mixed $value): string
     {
         // Boolean settings
-        if (in_array($key, ['maintenance_mode', 'allow_registration', 'use_logo'])) {
+        if (in_array($key, ['maintenance_mode', 'allow_registration', 'use_logo', 'tinymce_enable_upload'])) {
             return 'boolean';
         }
         
         // Integer settings
-        if (in_array($key, ['posts_per_page', 'projects_per_page', 'smtp_port'])) {
+        if (in_array($key, ['posts_per_page', 'projects_per_page', 'smtp_port', 'tinymce_height', 'tinymce_max_file_size'])) {
             return 'integer';
         }
         

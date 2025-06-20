@@ -154,12 +154,14 @@
                 <label for="content" class="block text-sm font-medium text-gray-300 mb-2">
                     Conteúdo *
                 </label>
-                <textarea name="content" 
-                          id="content" 
-                          rows="15"
-                          required
-                          class="w-full px-4 py-3 bg-gray-700/50 border border-gray-600/50 rounded-xl text-white placeholder-gray-400 focus:border-blue-500/50 focus:ring-2 focus:ring-blue-500/20 transition-all @error('content') border-red-500/50 @enderror"
-                          placeholder="Conteúdo completo do post em HTML ou Markdown...">{{ old('content', $post->content) }}</textarea>
+                <x-tinymce-editor 
+                    name="content" 
+                    id="content"
+                    :value="old('content', $post->content)"
+                    required
+                    placeholder="Digite o conteúdo completo do post..."
+                    class="@error('content') border-red-500/50 @enderror"
+                />
                 @error('content')
                     <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
                 @enderror
@@ -176,23 +178,61 @@
             Imagem de Destaque
         </h3>
         
-        <div class="grid grid-cols-1 gap-6">
-            <!-- Current Image Preview -->
-            @if($post->featured_image)
-            <div class="mb-4">
-                <label class="block text-sm font-medium text-gray-300 mb-2">Imagem Atual</label>
-                <div class="w-full max-w-md">
-                    <img src="{{ $post->featured_image }}" 
-                         alt="Imagem atual" 
-                         class="w-full h-48 object-cover rounded-xl border border-gray-600/50">
+        <!-- Current Image Preview -->
+        @if($post->featured_image)
+        <div class="mb-6">
+            <label class="block text-sm font-medium text-gray-300 mb-2">Imagem Atual</label>
+            <div class="w-full max-w-md">
+                <img src="{{ $post->featured_image }}" 
+                     alt="Imagem atual" 
+                     class="w-full h-48 object-cover rounded-xl border border-gray-600/50">
+            </div>
+        </div>
+        @endif
+        
+        <div class="space-y-6">
+            <!-- Upload File -->
+            <div>
+                <label for="featured_image_file" class="block text-sm font-medium text-gray-300 mb-2">
+                    {{ $post->featured_image ? 'Substituir por Nova Imagem' : 'Fazer Upload da Imagem' }}
+                </label>
+                <div class="relative">
+                    <input type="file" 
+                           name="featured_image_file" 
+                           id="featured_image_file" 
+                           accept="image/*"
+                           class="hidden"
+                           onchange="previewImage(this)">
+                    <label for="featured_image_file" 
+                           class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-600 border-dashed rounded-xl cursor-pointer bg-gray-700/30 hover:bg-gray-700/50 transition-all">
+                        <div class="flex flex-col items-center justify-center pt-5 pb-6">
+                            <svg class="w-8 h-8 mb-4 text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                            </svg>
+                            <p class="mb-2 text-sm text-gray-400">
+                                <span class="font-semibold">Clique para fazer upload</span>
+                            </p>
+                            <p class="text-xs text-gray-400">PNG, JPG, GIF, WEBP (MAX. 2MB)</p>
+                        </div>
+                    </label>
+                </div>
+                @error('featured_image_file')
+                    <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
+                @enderror
+                
+                <!-- Image Preview -->
+                <div id="imagePreview" class="mt-4 hidden">
+                    <img id="previewImg" src="" alt="Preview" class="w-full max-w-md h-48 object-cover rounded-xl border border-gray-600">
+                    <button type="button" onclick="removePreview()" class="mt-2 text-sm text-red-400 hover:text-red-300">
+                        Remover imagem
+                    </button>
                 </div>
             </div>
-            @endif
 
-            <!-- Featured Image -->
+            <!-- URL Alternative -->
             <div>
                 <label for="featured_image" class="block text-sm font-medium text-gray-300 mb-2">
-                    {{ $post->featured_image ? 'Nova URL da Imagem de Destaque' : 'URL da Imagem de Destaque' }}
+                    {{ $post->featured_image ? 'Ou Nova URL Externa' : 'Ou URL da Imagem Externa' }}
                 </label>
                 <input type="url" 
                        name="featured_image" 
@@ -203,7 +243,24 @@
                 @error('featured_image')
                     <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
                 @enderror
-                <p class="mt-1 text-xs text-gray-400">Recomendado: 1200x630px para melhor compartilhamento em redes sociais</p>
+                <p class="mt-1 text-xs text-gray-400">Use upload local ou URL externa, não ambos</p>
+            </div>
+        </div>
+        
+        <div class="mt-4 p-4 bg-blue-900/20 border border-blue-700/30 rounded-xl">
+            <div class="flex items-start">
+                <svg class="w-5 h-5 text-blue-400 mt-0.5 mr-3 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                <div class="text-sm text-blue-300">
+                    <p class="font-medium mb-1">Dicas para melhor SEO:</p>
+                    <ul class="list-disc list-inside space-y-1 text-blue-300/80">
+                        <li>Tamanho recomendado: 1200x630px (proporção 1.91:1)</li>
+                        <li>Formato ideal: JPG ou WebP para melhor compressão</li>
+                        <li>Arquivo otimizado para rápido carregamento</li>
+                        <li>Imagem representativa do conteúdo do post</li>
+                    </ul>
+                </div>
             </div>
         </div>
     </div>
@@ -307,6 +364,75 @@
 // Auto-generate slug from title
 document.getElementById('title').addEventListener('input', function() {
     // You can add slug generation logic here if needed
+});
+
+// Image preview functionality
+function previewImage(input) {
+    const preview = document.getElementById('imagePreview');
+    const previewImg = document.getElementById('previewImg');
+    
+    if (input.files && input.files[0]) {
+        const reader = new FileReader();
+        
+        reader.onload = function(e) {
+            previewImg.src = e.target.result;
+            preview.classList.remove('hidden');
+            
+            // Clear URL input if file is selected
+            document.getElementById('featured_image').value = '';
+        };
+        
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+
+function removePreview() {
+    const preview = document.getElementById('imagePreview');
+    const fileInput = document.getElementById('featured_image_file');
+    
+    preview.classList.add('hidden');
+    fileInput.value = '';
+}
+
+// Clear file input if URL is entered
+document.getElementById('featured_image').addEventListener('input', function() {
+    if (this.value) {
+        document.getElementById('featured_image_file').value = '';
+        document.getElementById('imagePreview').classList.add('hidden');
+    }
+});
+
+// Character counter for meta fields
+document.getElementById('meta_title').addEventListener('input', function() {
+    const maxLength = 60;
+    const currentLength = this.value.length;
+    const color = currentLength > maxLength ? 'text-red-400' : 'text-gray-400';
+    
+    let counter = this.parentNode.querySelector('.char-counter');
+    if (!counter) {
+        counter = document.createElement('p');
+        counter.className = 'mt-1 text-xs char-counter';
+        this.parentNode.appendChild(counter);
+    }
+    
+    counter.className = `mt-1 text-xs char-counter ${color}`;
+    counter.textContent = `${currentLength}/${maxLength} caracteres`;
+});
+
+document.getElementById('meta_description').addEventListener('input', function() {
+    const maxLength = 160;
+    const currentLength = this.value.length;
+    const color = currentLength > maxLength ? 'text-red-400' : 'text-gray-400';
+    
+    let counter = this.parentNode.querySelector('.char-counter');
+    if (!counter) {
+        counter = document.createElement('p');
+        counter.className = 'mt-1 text-xs char-counter';
+        this.parentNode.appendChild(counter);
+    }
+    
+    counter.className = `mt-1 text-xs char-counter ${color}`;
+    counter.textContent = `${currentLength}/${maxLength} caracteres`;
 });
 </script>
 @endsection 

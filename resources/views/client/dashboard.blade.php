@@ -51,9 +51,9 @@
         </div>
         <div class="mt-4">
             @if(auth()->user()->hasAcceptedQuote())
-                <a href="{{ route('client.projects.index') }}" class="text-green-400 hover:text-green-300 text-sm font-medium transition-colors">
-                    Ver Projetos →
-                </a>
+            <a href="{{ route('client.projects.index') }}" class="text-green-400 hover:text-green-300 text-sm font-medium transition-colors">
+                Ver Projetos →
+            </a>
             @else
                 <div class="flex items-center text-gray-400 text-sm">
                     <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
