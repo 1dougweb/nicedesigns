@@ -43,6 +43,8 @@ class User extends Authenticatable
         'preferences',
         'profile_completed_at',
         'abacatepay_customer_id',
+        'auto_login_token',
+        'auto_login_expires_at',
     ];
 
     /**
@@ -67,6 +69,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'preferences' => 'array',
             'profile_completed_at' => 'datetime',
+            'auto_login_expires_at' => 'datetime',
         ];
     }
 

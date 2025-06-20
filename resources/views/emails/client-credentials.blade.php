@@ -207,14 +207,25 @@
             </div>
             
             <div class="button-container">
-                <a href="{{ $loginUrl }}" class="btn btn-primary">
-                    🚀 Acessar minha conta
+                <a href="{{ $autoLoginUrl }}" class="btn btn-primary">
+                    ⚡ Acesso Instantâneo
+                </a>
+                <a href="{{ $loginUrl }}" class="btn btn-secondary">
+                    🚀 Login Manual
                 </a>
                 <a href="{{ $resetUrl }}" class="btn btn-secondary">
                     🔒 Redefinir senha
                 </a>
             </div>
             
+            <div style="background: #e7f3ff; border: 1px solid #3b82f6; border-radius: 8px; padding: 15px; margin: 20px 0;">
+                <h3 style="color: #1e40af; margin: 0 0 10px 0; font-size: 16px;">⚡ Acesso Instantâneo</h3>
+                <p style="color: #1e40af; margin: 0; font-size: 14px;">
+                    <strong>Novidade!</strong> Use o botão "Acesso Instantâneo" acima para entrar na sua conta automaticamente, sem precisar digitar email e senha. 
+                    Este link funciona apenas uma vez e expira em 24 horas por segurança.
+                </p>
+            </div>
+
             <div class="security-notice">
                 <h3>⚠️ Importante - Segurança</h3>
                 <p>Por questões de segurança, <strong>recomendamos fortemente</strong> que você redefina sua senha no primeiro acesso. Use o botão "Redefinir senha" acima ou altere sua senha após o login.</p>

@@ -410,10 +410,14 @@ class ClientController extends Controller
         // Configure email settings from database
         $this->updateEmailConfig();
         
+        // Generate auto login token
+        $autoLoginToken = \App\Http\Controllers\Auth\AutoLoginController::generateAutoLoginToken($client);
+        $autoLoginUrl = route('auto-login', ['token' => $autoLoginToken]);
+        
         $resetToken = Password::createToken($client);
         $resetUrl = route('password.reset', ['token' => $resetToken, 'email' => $client->email]);
         
-        Mail::to($client->email)->send(new ClientCredentials($client, $password, $resetUrl));
+        Mail::to($client->email)->send(new ClientCredentials($client, $password, $resetUrl, $autoLoginUrl));
     }
 
     /**

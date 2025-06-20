@@ -16,15 +16,17 @@ class ClientCredentials extends Mailable
     public User $client;
     public string $password;
     public string $resetUrl;
+    public string $autoLoginUrl;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(User $client, string $password, string $resetUrl)
+    public function __construct(User $client, string $password, string $resetUrl, string $autoLoginUrl)
     {
         $this->client = $client;
         $this->password = $password;
         $this->resetUrl = $resetUrl;
+        $this->autoLoginUrl = $autoLoginUrl;
     }
 
     /**
@@ -48,6 +50,7 @@ class ClientCredentials extends Mailable
                 'client' => $this->client,
                 'password' => $this->password,
                 'resetUrl' => $this->resetUrl,
+                'autoLoginUrl' => $this->autoLoginUrl,
                 'loginUrl' => route('login'),
                 'siteName' => site_setting('name') ?? config('app.name'),
             ]

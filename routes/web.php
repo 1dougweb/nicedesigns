@@ -198,6 +198,9 @@ Route::middleware(['auth', 'client'])->prefix('client')->name('client.')->group(
 
 // Auth Routes (Laravel/UI)
 Auth::routes();
+
+// Auto Login Route
+Route::get('/auto-login/{token}', [\App\Http\Controllers\Auth\AutoLoginController::class, 'login'])->name('auto-login');
 // Static Pages (deve ficar por último para não conflitar)
 Route::get('/{slug}', [PageController::class, 'show'])->name('pages.show');
 
