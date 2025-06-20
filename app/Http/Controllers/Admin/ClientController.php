@@ -7,6 +7,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Models\Notification;
+use App\Models\Setting;
 use App\Mail\ClientCredentials;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
@@ -341,6 +342,9 @@ class ClientController extends Controller
         }
 
         try {
+            // Configure email settings from database
+            $this->updateEmailConfig();
+            
             $token = Password::createToken($client);
             $resetUrl = route('password.reset', ['token' => $token, 'email' => $client->email]);
             
@@ -403,9 +407,34 @@ class ClientController extends Controller
      */
     private function sendCredentialsEmail(User $client, string $password): void
     {
+        // Configure email settings from database
+        $this->updateEmailConfig();
+        
         $resetToken = Password::createToken($client);
         $resetUrl = route('password.reset', ['token' => $resetToken, 'email' => $client->email]);
         
         Mail::to($client->email)->send(new ClientCredentials($client, $password, $resetUrl));
+    }
+
+    /**
+     * Update email configuration from settings
+     */
+    private function updateEmailConfig(): void
+    {
+        $emailSettings = Setting::where('group', 'email')->get()->keyBy('key');
+        
+        // Only apply if we have a username configured (indicates SMTP is set up)
+        if ($emailSettings->isNotEmpty() && $emailSettings->get('smtp_username')?->value) {
+            config([
+                'mail.default' => 'smtp',
+                'mail.mailers.smtp.host' => $emailSettings->get('smtp_host')->value ?? 'smtp.gmail.com',
+                'mail.mailers.smtp.port' => (int)($emailSettings->get('smtp_port')->value ?? 587),
+                'mail.mailers.smtp.username' => $emailSettings->get('smtp_username')->value,
+                'mail.mailers.smtp.password' => $emailSettings->get('smtp_password')->value,
+                'mail.mailers.smtp.encryption' => $emailSettings->get('smtp_encryption')->value ?? 'tls',
+                'mail.from.address' => $emailSettings->get('mail_from_address')->value ?? 'noreply@nicedesigns.com.br',
+                'mail.from.name' => $emailSettings->get('mail_from_name')->value ?? 'Nice Designs',
+            ]);
+        }
     }
 } 
