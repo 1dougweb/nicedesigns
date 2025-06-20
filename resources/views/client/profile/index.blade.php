@@ -877,15 +877,82 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 <!-- Photo preview after capture -->
                 <div id="photo-preview" class="absolute inset-0 bg-black hidden">
-                    <img id="captured-image" class="w-full h-full object-contain">
-                    <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/80 to-transparent">
+                    <!-- Header with title -->
+                    <div class="absolute top-0 left-0 right-0 p-4 bg-gradient-to-b from-black/80 to-transparent z-10">
+                        <h3 class="text-white text-xl font-bold text-center">
+                            📸 Prévia da Foto
+                        </h3>
+                        <p class="text-gray-300 text-sm text-center mt-1">
+                            Revise sua foto antes de confirmar
+                        </p>
+                    </div>
+
+                    <!-- Photo container with circular crop preview for avatar -->
+                    <div class="flex items-center justify-center h-full p-8 pt-20 pb-32">
+                        <div class="relative">
+                            <!-- Circular preview for avatar mode -->
+                            <div id="avatar-preview-container" class="relative">
+                                <div class="w-64 h-64 rounded-full overflow-hidden border-4 border-white/30 bg-gray-800 shadow-2xl">
+                                    <img id="captured-image" class="w-full h-full object-cover" style="transform-origin: center center;">
+                                </div>
+                                
+                                <!-- Overlay with guide -->
+                                <div class="absolute inset-0 rounded-full border-4 border-purple-400/50 pointer-events-none">
+                                    <div class="absolute inset-2 rounded-full border-2 border-white/20"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Zoom controls -->
+                            <div class="absolute -right-16 top-1/2 transform -translate-y-1/2 space-y-3">
+                                <button id="zoom-in" class="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                    </svg>
+                                </button>
+                                <button id="zoom-out" class="w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors">
+                                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6"/>
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Action buttons -->
+                    <div class="absolute bottom-0 left-0 right-0 p-6 bg-gradient-to-t from-black/90 to-transparent">
+                        <div class="flex items-center justify-center space-x-4 mb-4">
+                            <!-- Photo quality indicator -->
+                            <div class="flex items-center space-x-2 text-green-400 text-sm">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <span>Qualidade: Boa</span>
+                            </div>
+                        </div>
+                        
                         <div class="flex items-center justify-center space-x-4">
-                            <button id="retake-photo" class="px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-medium transition-colors">
-                                🔄 Tirar Nova
+                            <button id="retake-photo" class="flex items-center px-6 py-3 bg-gray-600 hover:bg-gray-700 text-white rounded-xl font-medium transition-colors">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                                Tirar Nova Foto
                             </button>
-                            <button id="use-photo" class="px-6 py-3 bg-green-600 hover:bg-green-700 text-white rounded-xl font-medium transition-colors">
-                                ✅ Usar Esta Foto
+                            <button id="use-photo" class="flex items-center px-8 py-3 bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700 text-white rounded-xl font-medium transition-all duration-300 shadow-lg">
+                                <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Confirmar e Salvar
                             </button>
+                        </div>
+                        
+                        <!-- Tips -->
+                        <div class="mt-4 text-center space-y-1">
+                            <p class="text-gray-400 text-xs">
+                                💡 Use os botões + e - para ajustar o zoom da foto
+                            </p>
+                            <p class="text-gray-400 text-xs">
+                                👆 Arraste a foto para reposicionar no centro
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -1006,6 +1073,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.getElementById('retake-photo').addEventListener('click', () => {
             photoPreview.classList.add('hidden');
             video.style.display = 'block';
+            resetPhotoZoom();
         });
         
         // Use photo
@@ -1016,6 +1084,15 @@ document.addEventListener('DOMContentLoaded', function() {
         // Flash toggle
         document.getElementById('toggle-flash').addEventListener('click', toggleFlash);
         
+        // Zoom controls
+        document.getElementById('zoom-in').addEventListener('click', () => {
+            adjustPhotoZoom(0.1);
+        });
+        
+        document.getElementById('zoom-out').addEventListener('click', () => {
+            adjustPhotoZoom(-0.1);
+        });
+        
         // Close modal when clicking outside
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
@@ -1023,6 +1100,11 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }
+    
+    // Photo zoom variables
+    let currentZoomLevel = 1;
+    let photoTransformX = 0;
+    let photoTransformY = 0;
     
     function capturePhoto() {
         const video = document.getElementById('camera-video');
@@ -1043,8 +1125,107 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Show preview
         capturedImage.src = imageDataUrl;
+        capturedImage.onload = function() {
+            // Initialize zoom for the captured image
+            resetPhotoZoom();
+            // Setup drag functionality
+            setupPhotoDrag();
+        };
+        
         video.style.display = 'none';
         photoPreview.classList.remove('hidden');
+    }
+    
+    function adjustPhotoZoom(delta) {
+        const capturedImage = document.getElementById('captured-image');
+        
+        currentZoomLevel += delta;
+        currentZoomLevel = Math.max(0.5, Math.min(3, currentZoomLevel)); // Limit between 0.5x and 3x
+        
+        updatePhotoTransform();
+    }
+    
+    function resetPhotoZoom() {
+        currentZoomLevel = 1;
+        photoTransformX = 0;
+        photoTransformY = 0;
+        updatePhotoTransform();
+    }
+    
+    function updatePhotoTransform() {
+        const capturedImage = document.getElementById('captured-image');
+        capturedImage.style.transform = `translate(${photoTransformX}px, ${photoTransformY}px) scale(${currentZoomLevel})`;
+    }
+    
+    // Add drag functionality to reposition photo
+    function setupPhotoDrag() {
+        const capturedImage = document.getElementById('captured-image');
+        let isDragging = false;
+        let lastX = 0;
+        let lastY = 0;
+
+        // Mouse events
+        capturedImage.addEventListener('mousedown', (e) => {
+            isDragging = true;
+            lastX = e.clientX;
+            lastY = e.clientY;
+            capturedImage.style.cursor = 'grabbing';
+            e.preventDefault();
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            
+            const deltaX = e.clientX - lastX;
+            const deltaY = e.clientY - lastY;
+            
+            photoTransformX += deltaX;
+            photoTransformY += deltaY;
+            
+            updatePhotoTransform();
+            
+            lastX = e.clientX;
+            lastY = e.clientY;
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            capturedImage.style.cursor = 'grab';
+        });
+
+        // Touch events for mobile
+        capturedImage.addEventListener('touchstart', (e) => {
+            isDragging = true;
+            const touch = e.touches[0];
+            lastX = touch.clientX;
+            lastY = touch.clientY;
+            e.preventDefault();
+        });
+
+        document.addEventListener('touchmove', (e) => {
+            if (!isDragging) return;
+            
+            const touch = e.touches[0];
+            const deltaX = touch.clientX - lastX;
+            const deltaY = touch.clientY - lastY;
+            
+            photoTransformX += deltaX;
+            photoTransformY += deltaY;
+            
+            updatePhotoTransform();
+            
+            lastX = touch.clientX;
+            lastY = touch.clientY;
+            
+            e.preventDefault();
+        });
+
+        document.addEventListener('touchend', () => {
+            isDragging = false;
+        });
+
+        // Set initial cursor
+        capturedImage.style.cursor = 'grab';
     }
     
     async function usePhoto() {
@@ -1054,16 +1235,44 @@ document.addEventListener('DOMContentLoaded', function() {
         loading.classList.remove('hidden');
         
         try {
-            // Convert canvas to blob
-            const blob = await new Promise(resolve => {
-                canvas.toBlob(resolve, 'image/jpeg', 0.8);
-            });
+            // Create final cropped canvas for avatar
+            const finalCanvas = document.createElement('canvas');
+            const finalCtx = finalCanvas.getContext('2d');
             
             if (currentCaptureMode === 'avatar') {
-                // Handle avatar upload
+                // Create square avatar (512x512)
+                finalCanvas.width = 512;
+                finalCanvas.height = 512;
+                
+                // Calculate the source area based on zoom and pan
+                const img = document.getElementById('captured-image');
+                const containerSize = 264; // Size of preview container
+                const scale = currentZoomLevel;
+                
+                // Calculate source dimensions
+                const sourceWidth = canvas.width / scale;
+                const sourceHeight = canvas.height / scale;
+                const sourceX = (canvas.width - sourceWidth) / 2 - (photoTransformX / containerSize) * canvas.width;
+                const sourceY = (canvas.height - sourceHeight) / 2 - (photoTransformY / containerSize) * canvas.height;
+                
+                // Draw cropped and scaled image
+                finalCtx.drawImage(canvas, 
+                    sourceX, sourceY, sourceWidth, sourceHeight,
+                    0, 0, 512, 512
+                );
+                
+                // Convert final canvas to blob
+                const blob = await new Promise(resolve => {
+                    finalCanvas.toBlob(resolve, 'image/jpeg', 0.9);
+                });
+                
                 await uploadAvatar(blob);
             } else if (currentCaptureMode === 'document') {
-                // Handle document processing
+                // For documents, use original canvas
+                const blob = await new Promise(resolve => {
+                    canvas.toBlob(resolve, 'image/jpeg', 0.8);
+                });
+                
                 await processDocument(blob);
             }
             
