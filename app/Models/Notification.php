@@ -34,6 +34,7 @@ class Notification extends Model
     const TYPE_SUCCESS = 'success';
     const TYPE_WARNING = 'warning';
     const TYPE_ERROR = 'error';
+    const TYPE_SYSTEM = 'system';
     const TYPE_NEW_CONTACT = 'new_contact';
     const TYPE_NEW_PROJECT = 'new_project';
     const TYPE_PROJECT_APPROVED = 'project_approved';
@@ -130,6 +131,7 @@ class Notification extends Model
             self::TYPE_SUCCESS => 'fi-rr-check-circle',
             self::TYPE_WARNING => 'fi-rr-exclamation-triangle',
             self::TYPE_ERROR => 'fi-rr-cross-circle',
+            self::TYPE_SYSTEM => 'fi-rr-settings',
             self::TYPE_NEW_CONTACT => 'fi-rr-envelope',
             self::TYPE_NEW_PROJECT => 'fi-rr-briefcase',
             self::TYPE_PROJECT_APPROVED => 'fi-rr-check-circle',
@@ -149,6 +151,7 @@ class Notification extends Model
             self::TYPE_SUCCESS => 'green',
             self::TYPE_WARNING => 'yellow',
             self::TYPE_ERROR => 'red',
+            self::TYPE_SYSTEM => 'blue',
             self::TYPE_NEW_CONTACT => 'blue',
             self::TYPE_NEW_PROJECT => 'purple',
             self::TYPE_PROJECT_APPROVED => 'green',
@@ -194,6 +197,7 @@ class Notification extends Model
             self::TYPE_SUCCESS => 'fi-rr-check-circle',
             self::TYPE_WARNING => 'fi-rr-exclamation-triangle',
             self::TYPE_ERROR => 'fi-rr-cross-circle',
+            self::TYPE_SYSTEM => 'fi-rr-settings',
             self::TYPE_NEW_CONTACT => 'fi-rr-envelope',
             self::TYPE_NEW_PROJECT => 'fi-rr-briefcase',
             self::TYPE_PROJECT_APPROVED => 'fi-rr-check-circle',
@@ -213,6 +217,7 @@ class Notification extends Model
             self::TYPE_SUCCESS => 'green',
             self::TYPE_WARNING => 'yellow',
             self::TYPE_ERROR => 'red',
+            self::TYPE_SYSTEM => 'blue',
             self::TYPE_NEW_CONTACT => 'blue',
             self::TYPE_NEW_PROJECT => 'purple',
             self::TYPE_PROJECT_APPROVED => 'green',
