@@ -7,6 +7,9 @@ use Illuminate\Support\Str;
 use App\Helpers\SettingsHelper;
 use Illuminate\Pagination\Paginator;
 use App\Models\Setting;
+use Illuminate\Auth\Notifications\ResetPassword;
+use App\Mail\PasswordResetMail;
+use Illuminate\Support\Facades\Mail;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -36,6 +39,9 @@ class AppServiceProvider extends ServiceProvider
         
         // Configure email settings from database
         $this->configureEmailFromDatabase();
+        
+        // Configure custom password reset notification
+        $this->configurePasswordResetNotification();
     }
     
     /**
@@ -80,5 +86,20 @@ class AppServiceProvider extends ServiceProvider
                 'mail.from.name' => $emailSettings->get('mail_from_name')->value ?? 'Nice Designs',
             ]);
         }
+    }
+    
+    /**
+     * Configure custom password reset notification
+     */
+    private function configurePasswordResetNotification(): void
+    {
+        ResetPassword::toMailUsing(function ($notifiable, $token) {
+            $resetUrl = url(route('password.reset', [
+                'token' => $token,
+                'email' => $notifiable->getEmailForPasswordReset(),
+            ], false));
+            
+            return new PasswordResetMail($notifiable, $resetUrl);
+        });
     }
 }

@@ -180,44 +180,21 @@
                     </div>
                 @endforeach
             @else
-                <!-- Projeto 1 -->
-                <div class="flex items-center p-4 bg-gray-700/30 rounded-2xl hover:bg-gray-700/50 transition-colors">
-                    <div class="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center mr-4">
-                        <svg class="w-6 h-6 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                <!-- Estado vazio -->
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 bg-gray-700/50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                         </svg>
                     </div>
-                    <div class="flex-1">
-                        <h4 class="text-white font-semibold">Site Corporativo</h4>
-                        <p class="text-gray-400 text-sm">Desenvolvimento em andamento</p>
-                        <div class="mt-2">
-                            <div class="w-full bg-gray-600 rounded-full h-2">
-                                <div class="bg-blue-500 h-2 rounded-full" style="width: 75%"></div>
-                            </div>
-                            <p class="text-xs text-gray-400 mt-1">75% concluído</p>
-                        </div>
-                    </div>
-                    <span class="text-blue-400 text-sm font-medium">Em andamento</span>
-                </div>
-
-                <!-- Projeto 2 -->
-                <div class="flex items-center p-4 bg-gray-700/30 rounded-2xl hover:bg-gray-700/50 transition-colors">
-                    <div class="w-12 h-12 bg-purple-600/20 rounded-xl flex items-center justify-center mr-4">
-                        <svg class="w-6 h-6 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                    <h4 class="text-gray-400 font-medium mb-2">Nenhum projeto em andamento</h4>
+                    <p class="text-gray-500 text-sm mb-6">Seus projetos aparecerão aqui quando forem criados pela nossa equipe.</p>
+                    <a href="{{ route('contact') }}" class="inline-flex items-center text-blue-400 hover:text-blue-300 text-sm font-medium transition-colors">
+                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
                         </svg>
-                    </div>
-                    <div class="flex-1">
-                        <h4 class="text-white font-semibold">App Mobile</h4>
-                        <p class="text-gray-400 text-sm">Design em aprovação</p>
-                        <div class="mt-2">
-                            <div class="w-full bg-gray-600 rounded-full h-2">
-                                <div class="bg-purple-500 h-2 rounded-full" style="width: 45%"></div>
-                            </div>
-                            <p class="text-xs text-gray-400 mt-1">45% concluído</p>
-                        </div>
-                    </div>
-                    <span class="text-yellow-400 text-sm font-medium">Aguardando</span>
+                        Solicitar novo projeto
+                    </a>
                 </div>
             @endif
         </div>
@@ -263,46 +240,15 @@
                     </div>
                 @endforeach
             @else
-                <!-- Atividade 1 -->
-                <div class="flex items-start space-x-4">
-                    <div class="w-8 h-8 bg-green-600/20 rounded-full flex items-center justify-center flex-shrink-0">
-                        <svg class="w-4 h-4 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                <!-- Estado vazio -->
+                <div class="text-center py-8">
+                    <div class="w-12 h-12 bg-gray-700/50 rounded-xl flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
                     </div>
-                    <div class="flex-1">
-                        <p class="text-white font-medium">Projeto Site Corporativo atualizado</p>
-                        <p class="text-gray-400 text-sm">Nova versão do design aprovada</p>
-                        <p class="text-gray-500 text-xs mt-1">Há 2 horas</p>
-                    </div>
-                </div>
-
-                <!-- Atividade 2 -->
-                <div class="flex items-start space-x-4">
-                    <div class="w-8 h-8 bg-blue-600/20 rounded-full flex items-center justify-center flex-shrink-0">
-                        <svg class="w-4 h-4 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                        </svg>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-white font-medium">Nova fatura gerada</p>
-                        <p class="text-gray-400 text-sm">Fatura #2025-006 - R$ 2.500,00</p>
-                        <p class="text-gray-500 text-xs mt-1">Ontem</p>
-                    </div>
-                </div>
-
-                <!-- Atividade 3 -->
-                <div class="flex items-start space-x-4">
-                    <div class="w-8 h-8 bg-purple-600/20 rounded-full flex items-center justify-center flex-shrink-0">
-                        <svg class="w-4 h-4 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                        </svg>
-                    </div>
-                    <div class="flex-1">
-                        <p class="text-white font-medium">Ticket de suporte respondido</p>
-                        <p class="text-gray-400 text-sm">Dúvida sobre hospedagem esclarecida</p>
-                        <p class="text-gray-500 text-xs mt-1">2 dias atrás</p>
-                    </div>
+                    <h4 class="text-gray-400 font-medium mb-2">Nenhuma atividade recente</h4>
+                    <p class="text-gray-500 text-sm">Suas atividades aparecerão aqui conforme você interage com a plataforma.</p>
                 </div>
             @endif
         </div>

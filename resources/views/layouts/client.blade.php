@@ -42,7 +42,7 @@
 <body class="font-sans antialiased bg-gray-900 text-white">
     <div class="min-h-screen flex">
         <!-- Sidebar -->
-        <div class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-800/50 backdrop-blur-xl border-r border-gray-700/50 transform transition-transform duration-300 ease-in-out lg:translate-x-0 lg:static lg:inset-0" id="sidebar">
+        <div class="fixed inset-y-0 left-0 z-50 w-64 bg-gray-800/50 backdrop-blur-xl border-r border-gray-700/50 transform transition-transform duration-300 ease-in-out -translate-x-full lg:translate-x-0 lg:static lg:inset-0" id="sidebar">
             <!-- Logo -->
             <div class="flex items-center justify-center h-16 px-4 bg-gradient-to-r from-green-600/20 to-blue-600/20 border-b border-gray-700/50">
                 <a href="{{ route('client.dashboard') }}" class="flex items-center space-x-3">
@@ -149,16 +149,6 @@
 
                 <!-- Divider -->
                 <div class="border-t border-gray-700/50 my-6"></div>
-
-                <!-- Site Link -->
-                <a href="{{ route('home') }}" 
-                   target="_blank"
-                   class="flex items-center px-4 py-3 text-gray-300 rounded-xl hover:bg-gray-700/50 hover:text-white transition-all duration-200 group">
-                    <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
-                    </svg>
-                    Ver Site
-                </a>
 
                 <!-- Logout -->
                 <form method="POST" action="{{ route('logout') }}">
